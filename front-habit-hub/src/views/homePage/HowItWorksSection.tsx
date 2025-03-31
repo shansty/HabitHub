@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HowItWorksSection: React.FC = () => {
   return (
@@ -12,9 +13,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
         <p className="mt-8 text-xl">
           Ready to create lasting habits?{' '}
-          <a href="#" className="text-indigo-700 font-semibold">
-            Join HabitHub now! 🚀
-          </a>
+          <Link to='/login' className="text-indigo-700 font-semibold"> Join HabitHub now! 🚀</Link>
         </p>
       </div>
     </section>
