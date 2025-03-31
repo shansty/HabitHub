@@ -1,14 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InputField from './InputField';
 import { Link } from 'react-router-dom';
+import { TypeLoginUser } from '../../types';
+import { useCreateLoginUserMutation } from '../../services/user';
 
 const LoginForm: React.FC = () => {
-    const user = {
-        username: "email",
-        password: "password"
-    }
+    const defaultUserDataValue: TypeLoginUser = { username: "", password: "" }
+    const [userData, setUserData] = useState<TypeLoginUser>(defaultUserDataValue);
+    const [createLoginUser] = useCreateLoginUserMutation()
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const { id, value } = e.target;
+        setUserData((prevUser) => ({
+            ...prevUser,
+            [id]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            const response = await createLoginUser(userData).unwrap()
+            console.log('User logged in:', response)
+        } catch (err) {
+            console.error('Login failed:', err)
+        }
     }
 
     return (
@@ -17,7 +35,7 @@ const LoginForm: React.FC = () => {
                 <h2 className="text-3xl font-bold mb-6 text-indigo-700">Log In to HabitHub</h2>
                 <form className="space-y-4 text-left">
                     <InputField
-                        value={user.username}
+                        value={userData.username}
                         handleOnChange={handleOnChange}
                         placeholder='Enter your username'
                         id='username'
@@ -25,13 +43,14 @@ const LoginForm: React.FC = () => {
                     />
 
                     <InputField
-                        value={user.password}
+                        value={userData.password}
                         handleOnChange={handleOnChange}
                         placeholder='Enter your password'
                         id='password'
                         type='password'
                     />
                     <button
+                        onSubmit={handleSubmit}
                         type="submit"
                         className="w-full bg-indigo-700 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition"
                     >

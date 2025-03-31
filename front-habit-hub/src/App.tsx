@@ -3,6 +3,7 @@ import LoginForm from './views/authPage/LoginForm';
 import SignUpForm from './views/authPage/SignUpForm';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
+
 function App() {
 
   return (
