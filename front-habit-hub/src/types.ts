@@ -1,4 +1,6 @@
-export type TypeLoginUser = {
+export type TypeUser = {
     username: string,
-    password: string
+    password: string,
+    email?: string,
+    profile_picture?: File
 }
