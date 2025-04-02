@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import InputField from './InputField';
+import PasswordField from './PasswordField';
 import { Link } from 'react-router-dom';
 import { TypeUser } from '../../types';
-import { useCreateUserMutation } from '../../services/user';
+import { useRegisterUserMutation } from '../../services/user';
 import Dropzone from './Dropzone';
-
 const SignUpForm: React.FC = () => {
 
     const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
-    const [createUser, { error, isLoading }] = useCreateUserMutation()
+    const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [registerUser, { error, isLoading }] = useRegisterUserMutation()
 
 
     const handlePhotoDrop = (file: File) => {
@@ -25,15 +26,26 @@ const SignUpForm: React.FC = () => {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        try {
-            const user = await createUser(userData).unwrap();
-            console.dir({user})
-        } catch (err) {
-            console.error('Sign up failed:', err)
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('username', userData.username);
+        formData.append('email', userData.email as string);
+        formData.append('password', userData.password);
+
+        if (userData.profile_picture) {
+            formData.append('profile_picture', userData.profile_picture);
         }
-    }
+        try {
+            const res = await registerUser(formData).unwrap();
+            if (res.emailSent) {
+                alert("Check your email to verify your account");
+            }
+        } catch (err) {
+            console.error("Sign up failed:", err);
+        }
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
@@ -60,14 +72,16 @@ const SignUpForm: React.FC = () => {
                         type='email'
                     />
 
-                    <InputField
+                    <PasswordField
                         value={userData.password}
-                        handleOnChange={handleOnChange}
-                        placeholder='Enter your password'
-                        id='password'
-                        type='password'
+                        onChange={handleOnChange}
+                        id="password"
+                        placeholder="Enter your password"
+                        setIsPasswordValid={setIsPasswordValid}
                     />
+
                     <button
+                        disabled={!isPasswordValid}
                         type="submit"
                         className="w-full bg-indigo-700 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition"
                     >

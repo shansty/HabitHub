@@ -14,8 +14,14 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: "" })
-  profile_picture: string;
+  @Column({ nullable: true, type: 'varchar' })
+  profile_picture: string | null;
+
+  @Column({ default: false })
+  isVerified: boolean;
+
+  @Column({ nullable: true, type: 'varchar' })
+  verification_code: string | null;
 
   @CreateDateColumn()
   created_at: Date;

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/users.entity'
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +21,7 @@ import { User } from './users/users.entity'
       synchronize: true,
     }),
     UsersModule,
+    EmailModule,
   ],
   controllers: [], 
   providers: [], 
