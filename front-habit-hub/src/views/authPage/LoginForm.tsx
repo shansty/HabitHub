@@ -58,6 +58,10 @@ const LoginForm: React.FC = () => {
                 {isLoading && <p>Logging in...</p>}
                 {error && <p className="text-red-600">Login failed.</p>}
                 <p className="mt-4 text-sm text-gray-800">
+                    Forgot the password?{' '}
+                    <Link to='/reset_password' className="text-indigo-600 font-medium hover:underline">Reset</Link>
+                </p>
+                <p className="mt-4 text-sm text-gray-800">
                     Don't have an account?{' '}
                     <Link to='/sign_up' className="text-indigo-600 font-medium hover:underline">Sign Up</Link>
                 </p>

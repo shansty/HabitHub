@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PasswordChecklist from 'react-password-checklist';
 import PasswordStrengthBar from './PasswordStrengthBar';
+import { formatFieldName } from '../../utils';
 
 
 interface PasswordFieldProps {
@@ -18,7 +19,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ value, onChange, id, plac
   return (
     <div className="relative">
       <label htmlFor={id} className="block text-sm font-medium mb-1">
-        {placeholder}
+        {formatFieldName(id)}
       </label>
 
       <input

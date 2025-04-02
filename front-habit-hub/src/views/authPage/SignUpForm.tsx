@@ -88,7 +88,7 @@ const SignUpForm: React.FC = () => {
                         Sign Up
                     </button>
                 </form>
-                {isLoading && <p>Logging in...</p>}
+                {isLoading && <p>Please wait...</p>}
                 {error && <p className="text-red-600">Sign Up failed.</p>}
                 <p className="mt-4 text-sm text-gray-800">
                     Already have an account?{' '}

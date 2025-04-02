@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { TypeUser } from '../types'
+import { TypeResetPasswordCredentials, TypeUser } from '../types'
 
 
 export const userApi = createApi({
@@ -24,8 +24,15 @@ export const userApi = createApi({
     verifyEmail: builder.mutation<{ success: boolean; message: string }, string>({
       query: (code) => ({
         url: `user/verify-email/${code}`,
-        method: 'PUT',
+        method: 'PATCH',
       }),
+    }),
+    resetPassword: builder.mutation<{success: boolean}, TypeResetPasswordCredentials>({
+      query: (body) => ({
+        url: 'user/reset_password',
+        method: 'PATCH',
+        body
+      })
     }),
     getUserData: builder.query({ query: (id: number) => `user/${id}` })
   }),
@@ -35,5 +42,6 @@ export const {
   useLoginUserMutation,
   useGetUserDataQuery,
   useRegisterUserMutation,
-  useVerifyEmailMutation
+  useVerifyEmailMutation,
+  useResetPasswordMutation
 } = userApi
