@@ -61,6 +61,7 @@ const LoginForm: React.FC = () => {
                     Don't have an account?{' '}
                     <Link to='/sign_up' className="text-indigo-600 font-medium hover:underline">Sign Up</Link>
                 </p>
+                
             </div>
         </div>
     );

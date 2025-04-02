@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone'
 
 const Dropzone = ({
@@ -16,6 +17,13 @@ const Dropzone = ({
             }
         }
     });
+
+    useEffect(() => {
+
+        const inputPr = getInputProps();
+        const rootPr = getRootProps()
+        console.dir({inputPr, rootPr})
+    }, [])
 
     return (
         <div

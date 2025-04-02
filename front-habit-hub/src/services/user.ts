@@ -10,16 +10,21 @@ export const userApi = createApi({
     loginUser: builder.mutation<{ token: string }, TypeUser>({
       query: (body) => ({
         url: 'user/login',
-        //for register willbe user/
         method: 'POST',
         body,
       }),
     }),
-    createUser: builder.mutation<{ user: TypeUser }, TypeUser>({
+    registerUser: builder.mutation<{emailSent: boolean}, FormData>({
       query: (body) => ({
         url: 'user',
         method: 'POST',
-        body,
+        body
+      }),
+    }),
+    verifyEmail: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (code) => ({
+        url: `user/verify-email/${code}`,
+        method: 'PUT',
       }),
     }),
     getUserData: builder.query({ query: (id: number) => `user/${id}` })
@@ -29,5 +34,6 @@ export const userApi = createApi({
 export const {
   useLoginUserMutation,
   useGetUserDataQuery,
-  useCreateUserMutation
+  useRegisterUserMutation,
+  useVerifyEmailMutation
 } = userApi
