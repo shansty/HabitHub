@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, CreateLoginUserDto } from './users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -35,7 +35,7 @@ export class UsersController {
   }
 
 
-  @Put('verify-email/:code')
+  @Patch('verify-email/:code')
   verifyEmail(
     @Param('code') code: string
   ) {
