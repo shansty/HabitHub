@@ -35,9 +35,9 @@ const VerifyEmailPage = () => {
                     </p>
                 )}
 
-                {error && (
-                    <p className="text-lg text-red-600 font-semibold">
-                        ❌ Verification failed. Your link might be invalid or expired. Please try again to sign up.
+                {error && 'data' in error && (
+                    <p className="text-red-600 text-lg text-center mt-1">
+                        {(error.data as any)?.message || '❌ Verification failed. Your link might be invalid or expired. Please try again to sign up.'}
                     </p>
                 )}
             </div>

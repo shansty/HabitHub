@@ -14,34 +14,36 @@ export const userApi = createApi({
         body,
       }),
     }),
-    registerUser: builder.mutation<{emailSent: boolean}, FormData>({
+    registerUser: builder.mutation<{ emailSent: boolean }, FormData>({
       query: (body) => ({
         url: 'user',
         method: 'POST',
         body
       }),
     }),
-    verifyEmail: builder.mutation<{ success: boolean; message: string }, string >({
+    verifyEmail: builder.mutation<{ success: boolean; message: string }, string>({
       query: (code) => ({
-        url: `user/verify_email?code=${code}`,
+        url: `user/email_verification?code=${code}`,
         method: 'PATCH',
       }),
     }),
-    resetPassword: builder.mutation<{success: boolean}, TypeResetPasswordCredentials>({
+    resetPassword: builder.mutation<{ success: boolean }, TypeResetPasswordCredentials>({
       query: (body) => ({
-        url: 'user/reset_password',
+        url: 'user/password/reset',
         method: 'PATCH',
         body
       })
     }),
-    verifyResetCode: builder.mutation<{ success: boolean}, {code: string}>({
+    verifyResetCode: builder.mutation<{ success: boolean }, { code: string }>({
       query: (body) => ({
-        url: `user/verify_reset_code`,
+        url: `user/password/code_verification`,
         method: 'PATCH',
         body
       }),
     }),
-    getUserData: builder.query({ query: (id: number) => `user/${id}` })
+    getUserData: builder.query<{ user: TypeUser }, string | null>({
+      query: (id) => `user/${id}`,
+    }),
   }),
 })
 
