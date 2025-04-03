@@ -23,6 +23,18 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   verification_code: string | null;
 
+  @Column({ type: 'timestamp', nullable: true })
+  verification_expires_at: Date;
+
+  @Column({ nullable: true, type: 'varchar' })
+  reset_code?: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  reset_code_expires_at?: Date;
+
+  @Column({ nullable: true, type: 'varchar' })
+  temp_password?: string;
+
   @CreateDateColumn()
   created_at: Date;
 

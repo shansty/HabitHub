@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import InputField from './InputField';
-import PasswordField from './PasswordField';
+import InputField from '../utils_components/InputField';
+import PasswordField from '../utils_components/PasswordField';
 import { Link } from 'react-router-dom';
-import { TypeUser } from '../../types';
-import { useRegisterUserMutation } from '../../services/user';
-import Dropzone from './Dropzone';
+import { TypeUser } from '../../../types';
+import { useRegisterUserMutation } from '../../../services/user';
+import Dropzone from '../utils_components/Dropzone';
+import SuccessModal from '../utils_components/SuccessModal';
+
 const SignUpForm: React.FC = () => {
 
     const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false)
     const [registerUser, { error, isLoading }] = useRegisterUserMutation()
 
 
@@ -26,6 +29,9 @@ const SignUpForm: React.FC = () => {
         }));
     };
 
+    const handleOnModalClose = () => {
+        setIsSuccess(false)
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -33,24 +39,26 @@ const SignUpForm: React.FC = () => {
         formData.append('username', userData.username);
         formData.append('email', userData.email as string);
         formData.append('password', userData.password);
-
         if (userData.profile_picture) {
             formData.append('profile_picture', userData.profile_picture);
         }
-        try {
-            const res = await registerUser(formData).unwrap();
-            if (res.emailSent) {
-                alert("Check your email to verify your account");
-            }
-        } catch (err) {
-            console.error("Sign up failed:", err);
-        }
-    };
-
+        const res = await registerUser(formData).unwrap();
+        if (res.emailSent) {
+            setIsSuccess(true)
+        };
+    }
+    
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
             <div className="bg-white p-8 shadow-xl max-w-md w-full text-center">
                 <h2 className="text-3xl font-bold mb-6 text-indigo-700">Sign Up to HabitHub</h2>
+                {isSuccess &&
+                    <SuccessModal
+                        isOpen={true}
+                        message='Check your email to verify your account'
+                        title='Registration almost done!'
+                        onClose={handleOnModalClose}
+                    />}
                 <form onSubmit={handleSubmit} className="space-y-4 text-left">
                     <Dropzone
                         onFileAccepted={handlePhotoDrop}
@@ -89,7 +97,11 @@ const SignUpForm: React.FC = () => {
                     </button>
                 </form>
                 {isLoading && <p>Please wait...</p>}
-                {error && <p className="text-red-600">Sign Up failed.</p>}
+                {error && 'data' in error && (
+                    <p className="text-red-600 text-sm text-center mt-1">
+                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                    </p>
+                )}
                 <p className="mt-4 text-sm text-gray-800">
                     Already have an account?{' '}
                     <Link to='/login' className="text-indigo-600 font-medium hover:underline">Log In</Link>

@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional,IsNotEmpty, IsString, IsUUID, IsBoolean } from "class-validator";
+import { IsEmail, IsOptional,IsNotEmpty, IsString, IsUUID, IsBoolean, isDate, IsDate } from "class-validator";
 
 export class CreateUserDto {
     @IsString()
@@ -24,6 +24,23 @@ export class CreateUserDto {
     @IsBoolean()
     @IsOptional()
     isVerified?: boolean;
+
+    @IsDate()
+    @IsOptional()
+    verification_expires_at?: Date
+
+    @IsString()
+    @IsOptional()
+    temp_password?: string;
+
+    @IsString()
+    @IsOptional()
+    reset_code?: string;
+
+    @IsDate()
+    @IsOptional()
+    reset_code_expires_at?: Date
+    
 }
 
 export class CreateLoginUserDto {
@@ -35,3 +52,21 @@ export class CreateLoginUserDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class ResetUserPasswordDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    @IsNotEmpty()
+    new_password: string;
+
+    @IsString()
+    @IsNotEmpty()
+    confirm_password: string;
+}
+
+export class VerifyUserResetCodeDto {
+    code: string;
+  }

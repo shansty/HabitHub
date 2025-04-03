@@ -4,16 +4,14 @@ import { useVerifyEmailMutation } from '../../services/user';
 
 const VerifyEmailPage = () => {
     const navigate = useNavigate();
-    const [code, setCode] = useState<string | null>(null);
     const [verifyEmail, { error, isLoading, isSuccess }] = useVerifyEmailMutation();
 
     useEffect(() => {
-        const urlCode = new URLSearchParams(window.location.search).get('code');
-        setCode(urlCode);
+        const code = new URLSearchParams(window.location.search).get('code');
         const verify = async () => {
-            if (!urlCode) return;
+            if (!code) return;
             try {
-                await verifyEmail(urlCode).unwrap();
+                await verifyEmail(code).unwrap();
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
@@ -39,13 +37,7 @@ const VerifyEmailPage = () => {
 
                 {error && (
                     <p className="text-lg text-red-600 font-semibold">
-                        ❌ Verification failed. Your link might be invalid or expired
-                    </p>
-                )}
-
-                {!code && (
-                    <p className="text-lg text-gray-700">
-                        No verification code found in URL.
+                        ❌ Verification failed. Your link might be invalid or expired. Please try again to sign up.
                     </p>
                 )}
             </div>

@@ -8,5 +8,6 @@ export type TypeUser = {
 export type TypeResetPasswordCredentials = {
     email: string,
     new_password: string,
-    confirm_password?: string,
+    confirm_password: string,
 }
+
