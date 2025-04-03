@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import InputField from '../utils_components/InputField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TypeUser } from '../../../types';
 import { useLoginUserMutation } from '../../../services/user';
+import { setToken } from '../../../utils';
 
 const LoginForm: React.FC = () => {
     const defaultUserDataValue: TypeUser = { username: "", password: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
     const [loginUser, { error, isLoading }] = useLoginUserMutation()
+    const navigate = useNavigate();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -20,12 +22,10 @@ const LoginForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        try {
-            const response = await loginUser(userData).unwrap()
-            const token = response.token;
-        } catch (err) {
-            console.error('Login failed:', err)
-        }
+        const response = await loginUser(userData).unwrap()
+        const token = response.token;
+        setToken(token);
+        navigate('/profile')
     }
 
     return (

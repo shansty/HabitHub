@@ -1,8 +1,8 @@
 export type TypeUser = {
     username: string,
-    password: string,
+    password?: string,
     email?: string,
-    profile_picture?: File
+    profile_picture?: File | string
 }
 
 export type TypeResetPasswordCredentials = {

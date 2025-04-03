@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import { TypeUser } from '../../../types';
 import { useRegisterUserMutation } from '../../../services/user';
 import Dropzone from '../utils_components/Dropzone';
-import SuccessModal from '../utils_components/SuccessModal';
+import Modal from '../utils_components/Modal';
 
 const SignUpForm: React.FC = () => {
 
     const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [registerUser, { error, isLoading }] = useRegisterUserMutation()
 
 
@@ -30,7 +30,7 @@ const SignUpForm: React.FC = () => {
     };
 
     const handleOnModalClose = () => {
-        setIsSuccess(false)
+        setIsModalOpen(false)
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,7 +44,7 @@ const SignUpForm: React.FC = () => {
         }
         const res = await registerUser(formData).unwrap();
         if (res.emailSent) {
-            setIsSuccess(true)
+            setIsModalOpen(true)
         };
     }
     
@@ -52,8 +52,8 @@ const SignUpForm: React.FC = () => {
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
             <div className="bg-white p-8 shadow-xl max-w-md w-full text-center">
                 <h2 className="text-3xl font-bold mb-6 text-indigo-700">Sign Up to HabitHub</h2>
-                {isSuccess &&
-                    <SuccessModal
+                {isModalOpen &&
+                    <Modal
                         isOpen={true}
                         message='Check your email to verify your account'
                         title='Registration almost done!'

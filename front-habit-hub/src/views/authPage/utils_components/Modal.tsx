@@ -1,13 +1,13 @@
 import React from 'react';
 
-interface SuccessModalProps {
+interface ModalProps {
     isOpen: boolean;
     message: string;
     title: string;
     onClose: () => void;
 }
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, message, title, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, message, title, onClose }) => {
  
     if (!isOpen) return null;
     return (
@@ -26,4 +26,4 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, message, title, onC
     );
 };
 
-export default SuccessModal;
+export default Modal;
