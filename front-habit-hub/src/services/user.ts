@@ -21,9 +21,9 @@ export const userApi = createApi({
         body
       }),
     }),
-    verifyEmail: builder.mutation<{ success: boolean; message: string }, string>({
+    verifyEmail: builder.mutation<{ success: boolean; message: string }, string >({
       query: (code) => ({
-        url: `user/verify-email/${code}`,
+        url: `user/verify_email?code=${code}`,
         method: 'PATCH',
       }),
     }),
@@ -34,6 +34,13 @@ export const userApi = createApi({
         body
       })
     }),
+    verifyResetCode: builder.mutation<{ success: boolean}, {code: string}>({
+      query: (body) => ({
+        url: `user/verify_reset_code`,
+        method: 'PATCH',
+        body
+      }),
+    }),
     getUserData: builder.query({ query: (id: number) => `user/${id}` })
   }),
 })
@@ -43,5 +50,6 @@ export const {
   useGetUserDataQuery,
   useRegisterUserMutation,
   useVerifyEmailMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useVerifyResetCodeMutation
 } = userApi

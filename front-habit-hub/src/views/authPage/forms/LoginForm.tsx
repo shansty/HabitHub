@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import InputField from './InputField';
+import InputField from '../utils_components/InputField';
 import { Link } from 'react-router-dom';
-import { TypeUser } from '../../types';
-import { useLoginUserMutation } from '../../services/user';
+import { TypeUser } from '../../../types';
+import { useLoginUserMutation } from '../../../services/user';
 
 const LoginForm: React.FC = () => {
     const defaultUserDataValue: TypeUser = { username: "", password: "" }
@@ -55,8 +55,12 @@ const LoginForm: React.FC = () => {
                         Log In
                     </button>
                 </form>
+                {error && 'data' in error && (
+                    <p className="text-red-600 text-sm text-center mt-1">
+                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                    </p>
+                )}
                 {isLoading && <p>Logging in...</p>}
-                {error && <p className="text-red-600">Login failed.</p>}
                 <p className="mt-4 text-sm text-gray-800">
                     Forgot the password?{' '}
                     <Link to='/reset_password' className="text-indigo-600 font-medium hover:underline">Reset</Link>
@@ -65,7 +69,7 @@ const LoginForm: React.FC = () => {
                     Don't have an account?{' '}
                     <Link to='/sign_up' className="text-indigo-600 font-medium hover:underline">Sign Up</Link>
                 </p>
-                
+
             </div>
         </div>
     );

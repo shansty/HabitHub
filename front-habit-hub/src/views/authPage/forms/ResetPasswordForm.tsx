@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { TypeResetPasswordCredentials } from '../../types';
-import { useResetPasswordMutation } from '../../services/user';
-import PasswordField from './PasswordField';
-import InputField from './InputField';
+import { useNavigate } from 'react-router-dom';
+import { TypeResetPasswordCredentials } from '../../../types';
+import { useResetPasswordMutation } from '../../../services/user';
+import PasswordField from '../utils_components/PasswordField';
+import InputField from '../utils_components/InputField';
 
 const ResetPasswordForm = () => {
 
@@ -15,6 +16,7 @@ const ResetPasswordForm = () => {
     const [isPasswordsEqual, setIsPasswordsEqual] = useState(false)
     const [isShowMessage, setIsShowMessage] = useState(true)
     const [resetPassword, { error, isLoading }] = useResetPasswordMutation()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (userData.confirm_password === userData.new_password) {
@@ -41,7 +43,7 @@ const ResetPasswordForm = () => {
             if (userData.confirm_password === userData.new_password) {
                 const res = await resetPassword(userData).unwrap();
                 if (res.success) {
-                    alert("Check your email to verify your account");
+                    navigate('/confirm_reset_password')
                 }
             }
         } catch (err) {
@@ -79,7 +81,7 @@ const ResetPasswordForm = () => {
                         placeholder="Confirm new password"
                     />
 
-                    {isShowMessage && <p className='text-xs text-red-900'>New password and confirmation do not match. Please try again.</p>}
+                    {isShowMessage && <p className='text-xs text-red-600'>New password and confirmation do not match. Please try again.</p>}
 
                     <button
                         disabled={!isPasswordValid || !isPasswordsEqual}
@@ -89,9 +91,12 @@ const ResetPasswordForm = () => {
                         Reset
                     </button>
                 </form>
-
+                {error && 'data' in error && (
+                    <p className="text-red-600 text-sm text-center mt-1">
+                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                    </p>
+                )}
                 {isLoading && <p>Please wait...</p>}
-                {error && <p className="text-red-600">Password reseting failed.</p>}
             </div>
         </div>
     );

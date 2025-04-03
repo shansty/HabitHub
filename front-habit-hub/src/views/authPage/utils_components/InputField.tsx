@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatFieldName } from '../../utils';
+import { formatFieldName } from '../../../utils';
 
 interface InputFieldProps {
   value?: string;

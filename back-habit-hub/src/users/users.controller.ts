@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put, Patch, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, CreateLoginUserDto } from './users.dto';
+import { CreateUserDto, CreateLoginUserDto, ResetUserPasswordDto, VerifyUserResetCodeDto } from './users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -35,13 +35,22 @@ export class UsersController {
   }
 
 
-  @Patch('verify-email/:code')
+  @Patch('verify_email')
   verifyEmail(
-    @Param('code') code: string
+    @Query('code') code: string,
   ) {
     return this.userService.verifyEmail(code);
   }
 
+  @Patch('reset_password')
+  resetPassword(@Body() resetUserPasswordDto: ResetUserPasswordDto) {
+    return this.userService.resetPassword(resetUserPasswordDto);
+  }
+
+  @Patch('verify_reset_code')
+  verifyResetCode(@Body() data: VerifyUserResetCodeDto) {
+    return this.userService.verifyResetCode(data);
+  }
 
   @Get()
   getAllUsers() {
