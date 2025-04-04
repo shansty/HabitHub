@@ -27,35 +27,36 @@ export class UsersController {
       }),
     }),
   )
-  registerUser(
+  registerUserAndSendVerificationLink(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.registerUser(createUserDto, file);
+    return this.userService.registerUserAndSendVerificationLink(createUserDto, file);
   }
 
 
-  @Patch('verify_email')
+  @Patch('email_verification')
   verifyEmail(
     @Query('code') code: string,
   ) {
     return this.userService.verifyEmail(code);
   }
 
-  @Patch('reset_password')
+  @Patch('password/reset')
   resetPassword(@Body() resetUserPasswordDto: ResetUserPasswordDto) {
     return this.userService.resetPassword(resetUserPasswordDto);
   }
 
-  @Patch('verify_reset_code')
+  @Patch('password/code_verification')
   verifyResetCode(@Body() data: VerifyUserResetCodeDto) {
     return this.userService.verifyResetCode(data);
   }
 
-  @Get()
-  getAllUsers() {
-    return this.userService.getAllUsers();
+  @Get(":id")
+  getUserData(
+    @Param("id") id: string
+  ) {
+    return this.userService.getUserData(id);
   }
-
 
 }
