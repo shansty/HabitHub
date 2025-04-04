@@ -70,3 +70,18 @@ export class ResetUserPasswordDto {
 export class VerifyUserResetCodeDto {
     code: string;
   }
+
+
+  export class UserDto {
+    @IsString()
+    @IsNotEmpty()
+    username: string
+
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    @IsOptional()
+    profile_picture: string | null;
+}
