@@ -45,10 +45,10 @@ const HabitList: React.FC<HabitListProps> = ({ habits }) => {
 
     return (
         <div>
-            <h3 className="text-xl font-semibold text-indigo-700 mb-4 flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-indigo-700 mb-4 flex items-center">
                 Your Habits
                 <button
-                    className="bg-indigo-700 hover:bg-indigo-800 text-white p-1 rounded-full cursor-pointer"
+                    className="bg-indigo-700 hover:bg-indigo-800 text-white rounded-full cursor-pointer ml-3"
                     onClick={handleToggleForm}
                 >
                     {showForm ? <X /> : <Plus />}
@@ -67,12 +67,11 @@ const HabitList: React.FC<HabitListProps> = ({ habits }) => {
                                 placeholder="Enter habit name"
                                 value={name}
                                 handleOnChange={(e) => setName(e.target.value)}
-                                className="w-full mb-2 p-2 border rounded-xl"
                             />
                             <select
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
-                                className="w-full mb-2 p-2 border rounded-xl focus:ring-2 focus:ring-indigo-600"
+                                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10 mt-1 mb-1"
                             >
                                 <option value="">Select a category</option>
                                 {categories.map((category) => (
@@ -83,7 +82,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits }) => {
                             </select>
                             <button
                                 onClick={handleAddHabit}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md"
                             >
                                 Add Habit
                             </button>
