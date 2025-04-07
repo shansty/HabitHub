@@ -6,6 +6,7 @@ import { UsersController } from './users.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailModule } from '../email/email.module';
+import { AuthModule } from '../auth/auth.module';
 
 
 @Module({
@@ -19,7 +20,8 @@ import { EmailModule } from '../email/email.module';
         signOptions: { expiresIn: '120h' },
       }),
     }),
-    EmailModule
+    EmailModule,
+    AuthModule
   ],
   providers: [UsersService],
   controllers: [UsersController],

@@ -1,25 +1,15 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useGetUserDataQuery } from '../../services/user';
-import { getToken, getIDFromToken } from '../../utils';
+import { getToken } from '../../utils';
 import Modal from '../authPage/utils_components/Modal';
-import profile from '../../assets/profile.png'
+import UserData from './UserData';
+
 
 const UserProfilePage: React.FC = () => {
     const navigate = useNavigate();
     const token = getToken();
-    const userId = getIDFromToken(token);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data, isLoading, error } = useGetUserDataQuery(userId);
-    const profilePic = data?.user.profile_picture instanceof File
-            ? URL.createObjectURL(data.user.profile_picture)
-            : data?.user.profile_picture || profile;
-
-    const getProfileSrc = () => {
-
-    }
-    console.log(data)
 
     const habits = [
         { id: 1, name: 'Drink Water', progress: 80 },
@@ -50,24 +40,7 @@ const UserProfilePage: React.FC = () => {
                         isOpen={true}
                         title="Your session has expired"
                         message='You need to log in to access the data' />}
-
-                {/* Header */}
-                {data && (
-                    <div className="flex items-center space-x-6">
-                        <img
-                            src={profilePic}
-                            alt="Profile"
-                            className="w-24 h-24 rounded-full object-cover shadow"
-                        />
-                        <div>
-                            <h2 className="text-2xl font-bold text-indigo-700">{data.user.username}</h2>
-                            <p className="text-gray-600">{data.user.email} </p>
-                        </div>
-                        <button className="text-md ml-auto font-bold text-gray-600 cursor-pointer">Edit profile</button>
-                    </div>
-                )}
-
-
+                <UserData />
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                     <div className="bg-indigo-50 p-4 rounded-lg">
                         <p className="text-lg font-semibold text-indigo-700">{habits.length}</p>

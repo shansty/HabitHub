@@ -2,11 +2,12 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Repository } from 'typeorm';
-import { CreateLoginUserDto, CreateUserDto, ResetUserPasswordDto, UserDto, VerifyUserResetCodeDto } from './users.dto';
+import { CreateLoginUserDto, CreateUserDto, ResetUserPasswordDto, UserDto, UserProfileDto, VerifyUserResetCodeDto } from './users.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 import { v4 as uuidv4 } from 'uuid';
-import { scryptHash, scryptVerify } from '../auth.utils';
+import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils';
+import { profile } from 'console';
 
 @Injectable()
 
@@ -28,10 +29,11 @@ export class UsersService {
             throw new NotFoundException('Invalid credentials. Please try again.');
         }
         const isValid = await scryptVerify(userData.password, user.password)
-        if(!isValid) {
+        if (!isValid) {
             throw new BadRequestException('Invalid password.');
         }
-        return { token: await this.jwtService.signAsync({ userId: user.id }), };
+        const token = await generateToken(user.id.toString(), this.jwtService);
+        return { token: token };
     }
 
 
@@ -44,8 +46,7 @@ export class UsersService {
             throw new BadRequestException("User already have an account. Try to log in.")
         }
         const code = uuidv4();
-        // 
-        const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
         if (existing_user && !existing_user.isVerified) {
             const now = new Date();
@@ -147,6 +148,24 @@ export class UsersService {
             profile_picture: user.profile_picture,
         }
         return ({ user: userData })
+    }
+
+
+    async updateUserProfile(body: UserProfileDto, userId: string, file?: Express.Multer.File): Promise<{ success: boolean }> {
+        const user = await this.getUserByQuery({ id: userId })
+        console.log(file)
+        if (!user) {
+            throw new ForbiddenException("You need to log in to see this data.")
+        }
+        const updatedUser = {
+            ...user,
+            username: body.username,
+            profile_picture: file?.filename || null,
+        }
+        console.dir({ updatedUser })
+
+        await this.userRepository.save(updatedUser);
+        return ({ success: true })
     }
 
 

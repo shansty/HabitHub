@@ -1,5 +1,6 @@
 import { randomBytes, scrypt as scryptCallback } from "crypto";
 import { promisify } from "util";
+import { JwtService } from '@nestjs/jwt';
 
 
 const scrypt: (password: string | Buffer, salt: string | Buffer, keylen: number) => Promise<Buffer> = promisify(scryptCallback);
@@ -18,7 +19,11 @@ export const scryptHash = async (string: string, salt?: string): Promise<string>
 export const scryptVerify = async (string: string, hashAndSalt: string): Promise<boolean> => {
     const [hash, salt] = hashAndSalt.split(":");
     const resultHashAndSalt = await scryptHash(string, salt);
-    console.log(`resultHashAndSalt ${resultHashAndSalt}`)
-
+    
     return resultHashAndSalt === hashAndSalt;
 };
+
+
+export async function generateToken(userId: string, jwtService: JwtService): Promise<string> {
+    return jwtService.signAsync({ userId });
+  }

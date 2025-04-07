@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { TypeResetPasswordCredentials, TypeUser } from '../types'
+import { TypeResetPasswordCredentials, TypeUser, TypeUserProfile } from '../types'
+import { getToken } from '../utils';
 
 
 export const userApi = createApi({
@@ -42,7 +43,29 @@ export const userApi = createApi({
       }),
     }),
     getUserData: builder.query<{ user: TypeUser }, string | null>({
-      query: (id) => `user/${id}`,
+      query: (id) => {
+        const token = getToken();
+        return {
+          url: `user/${id}`,
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+      },
+    }),
+    updateUserProfile: builder.mutation<{ success: boolean }, FormData | undefined>({
+      query: (body) => {
+        const token = getToken();
+        return {
+          url: 'user/profile',
+          method: 'PATCH',
+          body,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+      },
     }),
   }),
 })
@@ -53,5 +76,6 @@ export const {
   useRegisterUserMutation,
   useVerifyEmailMutation,
   useResetPasswordMutation,
-  useVerifyResetCodeMutation
+  useVerifyResetCodeMutation,
+  useUpdateUserProfileMutation
 } = userApi
