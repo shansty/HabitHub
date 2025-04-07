@@ -16,3 +16,19 @@ export type TypeResetPasswordCredentials = {
     confirm_password: string,
 }
 
+export type TypeHabit = {
+    name: string;
+    category: string;
+}
+
+export type TypeHabitWithProgress = {
+    id: number,
+    name: string;
+    category: string;
+    progress: number
+}
+
+export type TypeCategory = {
+    name: string,
+    icon: string
+}

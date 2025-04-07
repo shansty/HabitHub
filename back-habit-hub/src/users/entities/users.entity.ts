@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Habit } from '../../habit/entities/habit.entity';
 
 @Entity()
 export class User {
@@ -34,6 +35,9 @@ export class User {
 
   @Column({ nullable: true, type: 'varchar' })
   temp_password?: string;
+
+  @OneToMany(() => Habit, (habit) => habit.user, { cascade: true })
+  habits: Habit[];
 
   @CreateDateColumn()
   created_at: Date;
