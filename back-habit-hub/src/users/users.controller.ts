@@ -1,6 +1,11 @@
 import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put, Patch, Query, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, LoginUserDto, ResetUserPasswordDto, VerifyUserResetCodeDto, UserDto, UserProfileDto } from './users.dto';
+import { CreateUserDto } from './dto/create_user.dto';
+import { LoginUserDto } from './dto/login_user.dto';
+import { ResetUserPasswordDto } from './dto/reset_user_password.dto';
+import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto';
+import { UserDto } from './dto/user.dto';
+import { UserProfileDto } from './dto/user_profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';

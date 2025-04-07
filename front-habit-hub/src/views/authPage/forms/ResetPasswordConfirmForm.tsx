@@ -7,7 +7,7 @@ const ResetPasswordConfirmForm: React.FC = () => {
     const navigate = useNavigate();
 
     const [code, setCode] = useState('');
-    const [verifyResetCode, { isLoading, error }] = useVerifyResetCodeMutation();
+    const [verifyResetCode, { isLoading, error, isSuccess }] = useVerifyResetCodeMutation();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCode(e.target.value)
@@ -46,6 +46,11 @@ const ResetPasswordConfirmForm: React.FC = () => {
                 {error && 'data' in error && (
                     <p className="text-red-600 text-sm text-center mt-1">
                         {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                    </p>
+                )}
+                {isSuccess && (
+                    <p className="text-base text-green-600 font-semibold">
+                        ✅ Password changed successfully! Redirecting to login...
                     </p>
                 )}
             </div>

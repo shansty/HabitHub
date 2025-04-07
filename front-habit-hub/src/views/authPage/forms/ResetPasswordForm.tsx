@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TypeResetPasswordCredentials } from '../../../types';
 import { useResetPasswordMutation } from '../../../services/user';
@@ -13,20 +13,9 @@ const ResetPasswordForm = () => {
         confirm_password: ""
     })
     const [isPasswordValid, setIsPasswordValid] = useState(false);
-    const [isPasswordsEqual, setIsPasswordsEqual] = useState(false)
-    const [isShowMessage, setIsShowMessage] = useState(true)
+    const [hasSubmitted, setHasSubmitted] = useState(false);
     const [resetPassword, { error, isLoading }] = useResetPasswordMutation()
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (userData.confirm_password === userData.new_password) {
-            setIsPasswordsEqual(true)
-            setIsShowMessage(false)
-        } else {
-            setIsPasswordsEqual(false)
-            setIsShowMessage(true)
-        }
-    }, [userData.confirm_password, userData.new_password])
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -39,6 +28,13 @@ const ResetPasswordForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setHasSubmitted(true);
+
+        if (!userData.email.trim())  return;
+        if (!userData.new_password.trim()) return;
+        if (!userData.confirm_password.trim()) return;
+        if (userData.new_password !== userData.confirm_password) return;
+
         if (userData.confirm_password === userData.new_password) {
             const res = await resetPassword(userData).unwrap();
             if (res.success) {
@@ -77,10 +73,7 @@ const ResetPasswordForm = () => {
                         placeholder="Confirm new password"
                     />
 
-                    {isShowMessage && <p className='text-xs text-red-600'>New password and confirmation do not match. Please try again.</p>}
-
                     <button
-                        disabled={!isPasswordValid || !isPasswordsEqual}
                         type="submit"
                         className="w-full bg-indigo-700 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition"
                     >
@@ -91,6 +84,17 @@ const ResetPasswordForm = () => {
                     <p className="text-red-600 text-sm text-center mt-1">
                         {(error.data as any)?.message || 'Something went wrong. Please try again.'}
                     </p>
+                )}
+                {hasSubmitted && !userData.new_password.trim() && (
+                    <p className='text-sm text-red-600'>New password is required.</p>
+                )}
+
+                {hasSubmitted && userData.new_password !== userData.confirm_password && (
+                    <p className='text-sm text-red-600'>Passwords do not match.</p>
+                )}
+
+                {hasSubmitted && !userData.email.trim() && (
+                    <p className='text-sm text-red-600'>Email is required.</p>
                 )}
                 {isLoading && <p>Please wait...</p>}
             </div>

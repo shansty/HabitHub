@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useVerifyEmailMutation } from '../../services/user';
 
 const VerifyEmailPage = () => {
     const navigate = useNavigate();
     const [verifyEmail, { error, isLoading, isSuccess }] = useVerifyEmailMutation();
+    const [isCodeExist, setIsCodeExist] = useState(true)
 
     useEffect(() => {
         const code = new URLSearchParams(window.location.search).get('code');
@@ -13,6 +14,8 @@ const VerifyEmailPage = () => {
                 await verifyEmail(code);
             }
             verify();
+        } else {
+            setIsCodeExist(false)
         }
     }, []);
 
@@ -41,6 +44,10 @@ const VerifyEmailPage = () => {
                         {(error.data as any)?.message || '❌ Verification failed. Your link might be invalid or expired. Please try again to sign up.'}
                     </p>
                 )}
+                {!isCodeExist &&
+                    <p className="text-red-600 text-lg text-center mt-1">
+                        ❌ Verification failed. Your link might be invalid or expired. Please try again to sign up.
+                    </p>}
             </div>
         </div>
     );

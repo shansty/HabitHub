@@ -8,9 +8,10 @@ interface InputFieldProps {
   type: string;
   id: string;
   placeholder?: string;
+  className?: string
 }
 
-const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept }) => {
+const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept, className }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
 
@@ -26,7 +27,7 @@ const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id
         onChange={handleOnChange}
         placeholder={placeholder}
         accept={accept}
-        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10"
+        className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10 ${className}`}
       />
       {isPassword && (
         <span

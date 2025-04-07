@@ -1,8 +1,13 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
-import { LoginUserDto, CreateUserDto, ResetUserPasswordDto, UserDto, UserProfileDto, VerifyUserResetCodeDto } from './users.dto';
+import { CreateUserDto } from './dto/create_user.dto';
+import { LoginUserDto } from './dto/login_user.dto';
+import { ResetUserPasswordDto } from './dto/reset_user_password.dto';
+import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto';
+import { UserDto } from './dto/user.dto';
+import { UserProfileDto } from './dto/user_profile.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,7 +17,6 @@ import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils';
 
 export class UsersService {
     constructor(
-        @InjectRepository(User)
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly jwtService: JwtService,
@@ -48,7 +52,6 @@ export class UsersService {
         }
         const code = uuidv4();
         const expiresAt = new Date(Date.now() + this.one_hour_exparation);
-
         if (existing_user && !existing_user.isVerified) {
             const now = new Date();
             if (existing_user.verification_expires_at && existing_user.verification_expires_at > now) {
@@ -60,8 +63,18 @@ export class UsersService {
             await this.emailService.sendVerificationEmail(existing_user.email, code);
             return { emailSent: true };
         }
+
+        const user_with_username = await this.getUserByQuery({ username: userData.username })
+        if (user_with_username) {
+            throw new BadRequestException("Username is already taken")
+        }
+        const user_with_email = await this.getUserByQuery({ email: userData.email })
+        if (user_with_email) {
+            throw new BadRequestException("Email is already taken")
+        }
         const hashedPassword = await scryptHash(userData.password);
-        const user = this.userRepository.create({
+
+        const user = await this.userRepository.create({
             ...userData,
             password: hashedPassword,
             profile_picture: file?.filename || null,
@@ -71,6 +84,7 @@ export class UsersService {
         });
         await this.userRepository.save(user);
         await this.emailService.sendVerificationEmail(userData.email, code);
+
         return { emailSent: true };
     }
 
@@ -157,10 +171,13 @@ export class UsersService {
         if (!user) {
             throw new ForbiddenException("You need to log in to see this data.")
         }
+        console.dir({body, file})
+        const updated_user_username = body.username ? body.username : user.username;
+        const updated_user_profile_picrute = file ? file.filename : user.profile_picture;
         const updatedUser = {
             ...user,
-            username: body.username,
-            profile_picture: file?.filename || null,
+            username: updated_user_username,
+            profile_picture: updated_user_profile_picrute,
         }
 
         await this.userRepository.save(updatedUser);
