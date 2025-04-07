@@ -2,12 +2,11 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Repository } from 'typeorm';
-import { CreateLoginUserDto, CreateUserDto, ResetUserPasswordDto, UserDto, UserProfileDto, VerifyUserResetCodeDto } from './users.dto';
+import { LoginUserDto, CreateUserDto, ResetUserPasswordDto, UserDto, UserProfileDto, VerifyUserResetCodeDto } from './users.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 import { v4 as uuidv4 } from 'uuid';
 import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils';
-import { profile } from 'console';
 
 @Injectable()
 
@@ -20,8 +19,10 @@ export class UsersService {
         private readonly emailService: EmailService,
     ) { }
 
+    private one_hour_exparation = 60 * 60 * 1000;
+    private fifteen_minutes_exparation = 15 * 60 * 1000;
 
-    async login(userData: CreateLoginUserDto): Promise<{ token: string }> {
+    async login(userData: LoginUserDto): Promise<{ token: string }> {
         const user = await this.getUserByQuery({
             username: userData.username,
         });
@@ -46,7 +47,7 @@ export class UsersService {
             throw new BadRequestException("User already have an account. Try to log in.")
         }
         const code = uuidv4();
-        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + this.one_hour_exparation);
 
         if (existing_user && !existing_user.isVerified) {
             const now = new Date();
@@ -96,7 +97,7 @@ export class UsersService {
             throw new BadRequestException("User with such email doesn't exist")
         }
         const code = this.generate6DigitCode();
-        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + this.fifteen_minutes_exparation);
         user.reset_code = code;
         user.reset_code_expires_at = expiresAt;
         user.temp_password = userData.new_password;
@@ -153,7 +154,6 @@ export class UsersService {
 
     async updateUserProfile(body: UserProfileDto, userId: string, file?: Express.Multer.File): Promise<{ success: boolean }> {
         const user = await this.getUserByQuery({ id: userId })
-        console.log(file)
         if (!user) {
             throw new ForbiddenException("You need to log in to see this data.")
         }
@@ -162,7 +162,6 @@ export class UsersService {
             username: body.username,
             profile_picture: file?.filename || null,
         }
-        console.dir({ updatedUser })
 
         await this.userRepository.save(updatedUser);
         return ({ success: true })

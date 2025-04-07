@@ -46,11 +46,9 @@ const UserData: React.FC = () => {
     const handleSave = async () => {
         const formData = new FormData();
         formData.append('username', editUser?.username as string);
-        console.dir({ editUser })
         if (editUser?.profile_picture) {
             formData.append('profile_picture', editUser?.profile_picture as File);
         }
-        console.dir({ formData })
         await updateUserProfile(formData);
         setIsEditing(false);
     };
