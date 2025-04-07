@@ -7,19 +7,16 @@ const VerifyEmailPage = () => {
     const [verifyEmail, { error, isLoading, isSuccess }] = useVerifyEmailMutation();
 
     useEffect(() => {
-        console.log(isSuccess)
         const code = new URLSearchParams(window.location.search).get('code');
         if (code) {
             const verify = async () => {
                 await verifyEmail(code);
-                console.log(isSuccess)
             }
             verify();
         }
     }, []);
 
     useEffect(() => {
-        console.log(isSuccess)
         if (isSuccess) {
             setTimeout(() => {
                 navigate('/login');

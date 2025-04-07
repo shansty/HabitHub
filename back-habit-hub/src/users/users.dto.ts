@@ -43,7 +43,7 @@ export class CreateUserDto {
     
 }
 
-export class CreateLoginUserDto {
+export class LoginUserDto {
     @IsString()
     @IsNotEmpty()
     username: string

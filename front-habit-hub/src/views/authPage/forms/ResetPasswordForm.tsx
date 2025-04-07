@@ -39,15 +39,11 @@ const ResetPasswordForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            if (userData.confirm_password === userData.new_password) {
-                const res = await resetPassword(userData).unwrap();
-                if (res.success) {
-                    navigate('/confirm_reset_password')
-                }
+        if (userData.confirm_password === userData.new_password) {
+            const res = await resetPassword(userData).unwrap();
+            if (res.success) {
+                navigate('/confirm_reset_password')
             }
-        } catch (err) {
-            console.error("Password reseting failed.:", err);
         }
     };
 

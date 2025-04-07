@@ -18,13 +18,6 @@ const Dropzone = ({
         }
     });
 
-    useEffect(() => {
-
-        const inputPr = getInputProps();
-        const rootPr = getRootProps()
-        console.dir({inputPr, rootPr})
-    }, [])
-
     return (
         <div
             {...getRootProps()}

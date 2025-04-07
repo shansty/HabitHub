@@ -12,7 +12,7 @@ export class EmailService {
   });
 
   async sendVerificationEmail(to: string, code: string) {
-    const verifyUrl = `http://localhost:5173/verify-email?code=${code}`;
+    const verifyUrl = `${process.env.LOCAL_HOST}/verify-email?code=${code}`;
     await this.transporter.sendMail({
       from: `"HabitHub" <${process.env.EMAIL_USER}>`,
       to,

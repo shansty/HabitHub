@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Param, Put, Patch, Query, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, CreateLoginUserDto, ResetUserPasswordDto, VerifyUserResetCodeDto, UserDto, UserProfileDto } from './users.dto';
+import { CreateUserDto, LoginUserDto, ResetUserPasswordDto, VerifyUserResetCodeDto, UserDto, UserProfileDto } from './users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -12,8 +12,8 @@ export class UsersController {
   constructor(private readonly userService: UsersService) { }
 
   @Post('login')
-  login(@Body() CreateLoginUserDto: CreateLoginUserDto) {
-    return this.userService.login(CreateLoginUserDto);
+  login(@Body() LoginUserDto: LoginUserDto) {
+    return this.userService.login(LoginUserDto);
   }
 
   @Post()

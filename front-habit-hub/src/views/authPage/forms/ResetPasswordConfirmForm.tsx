@@ -15,15 +15,10 @@ const ResetPasswordConfirmForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        try {
-            await verifyResetCode({ code: code }).unwrap();
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000);
-        } catch (err) {
-            console.error('Invalid or expired code. Please try again.', err);
-        }
+        await verifyResetCode({ code: code }).unwrap();
+        setTimeout(() => {
+            navigate('/login');
+        }, 2000);
     };
 
     return (
