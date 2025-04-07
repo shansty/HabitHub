@@ -1,12 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { FaCamera } from 'react-icons/fa';
-import { HiOutlinePencilAlt } from "react-icons/hi";
-import { IoMdCheckmark } from "react-icons/io";
-import { MdCancel } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { useGetUserDataQuery, useUpdateUserProfileMutation } from '../../services/user';
 import { getToken, getIDFromToken } from '../../utils';
 import profile from '../../assets/profile.png'
+import { Camera, Check, Pencil, X } from 'lucide-react';
 
 
 const UserData: React.FC = () => {
@@ -76,7 +73,7 @@ const UserData: React.FC = () => {
                         className="absolute inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 rounded-full cursor-pointer"
                         onClick={handleProfilePicClick}
                     >
-                        <FaCamera className="text-white text-xl" />
+                        <Camera className="text-white text-xl"/>
                     </div>
                 )}
                 <input
@@ -99,27 +96,25 @@ const UserData: React.FC = () => {
                         />
                         <button
                             onClick={handleUsernameOnChange}
-                            className="text-sm text-green-600 hover:underline cursor-pointer"
+                            className="text-green-600 hover:underline cursor-pointer"
                         >
-                            <IoMdCheckmark />
+                            <Check className='w-5' />
                         </button>
                         <button
                             onClick={() => {
                                 setUsername(data?.user.username || "");
                                 setIsEdited(false);
                             }}
-                            className="text-sm text-red-500 hover:underline cursor-pointer"
+                            className="text-red-500 hover:underline cursor-pointer"
                         >
-                            <MdCancel />
+                            <X className='w-5'/>
                         </button>
                     </div>
                 ) : (
                     <div className="flex items-center">
                         <h2 className="text-2xl font-bold text-indigo-700">{data?.user.username}</h2>
-                        <HiOutlinePencilAlt
-                            className="ml-2 cursor-pointer"
-                            onClick={() => setIsEdited(true)}
-                        />
+                        <Pencil className="ml-2 cursor-pointer w-4 text-indigo-800"
+                            onClick={() => setIsEdited(true)}/>
                     </div>
                 )}
                 <p className="text-gray-600">{data?.user.email}</p>
