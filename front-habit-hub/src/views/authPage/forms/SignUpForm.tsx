@@ -38,7 +38,7 @@ const SignUpForm: React.FC = () => {
         const formData = new FormData();
         formData.append('username', userData.username);
         formData.append('email', userData.email as string);
-        formData.append('password', userData.password);
+        formData.append('password', userData.password as string);
         if (userData.profile_picture) {
             formData.append('profile_picture', userData.profile_picture);
         }
@@ -62,7 +62,7 @@ const SignUpForm: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-4 text-left">
                     <Dropzone
                         onFileAccepted={handlePhotoDrop}
-                        previewUrl={userData.profile_picture ? URL.createObjectURL(userData.profile_picture) : undefined}
+                        previewUrl={userData.profile_picture ? URL.createObjectURL(userData.profile_picture as File) : undefined}
                     />
                     <InputField
                         value={userData.username}
@@ -81,7 +81,7 @@ const SignUpForm: React.FC = () => {
                     />
 
                     <PasswordField
-                        value={userData.password}
+                        value={userData.password as string}
                         onChange={handleOnChange}
                         id="password"
                         placeholder="Enter your password"

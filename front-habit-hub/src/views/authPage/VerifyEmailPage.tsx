@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useVerifyEmailMutation } from '../../services/user';
 
@@ -7,21 +7,25 @@ const VerifyEmailPage = () => {
     const [verifyEmail, { error, isLoading, isSuccess }] = useVerifyEmailMutation();
 
     useEffect(() => {
+        console.log(isSuccess)
         const code = new URLSearchParams(window.location.search).get('code');
-        const verify = async () => {
-            if (!code) return;
-            try {
-                await verifyEmail(code).unwrap();
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
-            } catch (err) {
-                console.error('Verification failed:', err);
+        if (code) {
+            const verify = async () => {
+                await verifyEmail(code);
+                console.log(isSuccess)
             }
-        };
-        verify();
+            verify();
+        }
     }, []);
 
+    useEffect(() => {
+        console.log(isSuccess)
+        if (isSuccess) {
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        }
+    }, [isSuccess]);
 
 
     return (

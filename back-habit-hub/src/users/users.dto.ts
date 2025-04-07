@@ -85,3 +85,13 @@ export class VerifyUserResetCodeDto {
     @IsOptional()
     profile_picture: string | null;
 }
+
+export class UserProfileDto {
+    @IsString()
+    @IsNotEmpty()
+    username: string
+
+    @IsString()
+    @IsOptional()
+    profile_picture: File | string | null;
+}

@@ -4,12 +4,13 @@ import { formatFieldName } from '../../../utils';
 interface InputFieldProps {
   value?: string;
   handleOnChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  accept?: string;
   type: string;
   id: string;
-  placeholder: string;
+  placeholder?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder }) => {
+const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
 
@@ -24,6 +25,7 @@ const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id
         value={value}
         onChange={handleOnChange}
         placeholder={placeholder}
+        accept={accept}
         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10"
       />
       {isPassword && (
