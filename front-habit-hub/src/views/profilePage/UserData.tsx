@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
 import { useGetUserDataQuery, useUpdateUserProfileMutation } from '../../services/user';
 import { getToken, getIDFromToken } from '../../utils';
 import profile from '../../assets/profile.png'
@@ -12,14 +11,20 @@ const UserData: React.FC = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
     const [username, setUsername] = useState("")
-    const { data } = useGetUserDataQuery(userId);
-    const [updateUserProfile, { error: updateError }] = useUpdateUserProfileMutation();
-    const navigate = useNavigate();
+    const [customError, setCustomError] = useState<string | null>(null);
+    const { data, refetch } = useGetUserDataQuery(userId);
+    const [updateUserProfile] = useUpdateUserProfileMutation();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const profilePic = data?.user.profile_picture
         ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}`
         : profile;
+
+    useEffect(() => {
+        if (data?.user.username) {
+            setUsername(data.user.username);
+        }
+    }, [data?.user.username]);
 
     const handleMouseEnter = () => {
         setIsHovered(true);
@@ -36,24 +41,36 @@ const UserData: React.FC = () => {
     };
 
     const handleProfilePhotoOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCustomError(null)
         const formData = new FormData();
         if (e.target.files && e.target.files.length > 0) {
             formData.append('profile_picture', e.target.files[0]);
-            await updateUserProfile(formData);
-            navigate(0)
+            try {
+                await updateUserProfile(formData).unwrap();
+                refetch();
+            } catch (err: any) {
+                setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+            }
         }
     };
 
-
-    const handleUsernameOnChange = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleUsernameOnClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('username', username);
-        await updateUserProfile(formData);
-        setIsEdited(false);
-        navigate(0);
+        try {
+            await updateUserProfile(formData).unwrap();
+            setIsEdited(false);
+            refetch();
+        } catch (err: any) {
+            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+        }
     };
 
+    const handleUsernameOnClange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value)
+        setCustomError(null)
+    }
 
 
     return (
@@ -73,7 +90,7 @@ const UserData: React.FC = () => {
                         className="absolute inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 rounded-full cursor-pointer"
                         onClick={handleProfilePicClick}
                     >
-                        <Camera className="text-white text-xl"/>
+                        <Camera className="text-white text-xl" />
                     </div>
                 )}
                 <input
@@ -91,11 +108,11 @@ const UserData: React.FC = () => {
                         <input
                             type="text"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={handleUsernameOnClange}
                             className="text-2xl font-bold text-indigo-700 border-b border-indigo-300 focus:outline-none"
                         />
                         <button
-                            onClick={handleUsernameOnChange}
+                            onClick={handleUsernameOnClick}
                             className="text-green-600 hover:underline cursor-pointer"
                         >
                             <Check className='w-5' />
@@ -107,20 +124,20 @@ const UserData: React.FC = () => {
                             }}
                             className="text-red-500 hover:underline cursor-pointer"
                         >
-                            <X className='w-5'/>
+                            <X className='w-5' />
                         </button>
                     </div>
                 ) : (
                     <div className="flex items-center">
                         <h2 className="text-2xl font-bold text-indigo-700">{data?.user.username}</h2>
                         <Pencil className="ml-2 cursor-pointer w-4 text-indigo-800"
-                            onClick={() => setIsEdited(true)}/>
+                            onClick={() => setIsEdited(true)} />
                     </div>
                 )}
                 <p className="text-gray-600">{data?.user.email}</p>
-                {updateError && 'data' in updateError && (
+                {customError && (
                     <p className="text-red-600 text-sm text-center mt-1">
-                        {(updateError.data as any)?.message || 'Something went wrong. Please try again.'}
+                        {customError}
                     </p>
                 )}
             </div>

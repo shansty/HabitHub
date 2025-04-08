@@ -12,6 +12,8 @@ const SignUpForm: React.FC = () => {
     const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [customError, setCustomError] = useState<string | null>(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [registerUser, { error, isLoading }] = useRegisterUserMutation()
 
@@ -27,6 +29,7 @@ const SignUpForm: React.FC = () => {
             ...prevUser,
             [id]: value,
         }));
+        setCustomError(null);
     };
 
     const handleOnModalClose = () => {
@@ -42,12 +45,16 @@ const SignUpForm: React.FC = () => {
         if (userData.profile_picture) {
             formData.append('profile_picture', userData.profile_picture);
         }
-        const res = await registerUser(formData).unwrap();
-        if (res.emailSent) {
-            setIsModalOpen(true)
-        };
+        try {
+            const res = await registerUser(formData).unwrap();
+            if (res.emailSent) {
+                setIsModalOpen(true)
+            };
+        } catch (err: any) {
+            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+        }
     }
-    
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
             <div className="bg-white p-8 shadow-xl max-w-md w-full text-center">
@@ -89,7 +96,6 @@ const SignUpForm: React.FC = () => {
                     />
 
                     <button
-                        disabled={!isPasswordValid}
                         type="submit"
                         className="w-full bg-indigo-700 text-white font-semibold py-2 rounded-md hover:bg-indigo-700 transition"
                     >
@@ -97,9 +103,9 @@ const SignUpForm: React.FC = () => {
                     </button>
                 </form>
                 {isLoading && <p>Please wait...</p>}
-                {error && 'data' in error && (
+                {customError && (
                     <p className="text-red-600 text-sm text-center mt-1">
-                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                        {customError}
                     </p>
                 )}
                 <p className="mt-4 text-sm text-gray-800">
