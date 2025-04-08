@@ -171,14 +171,18 @@ export class UsersService {
         if (!user) {
             throw new ForbiddenException("You need to log in to see this data.")
         }
-        console.dir({body, file})
-        const updated_user_username = body.username ? body.username : user.username;
-        const updated_user_profile_picrute = file ? file.filename : user.profile_picture;
+        if (body.username && body.username !== user.username) {
+            const existingUser = await this.getUserByQuery({ username: body.username });
+
+            if (existingUser && existingUser.id !== user.id) {
+                throw new BadRequestException("Username is already taken.");
+            }
+        }
         const updatedUser = {
             ...user,
-            username: updated_user_username,
-            profile_picture: updated_user_profile_picrute,
-        }
+            username: body.username || user.username,
+            profile_picture: file ? file.filename : user.profile_picture,
+        };
 
         await this.userRepository.save(updatedUser);
         return ({ success: true })

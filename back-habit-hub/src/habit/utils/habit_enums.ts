@@ -15,6 +15,13 @@ export enum HabitCategory {
     SPIRITUALITY = 'SPIRITUALITY',
 }
 
+export enum HabitStatus {
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  ABANDONED = 'ABANDONED',  
+}
+
+
 export const HabitCategoryIcons: Record<HabitCategory, string> = {
   [HabitCategory.HEALTH]: '🧬',
   [HabitCategory.FITNESS]: '💪',

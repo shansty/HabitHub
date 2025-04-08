@@ -13,7 +13,7 @@ const ResetPasswordForm = () => {
         confirm_password: ""
     })
     const [isPasswordValid, setIsPasswordValid] = useState(false);
-    const [hasSubmitted, setHasSubmitted] = useState(false);
+    const [customError, setCustomError] = useState<string | null>(null);
     const [resetPassword, { error, isLoading }] = useResetPasswordMutation()
     const navigate = useNavigate();
 
@@ -24,23 +24,39 @@ const ResetPasswordForm = () => {
             ...prevUser,
             [id]: value,
         }));
+        setCustomError(null);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setHasSubmitted(true);
 
-        if (!userData.email.trim())  return;
-        if (!userData.new_password.trim()) return;
-        if (!userData.confirm_password.trim()) return;
-        if (userData.new_password !== userData.confirm_password) return;
+        if (!userData.email.trim()) {
+            setCustomError("Email is required")
+            return;
+        };
+        if (!userData.new_password.trim()){
+            setCustomError("New password is required")
+            return
+        } 
+        if (!userData.confirm_password.trim()) {
+            setCustomError("You need to confirm password.");
+            return;
+        }
+        if (userData.new_password !== userData.confirm_password) {
+            setCustomError("Passwords do not match.");
+            return;
+        };
 
         if (userData.confirm_password === userData.new_password) {
-            const res = await resetPassword(userData).unwrap();
-            if (res.success) {
-                navigate('/confirm_reset_password')
+            try {
+                const res = await resetPassword(userData).unwrap();
+                if (res.success) {
+                    navigate('/confirm_reset_password')
+                }
+            } catch (err: any) {
+                setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
             }
-        }
+        };
     };
 
     return (
@@ -80,21 +96,10 @@ const ResetPasswordForm = () => {
                         Reset
                     </button>
                 </form>
-                {error && 'data' in error && (
+                 {customError && (
                     <p className="text-red-600 text-sm text-center mt-1">
-                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                        {customError}
                     </p>
-                )}
-                {hasSubmitted && !userData.new_password.trim() && (
-                    <p className='text-sm text-red-600'>New password is required.</p>
-                )}
-
-                {hasSubmitted && userData.new_password !== userData.confirm_password && (
-                    <p className='text-sm text-red-600'>Passwords do not match.</p>
-                )}
-
-                {hasSubmitted && !userData.email.trim() && (
-                    <p className='text-sm text-red-600'>Email is required.</p>
                 )}
                 {isLoading && <p>Please wait...</p>}
             </div>

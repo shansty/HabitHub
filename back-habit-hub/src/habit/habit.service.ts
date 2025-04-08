@@ -3,7 +3,7 @@ import { CreateHabitDto } from './dto/create-habit.dto';
 import { Habit } from './entities/habit.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HabitCategory, HabitCategoryIcons } from './utils/habit-category-icons';
+import { HabitCategory, HabitCategoryIcons, HabitStatus } from './utils/habit_enums';
 import { User } from '../users/entities/users.entity';
 
 @Injectable()
@@ -17,21 +17,23 @@ export class HabitService {
 
 
   async createHabit(habit: CreateHabitDto, userId: string) {
-    console.dir({ habit })
-    const user = await this.userRepository.findOneBy({ id: +userId})
-    console.dir({user})
-    if(!user) {
-      throw new UnauthorizedException("You must be authorized to add a new hobby.")
-    }
-    const newHabit = await this.habitRepository.create({
-      name: habit.name,
-      category: habit.category,
-      startDate: new Date(),
-      user: user,
-      userId: +userId
-    });
-    await this.habitRepository.save(newHabit);
-    console.log(newHabit)
+  //   const user = await this.userRepository.findOneBy({ id: +userId})
+  //   if(!user) {
+  //     throw new UnauthorizedException("You must be authorized to add a new hobby.")
+  //   }
+  //   const newHabit = this.habitRepository.create({
+  //     name: habit.name,
+  //     category: habit.category,
+  //     startDate: new Date(),
+  //     user: user,
+  //     userId: +userId,
+  //     status: HabitStatus.IN_PROGRESS,
+  //   });
+  //   const savedHabit = await this.habitRepository.save(newHabit);
+
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+
     return {success: true}
   }
 

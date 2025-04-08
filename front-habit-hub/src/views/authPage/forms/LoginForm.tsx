@@ -8,7 +8,8 @@ import { setToken } from '../../../utils';
 const LoginForm: React.FC = () => {
     const defaultUserDataValue: TypeUser = { username: "", password: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
-    const [loginUser, { error, isLoading }] = useLoginUserMutation()
+    const [loginUser, { isLoading }] = useLoginUserMutation()
+    const [customError, setCustomError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,15 +19,20 @@ const LoginForm: React.FC = () => {
             ...prevUser,
             [id]: value,
         }));
+        setCustomError(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const response = await loginUser(userData).unwrap()
-        const token = response.token;
-        setToken(token);
-        navigate('/profile')
-    }
+        e.preventDefault();
+        try {
+            const response = await loginUser(userData).unwrap();
+            const token = response.token;
+            setToken(token);
+            navigate('/profile');
+        } catch (err: any) {
+            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+        }
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
@@ -55,9 +61,9 @@ const LoginForm: React.FC = () => {
                         Log In
                     </button>
                 </form>
-                {error && 'data' in error && (
+                {customError && (
                     <p className="text-red-600 text-sm text-center mt-1">
-                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
+                        {customError}
                     </p>
                 )}
                 {isLoading && <p>Logging in...</p>}

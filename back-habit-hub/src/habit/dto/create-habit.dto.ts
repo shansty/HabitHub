@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsEnum } from "class-validator";
-import { HabitCategory } from "../utils/habit-category-icons";
+import { HabitCategory } from "../utils/habit_enums";
 
 export class CreateHabitDto {
     @IsString()

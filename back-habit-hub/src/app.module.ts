@@ -6,7 +6,8 @@ import { User } from './users/entities/users.entity'
 import { EmailModule } from './email/email.module';
 import { HabitModule } from './habit/habit.module';
 import { Habit } from './habit/entities/habit.entity';
-import { HabitProgress } from './habit/entities/habit_progress.entity';
+import { HabitRepeat } from './habit/entities/habit_repeat.entity';
+import { HabitEvent } from './habit/entities/habit_event.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,7 +21,7 @@ import { HabitProgress } from './habit/entities/habit_progress.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Habit, HabitProgress],
+      entities: [User, Habit, HabitRepeat, HabitEvent],
       synchronize: true,
     }),
     UsersModule,

@@ -8,10 +8,11 @@ interface InputFieldProps {
   type: string;
   id: string;
   placeholder?: string;
-  className?: string
+  className?: string;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept, className }) => {
+const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept, className, onFocus }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
 
@@ -28,6 +29,7 @@ const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id
         placeholder={placeholder}
         accept={accept}
         className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10 ${className}`}
+        onFocus={onFocus}
       />
       {isPassword && (
         <span

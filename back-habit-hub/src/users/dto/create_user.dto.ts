@@ -2,15 +2,15 @@ import { IsEmail, IsOptional,IsNotEmpty, IsString, IsUUID, IsBoolean, IsDate } f
 
 export class CreateUserDto {
     @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Username is required. ' })
     username: string
 
-    @IsEmail({}, { message: 'Please provide a valid email address.' })
-    @IsNotEmpty()
+    @IsEmail({}, { message: 'Please provide a valid email address. ' })
+    @IsNotEmpty({ message: 'Email is required. ' })
     email: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Password is required. ' })
     password: string;
 
     @IsString()
