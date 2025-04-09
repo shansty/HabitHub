@@ -1,40 +1,49 @@
-export enum HabitCategory {
-    HEALTH = 'HEALTH',
-    FITNESS = 'FITNESS',
-    LEARNING = 'LEARNING',
-    MINDFULNESS = 'MINDFULNESS',
-    PRODUCTIVITY = 'PRODUCTIVITY',
-    NUTRITION = 'NUTRITION',
-    SLEEP = 'SLEEP',
-    FINANCE = 'FINANCE',
-    SOCIAL = 'SOCIAL',
-    SELF_CARE = 'SELF_CARE',
-    HOBBY = 'HOBBY',
-    WORK = 'WORK',
-    CREATIVE = 'CREATIVE',
-    SPIRITUALITY = 'SPIRITUALITY',
+export enum UnitOfMeasurementType {
+  TIMES = 'TIMES',
+  MINS = 'MINS',
+  HOURS = 'HOURS',
+  KM = 'KM',
+  M = 'M',
+  KG = 'KG',
+  G = 'G',
+  MG = 'MG',
+  L = 'L',
+  ML = 'ML',
 }
+
+
+export enum GoalPeriodicityType {
+  PER_DAY = 'PER DAY',
+  PER_WEEK = 'PER WEEK',
+  PER_MONTH = 'PER MONTH',
+}
+
+export enum HabitScheduleType {
+  DAILY = 'DAILY',
+  MONTHLY = 'MONTHLY',
+  INTERVAL = 'INTERVAL',
+}
+
+
+export enum HabitType {
+  GOOD = 'GOOD',
+  BAD = 'BAD',
+}
+
 
 export enum HabitStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
-  ABANDONED = 'ABANDONED',  
+  PAUSED = 'PAUSED',
+  ABANDONED = 'ABANDONED',
 }
 
 
-export const HabitCategoryIcons: Record<HabitCategory, string> = {
-  [HabitCategory.HEALTH]: '🧬',
-  [HabitCategory.FITNESS]: '💪',
-  [HabitCategory.LEARNING]: '📚',
-  [HabitCategory.MINDFULNESS]: '🧘‍♂️',
-  [HabitCategory.PRODUCTIVITY]: '📈',
-  [HabitCategory.NUTRITION]: '🥦',
-  [HabitCategory.SLEEP]: '💤',
-  [HabitCategory.FINANCE]: '🪙',
-  [HabitCategory.SOCIAL]: '👨‍👩‍👧',
-  [HabitCategory.SELF_CARE]: '🧖‍♀️',
-  [HabitCategory.HOBBY]: '🎮',
-  [HabitCategory.WORK]: '🖥️',
-  [HabitCategory.CREATIVE]: '🧠',
-  [HabitCategory.SPIRITUALITY]: '✨',
-};
+export enum HabitDomain {
+  FINANCE = 'FINANCE',
+  FITNESS = 'FITNESS',
+  HEALTH = 'HEALTH',
+  MINDSET = 'MINDSET',
+  NUTRITION = 'NUTRITION',
+  CUSTOM = 'CUSTOM',
+}

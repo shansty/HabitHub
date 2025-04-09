@@ -76,14 +76,14 @@ const UserData: React.FC = () => {
     return (
         <div className="flex items-start space-x-6 w-full">
             <div
-                className="relative w-24 h-24"
+                className="relative w-16 h-16"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
                 <img
                     src={profilePic}
                     alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover shadow"
+                    className="w-16 h-16 rounded-full object-cover shadow"
                 />
                 {isHovered && (
                     <div
