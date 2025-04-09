@@ -1,28 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, } from 'typeorm';
-import { HabitStatus } from '../utils/habit_enums';
+import { GoalPeriodicityType, HabitDomain, HabitStatus, HabitType, UnitOfMeasurementType } from '../utils/habit_enums';
 import { User } from '../../users/entities/users.entity';
-import { HabitRepeat } from './habit_repeat.entity';
+import { HabitSchedule } from './habit_repeat.entity';
 import { HabitEvent } from './habit_event.entity';
-
-
-enum GoalPeriodicityType {
-    PER_DAY = 'PER DAY',
-    PER_WEEK = 'PER WEEK',
-    PER_MONTH = 'PER MONTH',
-}
-
-enum UnitOfMeasurementType {
-    TIMES = 'TIMES',
-    MINS = 'MINS',
-    HOURS = 'HOURS',
-    KM = 'KM',
-    M = 'M',
-    KG = 'KG',
-    G = 'G',
-    MG = 'MG',
-    L = 'L',
-    ML = 'ML',
-}
+import { HabitDay } from './habit_day.entity';
 
 
 @Entity()
@@ -42,8 +23,23 @@ export class Habit {
     @Column({ type: 'enum', enum: GoalPeriodicityType })
     goalPeriodicity: GoalPeriodicityType
 
-    @OneToOne(() => HabitRepeat, (repeat) => repeat.habit, { cascade: true })
-    habitRepeat: HabitRepeat;
+    @Column()
+    goalDuration: Number; 
+
+    @OneToOne(() => HabitSchedule, (repeat) => repeat.habit, { cascade: true })
+    habitSchedule: HabitSchedule;
+
+    @OneToMany(() => HabitDay, (habitDay) => habitDay.habit)
+    habitDays: HabitDay[];
+
+    @Column({ type: 'enum', enum: HabitType, default: HabitType.GOOD })
+    type: HabitType;
+
+    @Column({ type: 'enum', enum: HabitDomain })
+    category: HabitDomain;
+
+    @Column()
+    icon: string;
 
     @Column({ type: 'date' })
     startDate: Date;

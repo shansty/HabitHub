@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Habit } from './habit.entity';
 
 @Entity()
@@ -20,5 +20,11 @@ export class HabitEvent {
 
   @Column({ default: false })
   isGoalCompleted: boolean;
+
+  @Column({ default: false })
+  isFailure: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
 }

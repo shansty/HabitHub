@@ -6,8 +6,9 @@ import { User } from './users/entities/users.entity'
 import { EmailModule } from './email/email.module';
 import { HabitModule } from './habit/habit.module';
 import { Habit } from './habit/entities/habit.entity';
-import { HabitRepeat } from './habit/entities/habit_repeat.entity';
+import { HabitSchedule } from './habit/entities/habit_repeat.entity';
 import { HabitEvent } from './habit/entities/habit_event.entity';
+import { HabitDay } from './habit/entities/habit_day.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,7 +22,7 @@ import { HabitEvent } from './habit/entities/habit_event.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Habit, HabitRepeat, HabitEvent],
+      entities: [User, Habit, HabitSchedule, HabitEvent, HabitDay],
       synchronize: true,
     }),
     UsersModule,

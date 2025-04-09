@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken } from '../../utils';
 import Modal from '../authPage/utils_components/Modal';
 import UserData from './UserData';
-import HabitList from './HabitList';
+import AddHabitForm from './AddHabitForm';
+import DatePicker from 'react-datepicker';
+import { format, isToday, isTomorrow } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 const UserProfilePage: React.FC = () => {
     const navigate = useNavigate();
     const token = getToken();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const habits = [
-        { id: 1, name: 'Drink Water', progcategoriesress: 80 },
-        { id: 2, name: 'Read 10 pages', progress: 60 },
-        { id: 3, name: 'Meditate', progress: 30 },
-    ];
-    // const highProgressHabits = habits.filter(h => h.progress >= 50).length;
+    const [isFormOpened, setIsFormOpened] = useState(false)
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [showCalendar, setShowCalendar] = useState(false);
+    const calendarRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!token) {
@@ -29,9 +29,22 @@ const UserProfilePage: React.FC = () => {
         navigate('/login');
     };
 
-    const onAddHabits = ( ) => {
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+                setShowCalendar(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
-    }
+
+    const getDateLabel = () => {
+        if (isToday(selectedDate)) return 'Today';
+        if (isTomorrow(selectedDate)) return 'Tomorrow';
+        return format(selectedDate, 'yyyy-MM-dd');
+    };
 
 
     return (
@@ -43,20 +56,40 @@ const UserProfilePage: React.FC = () => {
                         isOpen={true}
                         title="Your session has expired"
                         message='You need to log in to access the data' />}
-                <UserData />
-                {/* <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                    <div className="bg-indigo-50 p-4 rounded-lg">
-                        <p className="text-lg font-semibold text-indigo-700">{habits.length}</p>
-                        <p className="text-sm text-gray-600">Active Habits</p>
-                    </div>
-                    <div className="bg-indigo-50 p-4 rounded-lg">
-                        <p className="text-lg font-semibold text-indigo-700">{highProgressHabits}</p>
-                        <p className="text-sm text-gray-600">Over 50% Complete</p>
-                    </div>
-                    <div className="bg-indigo-50 p-4 rounded-lg">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+
+                    <UserData />
+
+                    <div className="relative flex sm:flex-row items-start sm:items-center gap-2" ref={calendarRef}>
+                        <button
+                            onClick={() => setShowCalendar(!showCalendar)}
+                            className="min-w-25 text-indigo-700 font-medium border px-3 py-2 rounded-md w-full sm:min-w-25"
+                        >
+                            {getDateLabel()}
+                        </button>
+                        <button
+                            onClick={() => setIsFormOpened(true)}
+                            className="min-w-25 bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-2 rounded-md w-full sm:min-w-25">
+                            Add Habit
+                        </button>
+
+                        {showCalendar && (
+                            <div className="absolute top-10 mr-20 z-10 shadow-lg bg-white p-2 rounded">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    onChange={(date: Date | null) => {
+                                        if (date) {
+                                            setSelectedDate(date);
+                                            setShowCalendar(false);
+                                        }
+                                    }}
+                                    inline
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
-            <HabitList habits={habits}/> */}
+                {isFormOpened && <AddHabitForm />}
             </div>
         </div>
     );

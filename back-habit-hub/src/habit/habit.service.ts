@@ -3,7 +3,6 @@ import { CreateHabitDto } from './dto/create-habit.dto';
 import { Habit } from './entities/habit.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HabitCategory, HabitCategoryIcons, HabitStatus } from './utils/habit_enums';
 import { User } from '../users/entities/users.entity';
 
 @Injectable()
@@ -37,14 +36,14 @@ export class HabitService {
     return {success: true}
   }
 
-  getAllCategories() {
-    const categories = Object.values(HabitCategory).map((category) => ({
-      name: category,
-      icon: HabitCategoryIcons[category],
-    }));
+  // getAllCategories() {
+  //   const categories = Object.values(HabitCategory).map((category) => ({
+  //     name: category,
+  //     icon: HabitCategoryIcons[category],
+  //   }));
 
-    return { categories: categories };
-  }
+  //   return { categories: categories };
+  // }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} habit`;
