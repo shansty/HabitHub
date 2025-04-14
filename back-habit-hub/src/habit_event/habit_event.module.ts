@@ -26,6 +26,7 @@ import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity'
   ],
   controllers: [HabitEventController],
   providers: [HabitEventService],
+  exports: [HabitEventService],
 })
 export class HabitEventModule { }
 

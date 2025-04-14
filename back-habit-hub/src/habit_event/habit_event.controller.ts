@@ -6,8 +6,8 @@ import { CreateHabitEventDto } from './dto/create-habit_event.dto';
 export class HabitEventController {
   constructor(private readonly habitEventService: HabitEventService) { }
 
-  @Post()
-  async findOrCreateEmptyEvent(@Body() body: CreateHabitEventDto) {
-    return this.habitEventService.findOrCreateEmptyEvent(body);
-  }
+  // @Post()
+  // async findOrCreateEmptyEvent(@Body() body: CreateHabitEventDto) {
+  //   return this.habitEventService.findOrCreateEmptyEvent(body);
+  // }
 }

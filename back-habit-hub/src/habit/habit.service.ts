@@ -9,6 +9,7 @@ import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.e
 import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity';
 import { HabitScheduleType } from './utils/habit_enums';
 import { HabitEvent } from '../habit_event/entities/habit_event.entity';
+import { HabitEventService } from '../habit_event/habit_event.service';
 
 
 
@@ -25,6 +26,7 @@ export class HabitService {
     private readonly habitScheduleRepository: Repository<HabitSchedule>,
     @InjectRepository(HabitEvent)
     private readonly habitEventRepository: Repository<HabitEvent>,
+    private readonly habitEventService: HabitEventService,
   ) { }
 
   getHabitCategories() {
@@ -39,10 +41,6 @@ export class HabitService {
 
 
   async createHabit(body: CreateHabitDto, userId: string) {
-    const user = await this.userRepository.findOneBy({ id: +userId });
-    if (!user) {
-      throw new UnauthorizedException("You must be authorized to add a new habit.");
-    }
 
     const habit = this.habitRepository.create({
       name: body.name,
@@ -86,8 +84,7 @@ export class HabitService {
         habitOccurence.push(
           this.habitOccurrenceRepository.create({
             date: currentDate,
-            user: user,
-            userId: user.id,
+            user: { id: +userId },
             habit: savedHabit,
             habitId: savedHabit.id,
           })
@@ -102,96 +99,60 @@ export class HabitService {
   }
 
 
-
   async getUserHabitsByDate(userId: string, date: string) {
+    const dateObj = new Date(date);
 
-    const userHabits = await this.habitOccurrenceRepository.findBy({
-      userId: +userId,
-      date: new Date(date),
+    const userHabitOccurrences = await this.habitOccurrenceRepository.findBy({
+      user: { id: +userId },
+      date: dateObj,
     });
 
-    const habitIds = userHabits.map((habit) => habit.habitId);
+    const habitIds = userHabitOccurrences.map((occurrence) => occurrence.habitId);
     if (!habitIds.length) return [];
 
     const habits = await this.habitRepository.find({
-      where: {
-        id: In(habitIds),
-      },
+      where: { id: In(habitIds) },
+      relations: ['events'],
     });
 
-    const existingHabitEvents = await this.habitEventRepository.find({
-      where: {
-        habitId: In(habitIds),
-        date: new Date(date),
-      },
+    const isToday = this.habitEventService.isSameDay(dateObj, new Date());
+
+    const eventMap = isToday
+      ? await this.habitEventService.fetchOrCreateHabitEvents(habits, dateObj)
+      : this.habitEventService.getExistingEventsForDate(habits, dateObj);
+
+    return habits.map(habit => {
+      const event = eventMap.get(habit.id);
+      return this.buildHabitResponse(habit, event);
     });
+  };
 
-    const eventsMap = new Map<number, HabitEvent>();
-    for (const event of existingHabitEvents) {
-      eventsMap.set(event.habitId, event);
-    }
-
-    const habitsMissingEvents = habits.filter(habit => !eventsMap.has(habit.id));
-
-    const isToday = this.isSameDay(new Date(date), new Date())
-
-    if (habitsMissingEvents.length > 0 && isToday) {
-      const newEvents = habitsMissingEvents.map(habit => {
-        const newEvent = this.habitEventRepository.create({
-          habitId: habit.id,
-          date: new Date(date),
-          value: 0,
-          isGoalCompleted: false,
-          isFailure: false,
-        });
-        return newEvent;
-      });
-
-      const savedEvents = await this.habitEventRepository.save(newEvents);
-
-      for (const event of savedEvents) {
-        eventsMap.set(event.habitId, event);
-      }
-    }
-
-    const userHabitsWithEvents = habits.map((habit) => {
-      const event = eventsMap.get(habit.id);
-
-      const habitWithEvent = {
-        id: habit.id,
-        name: habit.name,
-        goal: habit.goal,
-        unit: habit.unit,
-        icon: habit.icon,
-        value: event?.value ?? 0,
-        isGoalCompleted: event?.isGoalCompleted ?? false,
-        isFailure: event?.isFailure ?? false,
-      };
-
-      return habitWithEvent;
-    });
-
-    return userHabitsWithEvents;
-  }
 
 
   async deleteHabit(habitId: number, userId: number): Promise<{ success: boolean }> {
-    console.dir({
-      habitId, userId
-    })
     const habit = await this.habitRepository.findOne({
       where: { id: habitId, user: { id: userId } },
     });
-
     if (!habit) {
       throw new NotFoundException('Habit not found or does not belong to the user');
     }
-
     await this.habitRepository.remove(habit);
-
     return { success: true };
   }
 
+
+  private buildHabitResponse(habit: Habit, event?: HabitEvent) {
+    return {
+      id: habit.id,
+      name: habit.name,
+      goal: habit.goal,
+      unit: habit.unit,
+      icon: habit.icon,
+      value: event?.value ?? 0,
+      isGoalCompleted: event?.isGoalCompleted ?? false,
+      isFailure: event?.isFailure ?? false,
+    };
+  }
 
 
 
@@ -208,9 +169,4 @@ export class HabitService {
     return false;
   }
 
-  private isSameDay(d1: Date, d2: Date): boolean {
-    return d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate();
-  }
 }
