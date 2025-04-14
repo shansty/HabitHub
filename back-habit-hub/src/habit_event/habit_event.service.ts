@@ -1,8 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { HabitEvent } from './entities/habit_event.entity';
-import { CreateHabitEventDto } from './dto/create-habit_event.dto';
 import { Habit } from '..//habit/entities/habit.entity';
 
 @Injectable()
@@ -13,35 +12,62 @@ export class HabitEventService {
 
     @InjectRepository(Habit)
     private habitRepository: Repository<Habit>,
-  ) {}
+  ) { }
 
 
-  async findOrCreateEmptyEvent(body: CreateHabitEventDto): Promise<HabitEvent> {
-    const { habitId, date } = body;
+  async fetchOrCreateHabitEvents(habits: Habit[], date: Date): Promise<Map<number, HabitEvent>> {
+    const eventMap = this.getExistingEventsForDate(habits, date);
 
-    const existingHabitEvent = await this.habitEventRepository.findOneBy({
-      habitId: +habitId,
-      date: new Date(date)
-    });
+    const missingEvents: HabitEvent[] = [];
 
-    if (existingHabitEvent) {
-      return existingHabitEvent;
+    for (const habit of habits) {
+      if (!eventMap.has(habit.id)) {
+        const newEvent = this.createDefaultHabitEvent(habit, date);
+        missingEvents.push(newEvent);
+        eventMap.set(habit.id, newEvent); 
+      }
     }
 
-    const habit = await this.habitRepository.findOneBy({ id: habitId });
-    if (!habit) throw new NotFoundException('Habit not found');
+    if (missingEvents.length > 0) {
+      await this.habitEventRepository.save(missingEvents);
+    }
 
+    return eventMap;
+  }
+
+
+  getExistingEventsForDate(habits: Habit[], date: Date): Map<number, HabitEvent> {
+    const map = new Map<number, HabitEvent>();
+    for (const habit of habits) {
+      for (const event of habit.events) {
+        if (this.isSameDay(new Date (event.date), date)) {
+          map.set(habit.id, event);
+          break;
+        }
+      }
+    }
+
+    return map;
+  }
+
+
+  createDefaultHabitEvent(habit: Habit, date: Date): HabitEvent {
     const newEvent = this.habitEventRepository.create({
-      habitId,
-      date,
-      habit,
+      habit: habit,
+      habitId: habit.id,
+      date: date,
       value: 0,
       isGoalCompleted: false,
       isFailure: false,
     });
+    return newEvent
+  }
 
-    await this.habitEventRepository.save(newEvent)
 
-    return newEvent;
+  isSameDay(d1: Date, d2: Date): boolean {
+    console.dir({d1, d2})
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   }
 }

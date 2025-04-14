@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from '../habit_event/entities/habit_event.entity';
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity';
+import { HabitEventModule } from '../habit_event/habit_event.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.e
             signOptions: { expiresIn: '120h' },
           }),
         }),
-        AuthModule
+        AuthModule,
+        HabitEventModule
   ],
   controllers: [HabitController],
   providers: [HabitService],

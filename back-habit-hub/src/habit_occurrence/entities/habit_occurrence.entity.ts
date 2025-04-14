@@ -1,5 +1,5 @@
 import { User } from "../../users/entities/users.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Habit } from "../../habit/entities/habit.entity";
 
 @Entity()
@@ -11,10 +11,8 @@ export class HabitOccurrence {
   date: Date;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
-
-  @Column()
-  userId: number;
 
   @ManyToOne(() => Habit, (habit) => habit.habitOccurence, {
     onDelete: 'CASCADE',
