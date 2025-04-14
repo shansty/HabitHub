@@ -24,7 +24,7 @@ export class Habit {
     goalPeriodicity: GoalPeriodicityType
 
     @Column()
-    goalDuration: Number;
+    goalDuration: number;
 
     @OneToOne(() => HabitSchedule, (schedule) => schedule.habit, {
         cascade: true,
@@ -33,7 +33,9 @@ export class Habit {
     })
     habitSchedule: HabitSchedule;
 
-    @OneToMany(() => HabitOccurrence, (habitOccurence) => habitOccurence.habit)
+    @OneToMany(() => HabitOccurrence, (habitOccurence) => habitOccurence.habit, {
+        cascade: ['remove'],
+    })
     habitOccurence: HabitOccurrence[];
 
     @Column({ type: 'enum', enum: HabitType, default: HabitType.GOOD })
@@ -48,7 +50,9 @@ export class Habit {
     @Column({ type: 'date' })
     startDate: Date;
 
-    @OneToMany(() => HabitEvent, (event) => event.habit)
+    @OneToMany(() => HabitEvent, (event) => event.habit, {
+        cascade: ['remove'],
+    })
     events: HabitEvent[];
 
     @Column({ type: 'enum', enum: HabitStatus, default: 'IN_PROGRESS' })

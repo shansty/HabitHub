@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { HabitEvent } from './entities/habit_event.entity';
-import { Habit } from '..//habit/entities/habit.entity';
+import { Habit } from '../habit/entities/habit.entity';
 
 @Injectable()
 export class HabitEventService {
@@ -65,7 +65,6 @@ export class HabitEventService {
 
 
   isSameDay(d1: Date, d2: Date): boolean {
-    console.dir({d1, d2})
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();

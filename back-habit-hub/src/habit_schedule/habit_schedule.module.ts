@@ -26,5 +26,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [HabitScheduleController],
   providers: [HabitScheduleService],
+  exports: [HabitScheduleService],
 })
 export class HabitScheduleModule {}

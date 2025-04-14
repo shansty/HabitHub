@@ -8,7 +8,7 @@ export class HabitSchedule {
     id: number;
       
     @OneToOne(() => Habit, (habit) => habit.habitSchedule, { onDelete: 'CASCADE' })
-    @JoinColumn()
+    @JoinColumn({ name: 'habitId' })
     habit: Habit;
 
     @Column({ type: 'enum', enum: HabitScheduleType })
