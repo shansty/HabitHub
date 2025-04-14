@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, JoinColumn, } from 'typeorm';
 import { GoalPeriodicityType, HabitDomain, HabitStatus, HabitType, UnitOfMeasurementType } from '../utils/habit_enums';
 import { User } from '../../users/entities/users.entity';
-import { HabitSchedule } from './habit_repeat.entity';
-import { HabitEvent } from './habit_event.entity';
-import { HabitDay } from './habit_day.entity';
+import { HabitSchedule } from '../../habit_schedule/entities/habit_schedule.entity';
+import { HabitEvent } from '../../habit_event/entities/habit_event.entity';
+import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity';
 
 
 @Entity()
@@ -24,13 +24,17 @@ export class Habit {
     goalPeriodicity: GoalPeriodicityType
 
     @Column()
-    goalDuration: Number; 
+    goalDuration: Number;
 
-    @OneToOne(() => HabitSchedule, (repeat) => repeat.habit, { cascade: true })
+    @OneToOne(() => HabitSchedule, (schedule) => schedule.habit, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        eager: true,
+    })
     habitSchedule: HabitSchedule;
 
-    @OneToMany(() => HabitDay, (habitDay) => habitDay.habit)
-    habitDays: HabitDay[];
+    @OneToMany(() => HabitOccurrence, (habitOccurence) => habitOccurence.habit)
+    habitOccurence: HabitOccurrence[];
 
     @Column({ type: 'enum', enum: HabitType, default: HabitType.GOOD })
     type: HabitType;
@@ -50,11 +54,10 @@ export class Habit {
     @Column({ type: 'enum', enum: HabitStatus, default: 'IN_PROGRESS' })
     status: HabitStatus
 
-    @ManyToOne(() => User, (user) => user.habits, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' })
     user: User;
 
-    @Column()
-    userId: number;
 
     @CreateDateColumn()
     createdAt: Date;

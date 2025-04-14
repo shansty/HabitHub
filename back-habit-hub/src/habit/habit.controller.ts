@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { HabitService } from './habit.service';
 import { CreateHabitDto } from './dto/create-habit.dto'
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
@@ -11,25 +11,33 @@ export class HabitController {
   @UseGuards(JwtAuthGuard)
   @Post()
   createHabit(
-    @Body() habit: CreateHabitDto,
+    @Body() body: CreateHabitDto,
     @User('userId') userId: string
   ) {
-    return this.habitService.createHabit(habit, userId);
+    return this.habitService.createHabit(body, userId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('category')
-  getAllCategories() {
-    return this.habitService.getAllCategories();
+  @Get()
+  getUserHabitsByDate(
+    @User('userId') userId: string,
+    @Query('date') date: string
+  ) {
+    return this.habitService.getUserHabitsByDate(userId, date)
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.habitService.findOne(+id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('categories')
+  getCategories() {
+    return this.habitService.getHabitCategories();
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.habitService.remove(+id);
-  // }
+  @Delete(':habitId')
+  @UseGuards(JwtAuthGuard) 
+  deleteHabit(
+    @Param('habitId') habitId: string,
+    @User('userId') userId: string
+  ) {
+    return this.habitService.deleteHabit(+habitId, +userId);
+  }
 }

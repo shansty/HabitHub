@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Habit } from '../../habit/entities/habit.entity';
-import { HabitDay } from '../../habit/entities/habit_day.entity';
+import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity';
 
 @Entity()
 export class User {
@@ -40,8 +40,8 @@ export class User {
   @OneToMany(() => Habit, (habit) => habit.user, { cascade: true })
   habits: Habit[];
 
-  @OneToMany(() => HabitDay, (habitDay) => habitDay.user)
-  habitDays: HabitDay[];
+  @OneToMany(() => HabitOccurrence, (habitOcccurrence) => habitOcccurrence.user)
+  habitOcccurrences: HabitOccurrence[];
 
   @CreateDateColumn()
   created_at: Date;

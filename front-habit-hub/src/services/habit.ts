@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { TypeCategory, TypeHabit } from '../types';
+import { TypeCategoryConfig, TypeHabitCreateData, TypeUserHabitsList } from '../types';
 import { getToken } from '../utils';
 
 
 export const habitApi = createApi({
   reducerPath: 'habitApi',
+  tagTypes: ['Habit'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit`,
     prepareHeaders: (headers) => {
@@ -17,23 +18,33 @@ export const habitApi = createApi({
   }),
   refetchOnFocus: true,
   endpoints: (builder) => ({
-    getAllHabitCategories: builder.query<{ categories: TypeCategory[] }, void>({
-      query: () => ({
-        url: `category`,
-        method: 'GET',
+    getHabitCategories: builder.query<TypeCategoryConfig[], void>({
+      query: () => '/categories',
+    }),
+    createHabit: builder.mutation<{ success: boolean }, TypeHabitCreateData>({
+      query: (body) => ({
+        url: ``,
+        method: 'POST',
+        body
       }),
     }),
-    createHabit: builder.mutation<{ success: boolean }, TypeHabit>({
-      query: (body) => ({
-        url: '',
-        method: 'POST',
-        body,
+    getUserHabitsByDate: builder.query<TypeUserHabitsList[], string>({
+      query: (date) => `?date=${date}`,
+      providesTags: (result, error, date) => [{ type: 'Habit', id: date }],
+    }),
+    deleteHabit: builder.mutation<{ success: boolean }, number>({  
+      query: (habitId) => ({
+        url: `/${habitId}`,
+        method: 'DELETE',
       }),
+      invalidatesTags: [{ type: 'Habit' }],
     }),
   }),
 });
 
 export const {
-  useGetAllHabitCategoriesQuery,
+  useGetHabitCategoriesQuery,
   useCreateHabitMutation,
+  useLazyGetUserHabitsByDateQuery,
+  useDeleteHabitMutation
 } = habitApi;

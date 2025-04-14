@@ -1,9 +1,9 @@
 import { User } from "../../users/entities/users.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Habit } from "./habit.entity";
+import { Habit } from "../../habit/entities/habit.entity";
 
 @Entity()
-export class HabitDay {
+export class HabitOccurrence {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,7 +16,9 @@ export class HabitDay {
   @Column()
   userId: number;
 
-  @ManyToOne(() => Habit, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Habit, (habit) => habit.habitOccurence, {
+    onDelete: 'CASCADE',
+  })
   habit: Habit;
 
   @Column()
