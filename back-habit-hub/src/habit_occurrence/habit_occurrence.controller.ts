@@ -6,9 +6,5 @@ import { CreateHabitOccurrenceDto } from './dto/create-habit_occurrence.dto';
 export class HabitOccurrenceController {
   constructor(private readonly habitOccurrenceService: HabitOccurrenceService) {}
 
-  @Post()
-  create(@Body() createHabitOccurrenceDto: CreateHabitOccurrenceDto) {
-    return this.habitOccurrenceService.create(createHabitOccurrenceDto);
-  }
 
 }
