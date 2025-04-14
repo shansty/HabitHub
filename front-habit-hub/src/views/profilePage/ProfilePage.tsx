@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getToken } from '../../utils';
+import { getToken, isTokenValid } from '../../utils';
 import Modal from '../authPage/utils_components/Modal';
 import UserData from './UserData';
-import AddHabitForm from './AddHabitForm';
+import AddHabitForm from './forms/AddHabitForm';
 import DatePicker from 'react-datepicker';
 import { format, isToday, isTomorrow } from 'date-fns';
+import { useLazyGetUserHabitsByDateQuery } from '../../services/habit';
 import 'react-datepicker/dist/react-datepicker.css';
+import HabitList from './HabitList';
+import { Keyboard } from 'lucide-react';
 
 
 const UserProfilePage: React.FC = () => {
@@ -16,29 +19,29 @@ const UserProfilePage: React.FC = () => {
     const [isFormOpened, setIsFormOpened] = useState(false)
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
+    const [getHabits, { data }] = useLazyGetUserHabitsByDateQuery();
+
     const calendarRef = useRef<HTMLDivElement>(null);
+    const isValid = isTokenValid(token);
+    let formattedDate: string;
 
     useEffect(() => {
-        if (!token) {
+        if (!token || !isValid) {
             setIsModalOpen(true)
         }
     })
+
+    useEffect(() => {
+        formattedDate = format(selectedDate, 'yyyy-MM-dd');
+        getHabits(formattedDate);
+        console.log(data)
+    }, [selectedDate]);
+
 
     const handleOnModalClose = () => {
         setIsModalOpen(false);
         navigate('/login');
     };
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
-                setShowCalendar(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
 
     const getDateLabel = () => {
         if (isToday(selectedDate)) return 'Today';
@@ -50,7 +53,7 @@ const UserProfilePage: React.FC = () => {
     return (
         <div className="min-h-screen bg-blue-800 flex center justify-center">
             <div className="w-full max-w-350 bg-white rounded-xl p-8 space-y-3 mt-20 mb-20">
-                {!token && isModalOpen &&
+                {!token || !isValid && isModalOpen &&
                     <Modal
                         onClose={handleOnModalClose}
                         isOpen={true}
@@ -63,13 +66,14 @@ const UserProfilePage: React.FC = () => {
                     <div className="relative flex sm:flex-row items-start sm:items-center gap-2" ref={calendarRef}>
                         <button
                             onClick={() => setShowCalendar(!showCalendar)}
-                            className="min-w-25 text-indigo-700 font-medium border px-3 py-2 rounded-md w-full sm:min-w-25"
+                            className="text-indigo-700 font-medium border px-3 py-2 rounded-md w-full min-w-auto text-nowrap flex items-center gap-2"
                         >
-                            {getDateLabel()}
+                            <Keyboard />
+                             {getDateLabel()} 
                         </button>
                         <button
                             onClick={() => setIsFormOpened(true)}
-                            className="min-w-25 bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-2 rounded-md w-full sm:min-w-25">
+                            className="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-2 rounded-md w-full min-w-auto text-nowrap">
                             Add Habit
                         </button>
 
@@ -89,7 +93,17 @@ const UserProfilePage: React.FC = () => {
                         )}
                     </div>
                 </div>
-                {isFormOpened && <AddHabitForm />}
+                {isFormOpened && (
+                    <AddHabitForm
+                        onClose={() => setIsFormOpened(false)}
+                        minStartDate={new Date()}
+                        refetchHabits={() => getHabits(format(selectedDate, 'yyyy-MM-dd'))}
+                    />
+                )}
+                <HabitList
+                    habits={data}
+                    selectedDate={selectedDate}
+                />
             </div>
         </div>
     );

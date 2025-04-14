@@ -10,10 +10,11 @@ interface InputFieldProps {
   placeholder?: string;
   className?: string;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
-  min?: number
+  min?: number;
+  name?: string
 }
 
-const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept, className, onFocus, min }) => {
+const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id, placeholder, accept, className, onFocus, min, name }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
 
@@ -32,6 +33,7 @@ const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id
         className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 pr-10 ${className}`}
         onFocus={onFocus}
         min={min}
+        name={name}
       />
       {isPassword && (
         <span
@@ -45,4 +47,4 @@ const InputField: React.FC<InputFieldProps> = ({ value, handleOnChange, type, id
   );
 };
 
-export default InputField;
+export default React.memo(InputField);

@@ -9,6 +9,13 @@ export enum UnitOfMeasurementType {
   MG = 'MG',
   L = 'L',
   ML = 'ML',
+  USD = '$',
+  KCAL = 'KCAL',
+  STEPS = 'STEPS',
+  SESSIONS = 'SESSIONS',
+  BOOKS = 'BOOKS',
+  TASKS = 'TASKS',
+  ITEMS = 'ITEMS',
 }
 
 
@@ -21,7 +28,6 @@ export enum GoalPeriodicityType {
 export enum HabitScheduleType {
   DAILY = 'DAILY',
   MONTHLY = 'MONTHLY',
-  INTERVAL = 'INTERVAL',
 }
 
 

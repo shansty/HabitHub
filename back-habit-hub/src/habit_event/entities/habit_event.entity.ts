@@ -1,13 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
-import { Habit } from './habit.entity';
+import { Habit } from '../../habit/entities/habit.entity';
 
 @Entity()
 export class HabitEvent {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Habit, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Habit, (habit) => habit.events, {
+    onDelete: 'CASCADE',
+  })
   habit: Habit;
+
 
   @Column()
   habitId: number;

@@ -114,7 +114,7 @@ export class UsersService {
         const expiresAt = new Date(Date.now() + this.fifteen_minutes_exparation);
         user.reset_code = code;
         user.reset_code_expires_at = expiresAt;
-        user.temp_password = userData.new_password;
+        user.temp_password = await scryptHash(userData.new_password);
         await this.userRepository.save(user);
         await this.emailService.sendPasswordResetCode(user.email, code);
         return { success: true };

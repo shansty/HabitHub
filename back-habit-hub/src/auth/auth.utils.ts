@@ -19,7 +19,6 @@ export const scryptHash = async (string: string, salt?: string): Promise<string>
 export const scryptVerify = async (string: string, hashAndSalt: string): Promise<boolean> => {
     const [hash, salt] = hashAndSalt.split(":");
     const resultHashAndSalt = await scryptHash(string, salt);
-    
     return resultHashAndSalt === hashAndSalt;
 };
 
