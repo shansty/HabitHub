@@ -16,7 +16,7 @@ interface HabitFormProps {
   habit?: TypeUserHabitsList;
 }
 
-const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) => {
+const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) => {
   const [formData, setFormData] = useState<TypeHabitFormState>({
     name: habit?.name ?? '',
     category: habit?.category ?? '',
@@ -75,10 +75,10 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }
 
     try {
       if (!habit) {
-        await createHabit(preparedData).unwrap();
+        console.dir({ preparedData })
+        // await createHabit(preparedData).unwrap();
         onClose();
       } else {
-        console.dir({ preparedData })
         await editHabit({ habitId: habit.id, habitData: preparedData }).unwrap();
         onClose();
       }
@@ -225,4 +225,4 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }
   );
 };
 
-export default AddHabitForm;
+export default HabitForm;

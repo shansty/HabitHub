@@ -11,7 +11,8 @@ export class HabitEventController {
   addEventValue(
     @Param('habitId') habitId: number,
     @Body('logValue') logValue: number,
+    @Body('date') date: string,
   ) {
-    return this.habitEventService.addEventValue(habitId, logValue);
+    return this.habitEventService.addEventValue(habitId, logValue, date);
   }
 }

@@ -8,11 +8,15 @@ interface HabitListProps {
 }
 
 const HabitList: React.FC<HabitListProps> = ({ habits, selectedDate }) => {
+
+    const sortedHabits = habits?.slice().sort((a, b) => {
+        return Number(a.isGoalCompleted) - Number(b.isGoalCompleted);
+      });
    
     return (
         <div className="space-y-5 mt-10">
-            {habits && habits.length > 0 ? (
-                habits.map((habit) => (
+            {sortedHabits  && sortedHabits.length > 0 ? (
+                sortedHabits.map((habit) => (
                     <Habit habit={habit} selectedDate={selectedDate} key={habit.id}/> 
                 ))
             ) : (

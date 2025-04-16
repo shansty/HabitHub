@@ -16,11 +16,11 @@ export const habitEventApi = createApi({
   }),
   refetchOnFocus: true,
   endpoints: (builder) => ({
-    addEventValue: builder.mutation<{ success: boolean, isGoalCompleted: boolean }, { habitId: number, logValue: number }>({
-      query: ({ habitId, logValue }) => ({
+    addEventValue: builder.mutation<{ success: boolean, isGoalCompleted: boolean }, { habitId: number, logValue: number, date: Date }>({
+      query: ({ habitId, logValue, date }) => ({
         url: `/${habitId}`,
         method: 'PATCH',
-        body: { logValue }
+        body: { logValue, date }
       }),
     }),
   }),
