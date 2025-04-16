@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken, isTokenValid } from '../../utils';
-import Modal from '../authPage/utils_components/Modal';
-import UserData from './UserData';
+import Modal from '../../utils_components/Modal';
+import UserData from './components/UserData';
 import AddHabitForm from './forms/AddHabitForm';
 import DatePicker from 'react-datepicker';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { useLazyGetUserHabitsByDateQuery } from '../../services/habit';
 import 'react-datepicker/dist/react-datepicker.css';
-import HabitList from './HabitList';
+import { useClickOutside } from '../../hooks';
+import HabitList from './components/HabitList';
 import { Keyboard } from 'lucide-react';
 
 
@@ -22,6 +23,7 @@ const UserProfilePage: React.FC = () => {
     const [getHabits, { data }] = useLazyGetUserHabitsByDateQuery();
 
     const calendarRef = useRef<HTMLDivElement>(null);
+    useClickOutside(calendarRef, () => setShowCalendar(false));
     const isValid = isTokenValid(token);
     let formattedDate: string;
 
@@ -34,7 +36,6 @@ const UserProfilePage: React.FC = () => {
     useEffect(() => {
         formattedDate = format(selectedDate, 'yyyy-MM-dd');
         getHabits(formattedDate);
-        console.log(data)
     }, [selectedDate]);
 
 
@@ -69,7 +70,7 @@ const UserProfilePage: React.FC = () => {
                             className="text-indigo-700 font-medium border px-3 py-2 rounded-md w-full min-w-auto text-nowrap flex items-center gap-2"
                         >
                             <Keyboard />
-                             {getDateLabel()} 
+                            {getDateLabel()}
                         </button>
                         <button
                             onClick={() => setIsFormOpened(true)}
@@ -78,7 +79,8 @@ const UserProfilePage: React.FC = () => {
                         </button>
 
                         {showCalendar && (
-                            <div className="absolute top-10 mr-20 z-10 shadow-lg bg-white p-2 rounded">
+                            <div
+                                className="absolute top-10 mr-20 z-10 shadow-lg bg-white p-2 rounded">
                                 <DatePicker
                                     selected={selectedDate}
                                     onChange={(date: Date | null) => {
@@ -97,7 +99,6 @@ const UserProfilePage: React.FC = () => {
                     <AddHabitForm
                         onClose={() => setIsFormOpened(false)}
                         minStartDate={new Date()}
-                        refetchHabits={() => getHabits(format(selectedDate, 'yyyy-MM-dd'))}
                     />
                 )}
                 <HabitList

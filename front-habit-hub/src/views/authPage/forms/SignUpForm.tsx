@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import InputField from '../utils_components/InputField';
-import PasswordField from '../utils_components/PasswordField';
+import InputField from '../../../utils_components/InputField';
+import PasswordField from '../components/PasswordField';
 import { Link } from 'react-router-dom';
 import { TypeUser } from '../../../types';
 import { useRegisterUserMutation } from '../../../services/user';
-import Dropzone from '../utils_components/Dropzone';
-import Modal from '../utils_components/Modal';
+import Dropzone from '../../../utils_components/Dropzone';
+import Modal from '../../../utils_components/Modal';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 const SignUpForm: React.FC = () => {
 
     const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
     const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [ , setIsPasswordValid] = useState(false);
     const [customError, setCustomError] = useState<string | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [registerUser, { error, isLoading }] = useRegisterUserMutation()
+    const [registerUser, { isLoading }] = useRegisterUserMutation()
 
 
     const handlePhotoDrop = (file: File) => {
@@ -51,7 +52,7 @@ const SignUpForm: React.FC = () => {
                 setIsModalOpen(true)
             };
         } catch (err: any) {
-            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+            setCustomError(err?.data?.message);
         }
     }
 
@@ -103,11 +104,7 @@ const SignUpForm: React.FC = () => {
                     </button>
                 </form>
                 {isLoading && <p>Please wait...</p>}
-                {customError && (
-                    <p className="text-red-600 text-sm text-center mt-1">
-                        {customError}
-                    </p>
-                )}
+                <ErrorHandling customError={customError} />
                 <p className="mt-4 text-sm text-gray-800">
                     Already have an account?{' '}
                     <Link to='/login' className="text-indigo-600 font-medium hover:underline">Log In</Link>

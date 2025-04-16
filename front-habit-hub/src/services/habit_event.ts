@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { TypeHabitEvent } from '../types';
 import { getToken } from '../utils';
 
 
@@ -17,16 +16,16 @@ export const habitEventApi = createApi({
   }),
   refetchOnFocus: true,
   endpoints: (builder) => ({
-    findOrCreateEmptyHabitEvent: builder.mutation<{habitId: number, date: Date}, TypeHabitEvent>({
-      query: (body) => ({
-        url: ``,
-        method: 'POST',
-        body
+    addEventValue: builder.mutation<{ success: boolean, isGoalCompleted: boolean }, { habitId: number, logValue: number }>({
+      query: ({ habitId, logValue }) => ({
+        url: `/${habitId}`,
+        method: 'PATCH',
+        body: { logValue }
       }),
     }),
   }),
 });
 
 export const {
-  useFindOrCreateEmptyHabitEventMutation
+  useAddEventValueMutation
 } = habitEventApi;

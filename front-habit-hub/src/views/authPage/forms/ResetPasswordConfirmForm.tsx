@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import InputField from '../utils_components/InputField';
+import InputField from '../../../utils_components/InputField';
 import { useVerifyResetCodeMutation } from '../../../services/user';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 const ResetPasswordConfirmForm: React.FC = () => {
     const navigate = useNavigate();
 
     const [code, setCode] = useState('');
+    const [customError, setCustomError] = useState<string | null>(null);
     const [verifyResetCode, { isLoading, error, isSuccess }] = useVerifyResetCodeMutation();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,10 +17,14 @@ const ResetPasswordConfirmForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await verifyResetCode({ code: code }).unwrap();
-        setTimeout(() => {
-            navigate('/login');
-        }, 2000);
+        try {
+            await verifyResetCode({ code: code }).unwrap();
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        } catch (err: any) {
+            setCustomError(err?.data?.message);
+        }
     };
 
     return (
@@ -43,11 +49,7 @@ const ResetPasswordConfirmForm: React.FC = () => {
                         {isLoading ? 'Verifying...' : 'Verify Code'}
                     </button>
                 </form>
-                {error && 'data' in error && (
-                    <p className="text-red-600 text-sm text-center mt-1">
-                        {(error.data as any)?.message || 'Something went wrong. Please try again.'}
-                    </p>
-                )}
+                <ErrorHandling customError={customError} />
                 {isSuccess && (
                     <p className="text-base text-green-600 font-semibold">
                         ✅ Password changed successfully! Redirecting to login...

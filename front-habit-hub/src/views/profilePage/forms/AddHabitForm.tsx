@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import InputField from '../../authPage/utils_components/InputField';
-import { useGetHabitCategoriesQuery, useCreateHabitMutation } from '../../../services/habit';
+import InputField from '../../../utils_components/InputField';
+import { useGetHabitCategoriesQuery, useCreateHabitMutation, useEditHabitMutation } from '../../../services/habit';
 import { UnitOfMeasurementEnum, HabitScheduleEnum, GoalPeriodicityEnum } from '../../../enums';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import SelectField from './utils/SelectField';
-import InputNumber from './utils/InputNumber';
-import HabitScheduleDropdown from './utils/CustomHabitSchedulePicker';
-import { TypeHabitCreateData, TypeHabitFormState } from '../../../types';
+import SelectField from '../../../utils_components/SelectField';
+import InputNumber from '../../../utils_components/InputNumber';
+import HabitScheduleDropdown from '../components/CustomHabitSchedulePicker';
+import { TypeHabitCreateData, TypeHabitFormState, TypeUserHabitsList } from '../../../types';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 interface HabitFormProps {
   onClose: () => void;
   minStartDate: Date;
-  refetchHabits: () => void;
+  habit?: TypeUserHabitsList;
 }
 
-const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetchHabits }) => {
+const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) => {
   const [formData, setFormData] = useState<TypeHabitFormState>({
-    name: '',
-    goal: '1',
+    name: habit?.name ?? '',
+    category: habit?.category ?? '',
+    goal: habit?.goal?.toString() ?? '1',
     goalDuration: '21',
-    unit: UnitOfMeasurementEnum.TIMES,
-    icon: '',
-    habitSchedule: HabitScheduleEnum.DAILY,
+    unit: (habit?.unit as UnitOfMeasurementEnum) ?? UnitOfMeasurementEnum.TIMES,
+    icon: habit?.icon ?? '',
+    habitSchedule: habit?.habitSchedule.type ?? HabitScheduleEnum.DAILY,
     habitScheduleData: {
-      daysOfWeek: [],
-      daysOfMonth: [],
+      daysOfWeek: habit?.habitSchedule.daysOfWeek ?? [],
+      daysOfMonth: habit?.habitSchedule.daysOfMonth ?? [],
     },
     goalPeriodicity: GoalPeriodicityEnum.PER_DAY,
     startDate: new Date(),
-    category: '',
   });
 
   const { data: categories } = useGetHabitCategoriesQuery();
   const [unitOptions, setUnitOptions] = useState<UnitOfMeasurementEnum[]>([]);
   const [iconsOptions, setIconsOptions] = useState<string[]>([]);
   const [createHabit, { isLoading }] = useCreateHabitMutation();
+  const [editHabit] = useEditHabitMutation()
   const [customError, setCustomError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,8 +48,8 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetch
         setIconsOptions(found.icons);
         setFormData((prev) => ({
           ...prev,
-          unit: found.defaultUnit,
-          icon: found.defaultIcon,
+          unit: habit?.unit ?? found.defaultUnit,
+          icon: habit?.icon ?? found.defaultIcon,
         }));
       }
     }
@@ -72,11 +74,16 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetch
     };
 
     try {
-      await createHabit(preparedData).unwrap();
-      refetchHabits(); 
-      onClose();
+      if (!habit) {
+        await createHabit(preparedData).unwrap();
+        onClose();
+      } else {
+        console.dir({ preparedData })
+        await editHabit({ habitId: habit.id, habitData: preparedData }).unwrap();
+        onClose();
+      }
     } catch (err: any) {
-      setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+      setCustomError(err?.data?.message);
     }
   };
 
@@ -157,7 +164,7 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetch
             </div>
           </div>
 
-  
+
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-3 flex flex-col">
               <label className="text-sm font-medium mb-1">Duration</label>
@@ -172,7 +179,10 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetch
 
             <div className="col-span-4 flex flex-col">
               <label className="text-sm font-medium mb-1">Repeat</label>
-              <HabitScheduleDropdown setFormData={setFormData} />
+              <HabitScheduleDropdown
+                setFormData={setFormData}
+                habitSchedule={habit?.habitSchedule}
+              />
             </div>
 
             <div className="col-span-5 flex flex-col">
@@ -207,10 +217,7 @@ const AddHabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, refetch
               Save
             </button>
           </div>
-
-          {customError && (
-            <p className="text-red-600 text-sm text-center mt-1">{customError}</p>
-          )}
+          <ErrorHandling customError={customError} />
           {isLoading && <p className="text-sm text-center text-indigo-600">Saving...</p>}
         </form>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatString } from '../../../../utils';
+import { formatString } from '../utils';
 
 interface SelectFieldProps<T = string> {
   name?: string;

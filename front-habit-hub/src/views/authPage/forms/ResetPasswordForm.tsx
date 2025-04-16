@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TypeResetPasswordCredentials } from '../../../types';
 import { useResetPasswordMutation } from '../../../services/user';
-import PasswordField from '../utils_components/PasswordField';
-import InputField from '../utils_components/InputField';
+import PasswordField from '../components/PasswordField';
+import InputField from '../../../utils_components/InputField';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 const ResetPasswordForm = () => {
 
@@ -54,7 +55,7 @@ const ResetPasswordForm = () => {
                     navigate('/confirm_reset_password')
                 }
             } catch (err: any) {
-                setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+                setCustomError(err?.data?.message);
             }
         };
     };
@@ -96,11 +97,7 @@ const ResetPasswordForm = () => {
                         Reset
                     </button>
                 </form>
-                 {customError && (
-                    <p className="text-red-600 text-sm text-center mt-1">
-                        {customError}
-                    </p>
-                )}
+                <ErrorHandling customError={customError} />
                 {isLoading && <p>Please wait...</p>}
             </div>
         </div>

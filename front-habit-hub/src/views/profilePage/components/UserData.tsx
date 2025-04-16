@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useGetUserDataQuery, useUpdateUserProfileMutation } from '../../services/user';
-import { getToken, getIDFromToken } from '../../utils';
-import profile from '../../assets/profile.png'
+import { useGetUserDataQuery, useUpdateUserProfileMutation } from '../../../services/user';
+import { getToken, getIDFromToken } from '../../../utils';
+import profile from '../../../assets/profile.png'
 import { Camera, Check, Pencil, X } from 'lucide-react';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 
 const UserData: React.FC = () => {
@@ -17,8 +18,7 @@ const UserData: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const profilePic = data?.user.profile_picture
-        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}`
-        : profile;
+        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}` : profile;
 
     useEffect(() => {
         if (data?.user.username) {
@@ -49,7 +49,7 @@ const UserData: React.FC = () => {
                 await updateUserProfile(formData).unwrap();
                 refetch();
             } catch (err: any) {
-                setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+                setCustomError(err?.data?.message);
             }
         }
     };
@@ -63,7 +63,7 @@ const UserData: React.FC = () => {
             setIsEdited(false);
             refetch();
         } catch (err: any) {
-            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+            setCustomError(err?.data?.message);
         }
     };
 
@@ -135,11 +135,7 @@ const UserData: React.FC = () => {
                     </div>
                 )}
                 <p className="text-gray-600">{data?.user.email}</p>
-                {customError && (
-                    <p className="text-red-600 text-sm text-center mt-1">
-                        {customError}
-                    </p>
-                )}
+                <ErrorHandling customError={customError}/>
             </div>
         </div>
     );

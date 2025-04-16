@@ -72,14 +72,19 @@ export type TypeUserHabitsList = {
     id: number,
     name: string,
     goal: number,
-    unit: string,
+    unit: UnitOfMeasurementEnum,
     icon: string,
     value: number,
     isGoalCompleted: boolean,
-    isFailure: boolean
+    isFailure: boolean,
+    category?: string,
+    habitSchedule: {
+        type: HabitScheduleEnum;
+        daysOfWeek: number[];
+        daysOfMonth: number[];
+    };
+}
 
-  }
-  
 export type TypeHabitEvent = {
     habitId: number,
     date: string,
