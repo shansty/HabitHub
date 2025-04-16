@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { HabitService } from './habit.service';
-import { CreateHabitDto } from './dto/create-habit.dto'
+import { HabitDto } from './dto/create-habit.dto'
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { User } from '../auth/jwt/user.decorator';
 
@@ -11,7 +11,7 @@ export class HabitController {
   @UseGuards(JwtAuthGuard)
   @Post()
   createHabit(
-    @Body() body: CreateHabitDto,
+    @Body() body: HabitDto,
     @User('userId') userId: string
   ) {
     return this.habitService.createHabit(body, userId);
@@ -33,11 +33,21 @@ export class HabitController {
   }
 
   @Delete(':habitId')
-  @UseGuards(JwtAuthGuard) 
+  @UseGuards(JwtAuthGuard)
   deleteHabit(
     @Param('habitId') habitId: string,
     @User('userId') userId: string
   ) {
     return this.habitService.deleteHabit(+habitId, +userId);
+  }
+
+  @Patch(':habitId')
+  @UseGuards(JwtAuthGuard)
+  editHabit(
+    @Param('habitId') habitId: string,
+    @User('userId') userId: string,
+    @Body() habitData: HabitDto,
+  ) {
+    return this.habitService.editHabit(+habitId, userId, habitData);
   }
 }

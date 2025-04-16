@@ -1,13 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Body, Patch, Param, UseGuards } from '@nestjs/common';
 import { HabitEventService } from './habit_event.service';
-import { CreateHabitEventDto } from './dto/create-habit_event.dto';
-
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 @Controller('habit-event')
 export class HabitEventController {
   constructor(private readonly habitEventService: HabitEventService) { }
 
-  // @Post()
-  // async findOrCreateEmptyEvent(@Body() body: CreateHabitEventDto) {
-  //   return this.habitEventService.findOrCreateEmptyEvent(body);
-  // }
+
+  @Patch(':habitId')
+  @UseGuards(JwtAuthGuard)
+  addEventValue(
+    @Param('habitId') habitId: number,
+    @Body('logValue') logValue: number,
+  ) {
+    return this.habitEventService.addEventValue(habitId, logValue);
+  }
 }

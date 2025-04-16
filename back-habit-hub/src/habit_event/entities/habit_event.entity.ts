@@ -11,7 +11,6 @@ export class HabitEvent {
   })
   habit: Habit;
 
-
   @Column()
   habitId: number;
 

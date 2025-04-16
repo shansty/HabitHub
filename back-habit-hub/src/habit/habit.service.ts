@@ -1,11 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateHabitDto } from './dto/create-habit.dto';
+import { Body, Injectable, NotFoundException } from '@nestjs/common';
+import { HabitDto } from './dto/create-habit.dto';
 import { Habit } from './entities/habit.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, LessThan, MoreThan } from 'typeorm';
 import { HabitCategoryConfig } from './utils/habit-unit-map';
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity';
-import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from '../habit_event/entities/habit_event.entity';
 import { HabitEventService } from '../habit_event/habit_event.service';
 import { HabitScheduleService } from '../habit_schedule/habit_schedule.service';
@@ -25,6 +24,7 @@ export class HabitService {
     private readonly habitOccurrenceService: HabitOccurrenceService,
   ) { }
 
+
   getHabitCategories() {
     return Object.entries(HabitCategoryConfig).map(([name, config]) => ({
       name,
@@ -36,7 +36,7 @@ export class HabitService {
   }
 
 
-  async createHabit(body: CreateHabitDto, userId: string) {
+  async createHabit(body: HabitDto, userId: string) {
     const habit = await this.createAndSaveHabit(body, userId);
 
     await this.habitScheduleService.createSchedule(habit, body.habitSchedule, body.habitScheduleData);
@@ -50,40 +50,33 @@ export class HabitService {
   }
 
 
-
   async getUserHabitsByDate(userId: string, date: string) {
     const dateObj = new Date(date);
-    console.log(dateObj)
     const userHabitOccurrences = await this.habitOccurrenceRepository.find({
       where: {
         user: { id: +userId },
         date: dateObj,
       },
-      relations: ['user', 'habit'], 
+      relations: ['user', 'habit'],
     });
-    console.dir({ userHabitOccurrences })
     const habitIds = userHabitOccurrences.map((occurrence) => occurrence.habitId);
     if (!habitIds.length) return [];
-    console.dir({ habitIds })
     const habits = await this.habitRepository.find({
       where: { id: In(habitIds) },
-      relations: ['events'],
+      relations: ['events', 'habitSchedule'],
     });
 
     const isToday = this.habitEventService.isSameDay(dateObj, new Date());
-    console.log(isToday)
 
     const eventMap = isToday
       ? await this.habitEventService.fetchOrCreateHabitEvents(habits, dateObj)
       : this.habitEventService.getExistingEventsForDate(habits, dateObj);
 
-    console.dir({ eventMap })
     return habits.map(habit => {
       const event = eventMap.get(habit.id);
       return this.buildHabitResponse(habit, event);
     });
   };
-
 
 
   async deleteHabit(habitId: number, userId: number): Promise<{ success: boolean }> {
@@ -98,7 +91,42 @@ export class HabitService {
   }
 
 
-  async createAndSaveHabit(body: CreateHabitDto, userId: string): Promise<Habit> {
+  async editHabit(habitId: number, userId: string, habitData: HabitDto) {
+    const habit = await this.habitRepository.findOne({
+      where: { id: habitId, user: { id: +userId } },
+      relations: ['habitSchedule'],
+    });
+
+    if (!habit) throw new NotFoundException('Habit not found or access denied.');
+
+    this.updateHabitFieldsByHabitData(habit, habitData)
+
+    await this.habitRepository.save(habit)
+
+    await this.habitScheduleService.updateSchedule(
+      habit.habitSchedule,
+      habitData.habitSchedule,
+      habitData.habitScheduleData,
+    );
+
+    await this.habitOccurrenceRepository.delete({
+      habit: { id: habit.id }
+    });
+
+    const newOccurrences = this.habitOccurrenceService.generateOccurrences(
+      habit,
+      userId,
+      habitData.habitSchedule,
+      habitData.habitScheduleData,
+    );
+    await this.habitOccurrenceRepository.save(newOccurrences);
+
+
+    return habit;
+  }
+
+
+  async createAndSaveHabit(body: HabitDto, userId: string): Promise<Habit> {
     const habit = this.habitRepository.create({
       name: body.name,
       goal: body.goal,
@@ -124,10 +152,37 @@ export class HabitService {
       unit: habit.unit,
       icon: habit.icon,
       value: event?.value ?? 0,
+      category: habit.category,
       isGoalCompleted: event?.isGoalCompleted ?? false,
       isFailure: event?.isFailure ?? false,
+      habitSchedule: {
+        type: habit.habitSchedule?.type ?? null,
+        daysOfWeek: habit.habitSchedule?.daysOfWeek ?? [],
+        daysOfMonth: habit.habitSchedule?.daysOfMonth ?? [],
+      },
     };
   }
 
+  private updateHabitFieldsByHabitData(habit: Habit, habitData: HabitDto) {
+    const fieldsToUpdate: (keyof HabitDto)[] = [
+      'name',
+      'goal',
+      'goalDuration',
+      'unit',
+      'icon',
+      'goalPeriodicity',
+      'startDate',
+      'category',
+    ];
 
+    for (const key of fieldsToUpdate) {
+      const newValue = key === 'startDate'
+        ? new Date(habitData.startDate)
+        : habitData[key];
+
+      if (habit[key] !== newValue) {
+        habit[key] = newValue as any;
+      }
+    }
+  }
 }
