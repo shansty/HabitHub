@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { TypeUserHabitsList } from '../../types';
-import { useFindOrCreateEmptyHabitEventMutation } from '../../services/habit_event';
+import React from 'react';
+import { TypeUserHabitsList } from '../../../types';
 import Habit from './Habit';
 
 interface HabitListProps {
@@ -10,13 +9,11 @@ interface HabitListProps {
 
 const HabitList: React.FC<HabitListProps> = ({ habits, selectedDate }) => {
    
-    console.dir({habits})
-
     return (
         <div className="space-y-5 mt-10">
             {habits && habits.length > 0 ? (
                 habits.map((habit) => (
-                    <Habit habit={habit} selectedDate={selectedDate}/> 
+                    <Habit habit={habit} selectedDate={selectedDate} key={habit.id}/> 
                 ))
             ) : (
                 <p className="text-center text-gray-400 mt-8 text-sm">

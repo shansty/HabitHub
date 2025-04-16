@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { TypeUserHabitsList } from '../../types';
-import { useDeleteHabitMutation } from '../../services/habit';
+import React, { useState, useEffect, useRef } from 'react';
+import { TypeUserHabitsList } from '../../../types';
+import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit';
+import { useAddEventValueMutation } from '../../../services/habit_event';
+import AddHabitForm from '../forms/AddHabitForm';
+import { CheckCheck } from 'lucide-react';
+import { formatString } from '../../../utils';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
+import HabitSettings from './HabitSettings';
+import { useClickOutside } from '../../../hooks';
+
 
 interface HabitProps {
     habit: TypeUserHabitsList;
@@ -12,11 +20,16 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
     const [loggingHabitId, setLoggingHabitId] = useState<number | null>(null);
     const [logValue, setLogValue] = useState<string>('');
     const [isToday, setIsToday] = useState(true)
-    const [deleteHabit, refetch] = useDeleteHabitMutation();
+    const [isFormOpened, setIsFormOpened] = useState(false)
+    const [customError, setCustomError] = useState<string | null>(null);
 
+    const [addEventValue] = useAddEventValueMutation()
+    const [triggerRefetchHabits] = useLazyGetUserHabitsByDateQuery();
 
     const handleMenuOpen = (id: number) => setOpenMenuId(id);
     const handleMenuClose = () => setOpenMenuId(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    useClickOutside(dropdownRef, () => setOpenMenuId(null));
 
     useEffect(() => {
         if (selectedDate.toDateString() === new Date().toDateString()) {
@@ -27,15 +40,22 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
 
     }, [selectedDate])
 
-    const handleLogSubmit = (habitId: number) => {
-        // add logiv for editing habit event
+    const handleLogSubmit = async (habitId: number) => {
+        try {
+            await addEventValue({ habitId, logValue: Number(logValue) }).unwrap();
+        } catch (err: any) {
+            setCustomError(err?.data?.message);
+        }
+        const formattedDate = selectedDate.toISOString().split('T')[0];
+        await triggerRefetchHabits(formattedDate);
         setLoggingHabitId(null);
         setLogValue('');
     };
 
-    const handleDeleteHabit = async (habitId: number, e: React.MouseEvent<HTMLLIElement>) => {
-        e.stopPropagation();
-        await deleteHabit(habitId).unwrap();
+
+    const handleLoginClick = (habitId: number) => {
+        setLoggingHabitId(habitId);
+        setCustomError(null)
     }
 
     return (
@@ -48,9 +68,14 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                     <div className="text-4xl">{habit.icon}</div>
 
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800">{habit.name}</h3>
+                        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            {habit.name}
+                            {habit.isGoalCompleted && (
+                                <CheckCheck className='text-lime-500' />
+                            )}
+                        </h3>
                         <p className="text-sm text-gray-500">
-                            Progress: <span className="font-medium">{habit.value}</span> / {habit.goal} {habit.unit}
+                            Progress: <span className={`font-medium ${habit.isGoalCompleted ? 'text-lime-500' : ""}`}>{habit.value}</span> / {habit.goal} {formatString(habit.unit)}
                         </p>
                     </div>
                 </div>
@@ -59,7 +84,7 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                     {loggingHabitId === habit.id && !isToday ? (
                         <input
                             type="text"
-                            className="px-3 py-1 border rounded-md text-sm w-24"
+                            className="px-1 py-1 bg-indigo-600 text-white rounded-md text-sm w-20"
                             value={logValue}
                             onChange={(e) => setLogValue(e.target.value)}
                             onKeyDown={(e) => {
@@ -70,14 +95,15 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                             onBlur={() => setLoggingHabitId(null)}
                             autoFocus
                         />
-                    ) : (
+                    ) : (<>
+                        <ErrorHandling customError={customError} />
                         <button
                             className="flex items-center px-4 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition"
-                            onClick={() => setLoggingHabitId(habit.id)}
+                            onClick={() => handleLoginClick(habit.id)}
                         >
                             ⌨️ Log
                         </button>
-                    )}
+                    </>)}
 
                     <div className="relative inline-block text-left">
                         <button
@@ -87,24 +113,21 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                                     ? handleMenuClose()
                                     : handleMenuOpen(habit.id)
                             }
-                        >
-                            ⋮
-                        </button>
+                        > ⋮ </button>
 
                         {openMenuId === habit.id && (
                             <div
-                                onMouseLeave={handleMenuClose}
+                                ref={dropdownRef}
                                 className="absolute mt-2 w-auto bg-white border border-indigo-700 rounded-md shadow-lg z-50"
                             >
-                                <ul className="py-1 text-sm text-gray-700">
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Edit</li>
-                                    <li
-                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                        onClick={(e) => handleDeleteHabit(habit.id, e)}
-                                    >
-                                        Delete
-                                    </li>
-                                </ul>
+                                <HabitSettings habitId={habit.id} setIsFormOpened={setIsFormOpened} />
+                                {isFormOpened && (
+                                    <AddHabitForm
+                                        onClose={() => setIsFormOpened(false)}
+                                        minStartDate={new Date()}
+                                        habit={habit}
+                                    />
+                                )}
                             </div>
                         )}
                     </div>

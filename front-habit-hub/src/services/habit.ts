@@ -21,21 +21,30 @@ export const habitApi = createApi({
     getHabitCategories: builder.query<TypeCategoryConfig[], void>({
       query: () => '/categories',
     }),
+    getUserHabitsByDate: builder.query<TypeUserHabitsList[], string>({
+      query: (date) => `?date=${date}`,
+      providesTags: (result, error, date) => [{ type: 'Habit', id: date }],
+    }),
     createHabit: builder.mutation<{ success: boolean }, TypeHabitCreateData>({
       query: (body) => ({
         url: ``,
         method: 'POST',
         body
       }),
+      invalidatesTags: [{ type: 'Habit' }],
     }),
-    getUserHabitsByDate: builder.query<TypeUserHabitsList[], string>({
-      query: (date) => `?date=${date}`,
-      providesTags: (result, error, date) => [{ type: 'Habit', id: date }],
-    }),
-    deleteHabit: builder.mutation<{ success: boolean }, number>({  
+    deleteHabit: builder.mutation<{ success: boolean }, number>({
       query: (habitId) => ({
         url: `/${habitId}`,
         method: 'DELETE',
+      }),
+      invalidatesTags: [{ type: 'Habit' }],
+    }),
+    editHabit: builder.mutation<TypeUserHabitsList, { habitId: number, habitData: TypeHabitCreateData }>({
+      query: ({ habitId, habitData }) => ({
+        url: `/${habitId}`,
+        method: 'PATCH',
+        body: habitData,
       }),
       invalidatesTags: [{ type: 'Habit' }],
     }),
@@ -46,5 +55,6 @@ export const {
   useGetHabitCategoriesQuery,
   useCreateHabitMutation,
   useLazyGetUserHabitsByDateQuery,
-  useDeleteHabitMutation
+  useDeleteHabitMutation,
+  useEditHabitMutation
 } = habitApi;

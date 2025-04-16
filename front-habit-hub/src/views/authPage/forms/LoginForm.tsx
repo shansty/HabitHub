@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import InputField from '../utils_components/InputField';
+import InputField from '../../../utils_components/InputField';
 import { Link, useNavigate } from 'react-router-dom';
 import { TypeUser } from '../../../types';
 import { useLoginUserMutation } from '../../../services/user';
 import { setToken } from '../../../utils';
+import ErrorHandling from '../../../utils_components/ErrorHandling';
 
 const LoginForm: React.FC = () => {
     const defaultUserDataValue: TypeUser = { username: "", password: "" }
@@ -30,7 +31,7 @@ const LoginForm: React.FC = () => {
             setToken(token);
             navigate('/profile');
         } catch (err: any) {
-            setCustomError(err?.data?.message || 'Something went wrong. Please try again.');
+            setCustomError(err?.data?.message);
         }
     };
 
@@ -61,11 +62,7 @@ const LoginForm: React.FC = () => {
                         Log In
                     </button>
                 </form>
-                {customError && (
-                    <p className="text-red-600 text-sm text-center mt-1">
-                        {customError}
-                    </p>
-                )}
+                <ErrorHandling customError={customError}/>
                 {isLoading && <p>Logging in...</p>}
                 <p className="mt-4 text-sm text-gray-800">
                     Forgot the password?{' '}
