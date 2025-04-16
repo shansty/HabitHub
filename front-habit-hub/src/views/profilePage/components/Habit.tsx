@@ -23,21 +23,19 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
     const [isToday, setIsToday] = useState(true)
     const [isFormOpened, setIsFormOpened] = useState(false)
     const [customError, setCustomError] = useState<string | null>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const [addEventValue] = useAddEventValueMutation()
     const [triggerRefetchHabits] = useLazyGetUserHabitsByDateQuery();
 
     const handleMenuOpen = (id: number) => setOpenMenuId(id);
     const handleMenuClose = () => setOpenMenuId(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
     useClickOutside(dropdownRef, () => setOpenMenuId(null));
 
     useEffect(() => {
-        if (selectedDate.toDateString() === new Date().toDateString()) {
-            setIsToday(false)
-        } else {
-            setIsToday(true)
-        }
+        const today = new Date().toDateString();
+        const selected = selectedDate.toDateString();
+        setIsToday(today === selected);
     }, [selectedDate])
 
 
@@ -56,7 +54,14 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
 
     const handleLoginClick = (habitId: number) => {
         setLoggingHabitId(habitId);
-        setCustomError(null)
+        if (!isToday) {
+            setCustomError(" You can only log progress for today. ")
+            setTimeout(() => {
+                setCustomError(null)
+            }, 2000)
+        } else {
+            setCustomError(null)
+        }
     }
 
     return (
@@ -82,7 +87,7 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    {loggingHabitId === habit.id && !isToday ? (
+                    {loggingHabitId === habit.id && isToday ? (
                         <input
                             type="text"
                             className="px-1 py-1 bg-indigo-600 text-white rounded-md text-sm w-20"
