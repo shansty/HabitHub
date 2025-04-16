@@ -15,6 +15,7 @@ const weekDays = [
   { label: 'Sat', value: 6 },
   { label: 'Sun', value: 7 },
 ];
+const defaultDays = [1, 2, 3, 4, 5, 6, 7];
 
 interface HabitScheduleDropdownProps {
   setFormData: React.Dispatch<React.SetStateAction<TypeHabitFormState>>;
@@ -30,79 +31,74 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
+
   useEffect(() => {
-    if (!habitSchedule) return;
-
-    setSelectedSchedule(habitSchedule.type);
-    if (habitSchedule.type === HabitScheduleEnum.DAILY && habitSchedule.daysOfWeek.length > 0) {
-      const numericDaysOfWeek = habitSchedule.daysOfWeek.map(Number);
-      setSelectedWeekdays(numericDaysOfWeek);
-      setFormData((prev) => ({
-        ...prev,
-        habitSchedule: HabitScheduleEnum.DAILY,
-        habitScheduleData: {
-          daysOfWeek: numericDaysOfWeek,
-          daysOfMonth: [],
-        },
-      }));
+    if (!habitSchedule) {
+      initDefaultSchedule();
+      return;
     }
-
-    if (habitSchedule.type === HabitScheduleEnum.MONTHLY && habitSchedule.daysOfMonth.length > 0) {
-      const numericDays = habitSchedule.daysOfMonth.map(Number); 
-      const dates = numericDays.map((day) => {
-        const today = new Date();
-        return new Date(today.getFullYear(), today.getMonth(), day);
-      });
-
-      setSelectedDates(dates);
-      setFormData((prev) => ({
-        ...prev,
-        habitSchedule: HabitScheduleEnum.MONTHLY,
-        habitScheduleData: {
-          daysOfWeek: [],
-          daysOfMonth: habitSchedule.daysOfMonth,
-        },
-      }));
+    const { type, daysOfWeek, daysOfMonth } = habitSchedule;
+    setSelectedSchedule(type);
+    if (type === HabitScheduleEnum.DAILY && daysOfWeek.length > 0) {
+      setSelectedWeekdays(daysOfWeek);
+      updateScheduleFormData(HabitScheduleEnum.DAILY, daysOfWeek);
+    }
+    if (type === HabitScheduleEnum.MONTHLY && daysOfMonth.length > 0) {
+      handleMonthlySetup(daysOfMonth);
     }
   }, [habitSchedule]);
+
+
+  const initDefaultSchedule = () => {
+    setSelectedSchedule(HabitScheduleEnum.DAILY);
+    setSelectedWeekdays(defaultDays);
+    updateScheduleFormData(HabitScheduleEnum.DAILY, defaultDays)
+  };
+
+
+  const handleMonthlySetup = (daysOfMonth: number[]) => {
+    const today = new Date();
+    const dates = daysOfMonth.map(day => new Date(today.getFullYear(), today.getMonth(), day));
+    setSelectedDates(dates);
+    updateScheduleFormData(HabitScheduleEnum.MONTHLY, daysOfMonth)
+  };
+
+
+  const updateScheduleFormData = (scheduleType: HabitScheduleEnum, daysOfWeek: number[] = [], daysOfMonth: number[] = []) => {
+    setFormData(prev => ({
+      ...prev,
+      habitSchedule: scheduleType,
+      habitScheduleData: {
+        daysOfWeek,
+        daysOfMonth,
+      },
+    }));
+  };
+
 
   const toggleWeekday = (day: number) => {
     setSelectedWeekdays((prev) => {
       const updated = prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day];
-      setFormData((prevForm) => ({
-        ...prevForm,
-        habitSchedule: HabitScheduleEnum.DAILY,
-        habitScheduleData: {
-          daysOfWeek: updated,
-          daysOfMonth: [],
-        },
-      }));
+      updateScheduleFormData(HabitScheduleEnum.DAILY, updated)
       return updated;
     });
   };
 
+
   const handleDateSelect = (date: Date | null) => {
     if (!date) return;
-
     const dayOfMonth = date.getDate();
     setSelectedDates((prevDates) => {
       const alreadySelected = prevDates.some((d) => d.getDate() === dayOfMonth);
       const updated = alreadySelected
         ? prevDates.filter((d) => d.getDate() !== dayOfMonth)
         : [...prevDates, date];
-
-      setFormData((prevForm) => ({
-        ...prevForm,
-        habitSchedule: HabitScheduleEnum.MONTHLY,
-        habitScheduleData: {
-          daysOfWeek: [],
-          daysOfMonth: updated.map((d) => d.getDate()),
-        },
-      }));
-
+      updateScheduleFormData(HabitScheduleEnum.MONTHLY, updated.map((d) => d.getDate()))
       return updated;
     });
   };
+
+
 
   return (
     <DropdownMenu.Root modal={false}>
@@ -135,8 +131,8 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
                     toggleWeekday(day.value);
                   }}
                   className={`border px-1 py-1 rounded-md ${selectedWeekdays.includes(day.value)
-                      ? "bg-indigo-600 text-white"
-                      : "bg-white"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-white"
                     }`}
                 >
                   {day.label}

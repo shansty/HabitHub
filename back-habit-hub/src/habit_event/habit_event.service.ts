@@ -13,13 +13,14 @@ export class HabitEventService {
 
 
 
-  async addEventValue(habitId: number, logValue: number) {
+  async addEventValue(habitId: number, logValue: number, date: string) {
     if(logValue < 0) {
       throw new BadRequestException("Negative numbers are not available.")
     }
     const habit_event = await this.habitEventRepository.findOne({
       where: {
-        habitId: habitId
+        habitId: habitId,
+        date: new Date (date)
       },
       relations: ['habit']
     })

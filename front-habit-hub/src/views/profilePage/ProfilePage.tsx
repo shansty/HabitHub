@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getToken, isTokenValid } from '../../utils';
 import Modal from '../../utils_components/Modal';
 import UserData from './components/UserData';
-import AddHabitForm from './forms/AddHabitForm';
+import HabitForm from './forms/HabitForm';
 import DatePicker from 'react-datepicker';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { useLazyGetUserHabitsByDateQuery } from '../../services/habit';
@@ -96,7 +96,7 @@ const UserProfilePage: React.FC = () => {
                     </div>
                 </div>
                 {isFormOpened && (
-                    <AddHabitForm
+                    <HabitForm
                         onClose={() => setIsFormOpened(false)}
                         minStartDate={new Date()}
                     />

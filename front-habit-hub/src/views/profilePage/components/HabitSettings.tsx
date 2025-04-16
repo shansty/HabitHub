@@ -20,20 +20,22 @@ const HabitSettings: React.FC<HabitSettingsProps> = ({ habitId, setIsFormOpened 
     };
 
     return (
-        <ul className="py-1 text-sm text-gray-700">
-            <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={(e) => handleEditHabit(e)}
-            >
-                Edit
-            </li>
-            <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={(e) => handleDeleteHabit(habitId, e)}
-            >
-                Delete
-            </li>
-        </ul>
+        <>
+            <ul className="py-1 text-sm text-gray-700">
+                <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={(e) => handleEditHabit(e)}
+                >
+                    Edit
+                </li>
+                <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={(e) => handleDeleteHabit(habitId, e)}
+                >
+                    Delete
+                </li>
+            </ul>
+        </>
     );
 }
 

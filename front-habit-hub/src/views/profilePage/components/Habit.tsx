@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TypeUserHabitsList } from '../../../types';
 import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit';
 import { useAddEventValueMutation } from '../../../services/habit_event';
-import AddHabitForm from '../forms/AddHabitForm';
+import HabitForm from '../forms/HabitForm';
 import { CheckCheck } from 'lucide-react';
 import { formatString } from '../../../utils';
 import ErrorHandling from '../../../utils_components/ErrorHandling';
@@ -16,6 +16,7 @@ interface HabitProps {
 }
 
 const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
+
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const [loggingHabitId, setLoggingHabitId] = useState<number | null>(null);
     const [logValue, setLogValue] = useState<string>('');
@@ -37,12 +38,12 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
         } else {
             setIsToday(true)
         }
-
     }, [selectedDate])
+
 
     const handleLogSubmit = async (habitId: number) => {
         try {
-            await addEventValue({ habitId, logValue: Number(logValue) }).unwrap();
+            await addEventValue({ habitId, logValue: Number(logValue), date: selectedDate }).unwrap();
         } catch (err: any) {
             setCustomError(err?.data?.message);
         }
@@ -122,7 +123,7 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                             >
                                 <HabitSettings habitId={habit.id} setIsFormOpened={setIsFormOpened} />
                                 {isFormOpened && (
-                                    <AddHabitForm
+                                    <HabitForm
                                         onClose={() => setIsFormOpened(false)}
                                         minStartDate={new Date()}
                                         habit={habit}
