@@ -4,7 +4,6 @@ import { HabitSchedule } from './entities/habit_schedule.entity';
 import { Habit } from '../habit/entities/habit.entity';
 import { HabitScheduleType } from '../habit/utils/habit_enums';
 import { Injectable } from '@nestjs/common';
-import { scheduled } from 'rxjs';
 
 @Injectable()
 export class HabitScheduleService {
