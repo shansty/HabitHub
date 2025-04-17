@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { TypeCategoryConfig, TypeHabitCreateData, TypeUserHabitsList } from '../types';
+import { CategoryData, HabitCreateData, UsersHabitData } from '../types';
 import { getToken } from '../utils';
 
 
@@ -18,14 +18,14 @@ export const habitApi = createApi({
   }),
   refetchOnFocus: true,
   endpoints: (builder) => ({
-    getHabitCategories: builder.query<TypeCategoryConfig[], void>({
+    getHabitCategories: builder.query<CategoryData[], void>({
       query: () => '/categories',
     }),
-    getUserHabitsByDate: builder.query<TypeUserHabitsList[], string>({
+    getUserHabitsByDate: builder.query<UsersHabitData[], string>({
       query: (date) => `?date=${date}`,
       providesTags: (_result, _error, date) => [{ type: 'Habit', id: date }],
     }),
-    createHabit: builder.mutation<{ success: boolean }, TypeHabitCreateData>({
+    createHabit: builder.mutation<{ success: boolean }, HabitCreateData>({
       query: (body) => ({
         url: ``,
         method: 'POST',
@@ -40,7 +40,7 @@ export const habitApi = createApi({
       }),
       invalidatesTags: [{ type: 'Habit' }],
     }),
-    editHabit: builder.mutation<TypeUserHabitsList, { habitId: number, habitData: TypeHabitCreateData }>({
+    editHabit: builder.mutation<UsersHabitData, { habitId: number, habitData: HabitCreateData }>({
       query: ({ habitId, habitData }) => ({
         url: `/${habitId}`,
         method: 'PATCH',

@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import InputField from '../../../utils_components/InputField';
-import PasswordField from '../components/PasswordField';
+import InputField from '../../../utils_components/input_field';
+import PasswordField from '../components/password_field';
 import { Link } from 'react-router-dom';
-import { TypeUser } from '../../../types';
+import { User } from '../../../types';
 import { useRegisterUserMutation } from '../../../services/user';
-import Dropzone from '../../../utils_components/Dropzone';
-import Modal from '../../../utils_components/Modal';
-import ErrorHandling from '../../../utils_components/ErrorHandling';
+import Dropzone from '../../../utils_components/custom_dropzone';
+import Modal from '../../../utils_components/modal_notification';
+import ErrorHandling from '../../../utils_components/error_handling';
 
 const SignUpForm: React.FC = () => {
 
-    const defaultUserDataValue: TypeUser = { username: "", password: "", email: "" }
-    const [userData, setUserData] = useState<TypeUser>(defaultUserDataValue);
+    const defaultUserDataValue: User = { username: "", password: "", email: "" }
+    const [userData, setUserData] = useState<User>(defaultUserDataValue);
     const [ , setIsPasswordValid] = useState(false);
     const [customError, setCustomError] = useState<string | null>(null);
 

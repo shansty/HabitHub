@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { TypeResetPasswordCredentials, TypeUser } from '../types'
+import { ResetPasswordCredentials, User } from '../types'
 import { getToken } from '../utils';
 
 export const userApi = createApi({
@@ -7,7 +7,7 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/user` }),
   refetchOnFocus: true,
   endpoints: (builder) => ({
-    loginUser: builder.mutation<{ token: string }, TypeUser>({
+    loginUser: builder.mutation<{ token: string }, User>({
       query: (body) => ({
         url: 'login',
         method: 'POST',
@@ -27,7 +27,7 @@ export const userApi = createApi({
         method: 'PATCH',
       }),
     }),
-    resetPassword: builder.mutation<{ success: boolean }, TypeResetPasswordCredentials>({
+    resetPassword: builder.mutation<{ success: boolean }, ResetPasswordCredentials>({
       query: (body) => ({
         url: 'password/reset',
         method: 'PATCH',
@@ -41,7 +41,7 @@ export const userApi = createApi({
         body
       }),
     }),
-    getUserData: builder.query<{ user: TypeUser }, string | null>({
+    getUserData: builder.query<{ user: User }, string | null>({
       query: (id) => {
         const token = getToken();
         return {

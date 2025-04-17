@@ -1,40 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import InputField from '../../../utils_components/InputField';
+import InputField from '../../../utils_components/input_field';
 import { useGetHabitCategoriesQuery, useCreateHabitMutation, useEditHabitMutation } from '../../../services/habit';
-import { UnitOfMeasurementEnum, HabitScheduleEnum, GoalPeriodicityEnum } from '../../../enums';
+import { UnitOfMeasurement, Schedule, GoalPeriodicity } from '../../../enums';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import SelectField from '../../../utils_components/SelectField';
-import InputNumber from '../../../utils_components/InputNumber';
-import HabitScheduleDropdown from '../components/CustomHabitSchedulePicker';
-import { TypeHabitCreateData, TypeHabitFormState, TypeUserHabitsList } from '../../../types';
-import ErrorHandling from '../../../utils_components/ErrorHandling';
+import SelectField from '../../../utils_components/select_field';
+import InputNumber from '../../../utils_components/input_number';
+import HabitScheduleDropdown from '../components/custom_habit_schedule_picker';
+import { HabitCreateData, UsersHabitData } from '../../../types';
+import ErrorHandling from '../../../utils_components/error_handling';
 
 interface HabitFormProps {
   onClose: () => void;
   minStartDate: Date;
-  habit?: TypeUserHabitsList;
+  habit?: UsersHabitData;
 }
 
 const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) => {
-  const [formData, setFormData] = useState<TypeHabitFormState>({
+  const [formData, setFormData] = useState<HabitCreateData>({
     name: habit?.name ?? '',
     category: habit?.category ?? '',
-    goal: habit?.goal?.toString() ?? '1',
-    goalDuration: '21',
-    unit: (habit?.unit as UnitOfMeasurementEnum) ?? UnitOfMeasurementEnum.TIMES,
+    goal: habit?.goal ?? 1,
+    goalDuration: 21,
+    unit: (habit?.unit as UnitOfMeasurement) ?? UnitOfMeasurement.TIMES,
     icon: habit?.icon ?? '',
-    habitSchedule: habit?.habitSchedule.type ?? HabitScheduleEnum.DAILY,
+    habitSchedule: habit?.habitSchedule.type ?? Schedule.DAILY,
     habitScheduleData: {
       daysOfWeek: habit?.habitSchedule.daysOfWeek?.map(Number) ?? [],
       daysOfMonth: habit?.habitSchedule.daysOfMonth?.map(Number) ?? [],
     },
-    goalPeriodicity: GoalPeriodicityEnum.PER_DAY,
+    goalPeriodicity: GoalPeriodicity.PER_DAY,
     startDate: new Date(),
   });
 
   const { data: categories } = useGetHabitCategoriesQuery();
-  const [unitOptions, setUnitOptions] = useState<UnitOfMeasurementEnum[]>([]);
+  const [unitOptions, setUnitOptions] = useState<UnitOfMeasurement[]>([]);
   const [iconsOptions, setIconsOptions] = useState<string[]>([]);
   const [createHabit, { isLoading }] = useCreateHabitMutation();
   const [editHabit] = useEditHabitMutation()
@@ -67,11 +67,11 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const preparedData: TypeHabitCreateData = {
+    const preparedData: HabitCreateData = {
       ...formData,
       goal: Number(formData.goal),
       goalDuration: Number(formData.goalDuration),
-      startDate: formData.startDate?.toISOString().split('T')[0] || '',
+      startDate: formData.startDate,
     };
 
     try {
@@ -90,7 +90,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
   const handleBlur = (field: 'goal' | 'goalDuration', min = 1) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: prev[field] === '' || Number(prev[field]) < min ? String(min) : prev[field],
+      [field]: !prev[field] || prev[field] < min ? min : prev[field],
     }));
   };
 
@@ -159,7 +159,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
                 name="goalPeriodicity"
                 value={formData.goalPeriodicity}
                 handleOnChange={handleChange}
-                array={Object.values(GoalPeriodicityEnum)}
+                array={Object.values(GoalPeriodicity)}
               />
             </div>
           </div>

@@ -1,10 +1,10 @@
-import HomePage from './views/homePage/HomePage'
-import LoginForm from './views/authPage/forms/LoginForm';
-import SignUpForm from './views/authPage/forms/SignUpForm';
-import VerifyEmailPage from './views/authPage/VerifyEmailPage';
-import ResetPasswordForm from './views/authPage/forms/ResetPasswordForm';
-import ResetPasswordConfirmForm from './views/authPage/forms/ResetPasswordConfirmForm';
-import UserProfilePage from './views/profilePage/ProfilePage';
+import HomePage from './views/homePage/home_page'
+import LoginForm from './views/authPage/forms/login_form';
+import SignUpForm from './views/authPage/forms/sign_up_form';
+import VerifyEmailPage from './views/authPage/verify_email_page';
+import ResetPasswordForm from './views/authPage/forms/reset_password_form';
+import ResetPasswordConfirmForm from './views/authPage/forms/reset_password_confirm_form';
+import UserProfilePage from './views/profilePage/profile_page';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 

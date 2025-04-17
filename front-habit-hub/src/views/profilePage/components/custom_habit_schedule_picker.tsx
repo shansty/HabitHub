@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { HabitScheduleEnum } from '../../../enums';
+import { Schedule } from '../../../enums';
 import { formatString } from '../../../utils';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { TypeHabitFormState } from '../../../types';
+import { HabitCreateData } from '../../../types';
 
 const weekDays = [
   { label: 'Mon', value: 1 },
@@ -18,16 +18,16 @@ const weekDays = [
 const defaultDays = [1, 2, 3, 4, 5, 6, 7];
 
 interface HabitScheduleDropdownProps {
-  setFormData: React.Dispatch<React.SetStateAction<TypeHabitFormState>>;
+  setFormData: React.Dispatch<React.SetStateAction<HabitCreateData>>;
   habitSchedule?: {
-    type: HabitScheduleEnum;
+    type: Schedule;
     daysOfWeek: number[];
     daysOfMonth: number[];
   };
 }
 
 const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormData, habitSchedule }) => {
-  const [selectedSchedule, setSelectedSchedule] = useState<HabitScheduleEnum>(HabitScheduleEnum.DAILY);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule>(Schedule.DAILY);
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
@@ -39,32 +39,32 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
     }
     const { type, daysOfWeek, daysOfMonth } = habitSchedule;
     setSelectedSchedule(type);
-    if (type === HabitScheduleEnum.DAILY && daysOfWeek.length > 0) {
+    if (type === Schedule.DAILY && daysOfWeek.length > 0) {
       setSelectedWeekdays(daysOfWeek);
-      updateScheduleFormData(HabitScheduleEnum.DAILY, daysOfWeek);
+      updateScheduleFormData(Schedule.DAILY, daysOfWeek);
     }
-    if (type === HabitScheduleEnum.MONTHLY && daysOfMonth.length > 0) {
+    if (type === Schedule.MONTHLY && daysOfMonth.length > 0) {
       handleMonthlySetup(daysOfMonth);
     }
   }, [habitSchedule]);
-
-
-  const initDefaultSchedule = () => {
-    setSelectedSchedule(HabitScheduleEnum.DAILY);
-    setSelectedWeekdays(defaultDays);
-    updateScheduleFormData(HabitScheduleEnum.DAILY, defaultDays)
-  };
 
 
   const handleMonthlySetup = (daysOfMonth: number[]) => {
     const today = new Date();
     const dates = daysOfMonth.map(day => new Date(today.getFullYear(), today.getMonth(), day));
     setSelectedDates(dates);
-    updateScheduleFormData(HabitScheduleEnum.MONTHLY, daysOfMonth)
+    updateScheduleFormData(Schedule.MONTHLY, daysOfMonth)
   };
 
 
-  const updateScheduleFormData = (scheduleType: HabitScheduleEnum, daysOfWeek: number[] = [], daysOfMonth: number[] = []) => {
+  const initDefaultSchedule = () => {
+    setSelectedSchedule(Schedule.DAILY);
+    setSelectedWeekdays(defaultDays);
+    updateScheduleFormData(Schedule.DAILY, defaultDays)
+  };
+
+
+  const updateScheduleFormData = (scheduleType: Schedule, daysOfWeek: number[] = [], daysOfMonth: number[] = []) => {
     setFormData(prev => ({
       ...prev,
       habitSchedule: scheduleType,
@@ -76,13 +76,16 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
   };
 
 
-  const toggleWeekday = (day: number) => {
+  const handleWeekdaySelect = (day: number) => {
     setSelectedWeekdays((prev) => {
       const updated = prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day];
-      updateScheduleFormData(HabitScheduleEnum.DAILY, updated)
+      if (selectedSchedule === Schedule.DAILY) {
+        updateScheduleFormData(Schedule.DAILY, updated);
+      }
       return updated;
     });
   };
+
 
 
   const handleDateSelect = (date: Date | null) => {
@@ -93,11 +96,12 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
       const updated = alreadySelected
         ? prevDates.filter((d) => d.getDate() !== dayOfMonth)
         : [...prevDates, date];
-      updateScheduleFormData(HabitScheduleEnum.MONTHLY, updated.map((d) => d.getDate()))
+        if (selectedSchedule === Schedule.MONTHLY) {
+          updateScheduleFormData(Schedule.MONTHLY, [], updated.map((d) => d.getDate()));
+        }
       return updated;
     });
   };
-
 
 
   return (
@@ -115,10 +119,10 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
       >
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger
-            onMouseEnter={() => setSelectedSchedule(HabitScheduleEnum.DAILY)}
+            onMouseEnter={() => setSelectedSchedule(Schedule.DAILY)}
             className="px-4 py-1 rounded-md flex justify-between items-center w-full"
           >
-            {formatString(HabitScheduleEnum.DAILY)} →
+            {formatString(Schedule.DAILY)} →
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent className="ml-2 bg-white shadow-md rounded-md p-3 grid grid-cols-2 gap-2 w-48 z-50">
             {weekDays.map((day) => (
@@ -128,7 +132,7 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    toggleWeekday(day.value);
+                    handleWeekdaySelect(day.value);
                   }}
                   className={`border px-1 py-1 rounded-md ${selectedWeekdays.includes(day.value)
                     ? "bg-indigo-600 text-white"
@@ -144,10 +148,10 @@ const HabitScheduleDropdown: React.FC<HabitScheduleDropdownProps> = ({ setFormDa
 
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger
-            onMouseEnter={() => setSelectedSchedule(HabitScheduleEnum.MONTHLY)}
+            onMouseEnter={() => setSelectedSchedule(Schedule.MONTHLY)}
             className="px-4 py-1 mt-1 rounded flex justify-between items-center w-full"
           >
-            {formatString(HabitScheduleEnum.MONTHLY)} →
+            {formatString(Schedule.MONTHLY)} →
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent className="ml-2 shadow-md rounded-md p-3 w-auto">
             <div

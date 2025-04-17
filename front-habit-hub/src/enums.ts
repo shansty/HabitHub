@@ -1,4 +1,4 @@
-export enum UnitOfMeasurementEnum {
+export enum UnitOfMeasurement {
     TIMES = 'TIMES',
     MINS = 'MINS',
     HOURS = 'HOURS',
@@ -19,13 +19,13 @@ export enum UnitOfMeasurementEnum {
   }
   
 
-export enum GoalPeriodicityEnum {
+export enum GoalPeriodicity {
     PER_DAY = 'PER DAY',
     PER_WEEK = 'PER WEEK',
     PER_MONTH = 'PER MONTH',
   }
   
-  export enum HabitScheduleEnum {
+  export enum Schedule {
     DAILY = 'DAILY',
     MONTHLY = 'MONTHLY',
   }

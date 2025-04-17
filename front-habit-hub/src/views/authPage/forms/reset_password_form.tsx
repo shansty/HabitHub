@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TypeResetPasswordCredentials } from '../../../types';
+import { ResetPasswordCredentials } from '../../../types';
 import { useResetPasswordMutation } from '../../../services/user';
-import PasswordField from '../components/PasswordField';
-import InputField from '../../../utils_components/InputField';
-import ErrorHandling from '../../../utils_components/ErrorHandling';
+import PasswordField from '../components/password_field';
+import InputField from '../../../utils_components/input_field';
+import ErrorHandling from '../../../utils_components/error_handling';
 
 const ResetPasswordForm = () => {
 
-    const [userData, setUserData] = useState<TypeResetPasswordCredentials>({
+    const [userData, setUserData] = useState<ResetPasswordCredentials>({
         email: "",
         new_password: "",
         confirm_password: ""
