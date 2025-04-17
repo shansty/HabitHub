@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum,IsNumber, Min, Max, IsDateString, IsOptional, IsArray, IsInt, ValidateIf, ValidateNested} from "class-validator";
 import { Type } from "class-transformer";
-import {UnitOfMeasurementType, GoalPeriodicityType, HabitScheduleType, HabitDomain} from "../utils/habit_enums";
+import {UnitOfMeasurement, GoalPeriodicity, Schedule , HabitDomain } from "../utils/habit_enums";
 
 class HabitScheduleData {
   @ValidateIf((_, value) => Array.isArray(value))
@@ -33,34 +33,34 @@ export class HabitDto {
   @Min(1, { message: 'Goal duration must be at least 1 day. ' })
   goalDuration: number;
 
-  @IsEnum(UnitOfMeasurementType, {
+  @IsEnum(UnitOfMeasurement, {
     message: 'Please select a valid unit of measurement. '
   })
-  unit: UnitOfMeasurementType;
+  unit: UnitOfMeasurement;
 
   @IsString({ message: 'Icon must be a string. ' })
   @IsNotEmpty({ message: 'Please select an icon for your habit. ' })
   icon: string;
 
-  @IsEnum(HabitScheduleType, {
+  @IsEnum(Schedule , {
     message: 'Please choose a valid repeat schedule. '
   })
-  habitSchedule: HabitScheduleType;
+  habitSchedule: Schedule ;
 
   @ValidateNested()
   @Type(() => HabitScheduleData)
   habitScheduleData: HabitScheduleData;
 
-  @IsEnum(GoalPeriodicityType, {
+  @IsEnum(GoalPeriodicity, {
     message: 'Please select how often you want to complete your goal. '
   })
-  goalPeriodicity: GoalPeriodicityType;
+  goalPeriodicity: GoalPeriodicity;
 
   @IsDateString({}, { message: 'Please provide a valid start date. ' })
   startDate: string;
 
-  @IsEnum(HabitDomain, {
+  @IsEnum(HabitDomain , {
     message: 'Please choose a valid category from the list.'
   })
-  category: HabitDomain;
+  category: HabitDomain ;
 }

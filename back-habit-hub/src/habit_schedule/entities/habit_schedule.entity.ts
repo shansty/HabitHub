@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Habit } from "../../habit/entities/habit.entity";
-import { HabitScheduleType } from "../../habit/utils/habit_enums";
+import { HabitDomain, Schedule  } from "../../habit/utils/habit_enums";
 
 @Entity()
 export class HabitSchedule {
@@ -11,8 +11,8 @@ export class HabitSchedule {
     @JoinColumn({ name: 'habitId' })
     habit: Habit;
 
-    @Column({ type: 'enum', enum: HabitScheduleType })
-    type: HabitScheduleType;
+    @Column({ type: 'enum', enum: Schedule})
+    type: Schedule;
 
     @Column("int", { array: true, nullable: true })
     daysOfWeek: number[];

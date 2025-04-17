@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-interface ICustomJwtPayload {
+interface CustomJwtPayload {
     userId: string;
     exp: number;
     iat: number;
@@ -26,7 +26,7 @@ export function getToken(): string | null {
 
 export function getIDFromToken(token: string | null): string | null {
     if (!token) return null;
-    const decoded: ICustomJwtPayload = jwtDecode(token);
+    const decoded: CustomJwtPayload = jwtDecode(token);
     return decoded.userId;
 }
 
@@ -34,7 +34,7 @@ export function isTokenValid(token: string | null): boolean {
     if (!token) return false;
   
     try {
-      const decoded: ICustomJwtPayload = jwtDecode(token);
+      const decoded: CustomJwtPayload = jwtDecode(token);
       const currentTime = Math.floor(Date.now() / 1000);
       return decoded.exp > currentTime;
     } catch (error) {

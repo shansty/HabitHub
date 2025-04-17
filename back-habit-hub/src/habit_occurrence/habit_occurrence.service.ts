@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HabitOccurrence } from './entities/habit_occurrence.entity';
 import { Repository } from 'typeorm';
 import { Habit } from '../habit/entities/habit.entity';
-import { HabitScheduleType } from '../habit/utils/habit_enums';
+import { HabitDomain, Schedule  } from '../habit/utils/habit_enums';
 
 @Injectable()
 export class HabitOccurrenceService {
@@ -12,7 +12,7 @@ export class HabitOccurrenceService {
     private readonly habitOccurrenceRepository: Repository<HabitOccurrence>,
   ) {}
 
-  generateOccurrences(habit: Habit, userId: string, scheduleType: HabitScheduleType, scheduleData: { daysOfWeek?: number[]; daysOfMonth?: number[] }): HabitOccurrence[] {
+  generateOccurrences(habit: Habit, userId: string, scheduleType: Schedule , scheduleData: { daysOfWeek?: number[]; daysOfMonth?: number[] }): HabitOccurrence[] {
     const occurrences: HabitOccurrence[] = [];
     const start = new Date(habit.startDate);
     for (let i = 0; i < habit.goalDuration; i++) {
@@ -34,16 +34,16 @@ export class HabitOccurrenceService {
   }
 
   
-  private shouldIncludeDate(date: Date, schedule: HabitScheduleType, data: { daysOfWeek?: number[]; daysOfMonth?: number[] }): boolean {
+  private shouldIncludeDate(date: Date, schedule: Schedule , data: { daysOfWeek?: number[]; daysOfMonth?: number[] }): boolean {
     const jsDay = date.getDay();
     const mappedDay = jsDay === 0 ? 7 : jsDay; 
     const dayOfMonth = date.getDate();
 
-    if (schedule === HabitScheduleType.DAILY) {
+    if (schedule === Schedule.DAILY) {
       return data.daysOfWeek?.includes(mappedDay) ?? false;
     }
 
-    if (schedule === HabitScheduleType.MONTHLY) {
+    if (schedule === Schedule.MONTHLY) {
       return data.daysOfMonth?.includes(dayOfMonth) ?? false;
     }
 

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TypeUserHabitsList } from '../../../types';
+import { UsersHabitData } from '../../../types';
 import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit';
 import { useAddEventValueMutation } from '../../../services/habit_event';
-import HabitForm from '../forms/HabitForm';
+import HabitForm from '../forms/habit_form';
 import { CheckCheck } from 'lucide-react';
 import { formatString } from '../../../utils';
-import ErrorHandling from '../../../utils_components/ErrorHandling';
-import HabitSettings from './HabitSettings';
+import ErrorHandling from '../../../utils_components/error_handling';
+import HabitSettings from './habit_settings';
 import { useClickOutside } from '../../../hooks';
 
 
 interface HabitProps {
-    habit: TypeUserHabitsList;
+    habit: UsersHabitData;
     selectedDate: Date;
 }
 

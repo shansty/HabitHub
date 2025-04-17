@@ -2,7 +2,7 @@ import React from 'react';
 
 interface InputNumberProps {
   name: string;
-  value: string;
+  value: number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   min?: number;
   className?: string;

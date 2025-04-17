@@ -1,94 +1,69 @@
-import { UnitOfMeasurementEnum, HabitScheduleEnum, GoalPeriodicityEnum } from "./enums"
+import { UnitOfMeasurement, Schedule, GoalPeriodicity } from "./enums"
 
-export type TypeUser = {
+export type User = {
     username: string,
     password?: string,
     email?: string,
     profile_picture?: File | string | undefined
 }
 
-export type TypeUserProfile = {
+export type UserProfile = {
     username?: string,
     profile_picture?: File | string | undefined
 }
 
-export type TypeResetPasswordCredentials = {
+export type ResetPasswordCredentials = {
     email: string,
     new_password: string,
     confirm_password: string,
 }
 
-export type TypeHabitWithProgress = {
-    id: number,
-    name: string;
-    category: string;
-    progress: number
-}
-
-export type TypeCategoryConfig = {
+export type CategoryData = {
     name: string;
     icons: string[];
     defaultIcon: string;
-    defaultUnit: UnitOfMeasurementEnum;
-    allowedUnits: UnitOfMeasurementEnum[];
+    defaultUnit: UnitOfMeasurement;
+    allowedUnits: UnitOfMeasurement[];
 }
 
-export type TypeHabitFormState = {
+export type HabitCreateData = {
     name: string;
-    goal: string;
-    goalDuration: string;
-    unit: UnitOfMeasurementEnum;
+    goal: number;
+    goalDuration: number;
+    unit: UnitOfMeasurement;
     icon: string;
-    habitSchedule: HabitScheduleEnum;
+    habitSchedule: Schedule;
     habitScheduleData: {
         daysOfWeek: number[];
         daysOfMonth: number[];
     };
-    goalPeriodicity: GoalPeriodicityEnum;
+    goalPeriodicity: GoalPeriodicity;
     startDate: Date;
     category: string;
 };
 
-
-
-export type TypeHabitCreateData = {
-    name: string;
-    goal: number;
-    goalDuration: number;
-    unit: UnitOfMeasurementEnum;
-    icon: string;
-    habitSchedule: HabitScheduleEnum;
-    habitScheduleData: {
-        daysOfWeek: number[];
-        daysOfMonth: number[];
-    };
-    goalPeriodicity: GoalPeriodicityEnum;
-    startDate: string;
-    category: string;
-};
-
-
-export type TypeUserHabitsList = {
+export type UsersHabitData = {
     id: number,
     name: string,
     goal: number,
-    unit: UnitOfMeasurementEnum,
+    unit: UnitOfMeasurement,
     icon: string,
     value: number,
     isGoalCompleted: boolean,
     isFailure: boolean,
     category?: string,
     habitSchedule: {
-        type: HabitScheduleEnum;
+        type: Schedule;
         daysOfWeek: number[];
         daysOfMonth: number[];
     };
 }
 
-export type TypeHabitEvent = {
+export type HabitEvent = {
     habitId: number,
     date: string,
     value?: number,
     isGoalCompleted?: boolean,
     isFailure?: boolean,
 }
+

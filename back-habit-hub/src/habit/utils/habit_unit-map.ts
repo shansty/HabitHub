@@ -1,70 +1,70 @@
-import { HabitDomain, UnitOfMeasurementType } from './habit_enums';
+import { HabitDomain , UnitOfMeasurement } from './habit_enums';
 
-export const HabitCategoryConfig: Record<HabitDomain, {
+export const HabitCategoryConfig: Record<HabitDomain , {
   icons: string[];
   defaultIcon: string;
-  defaultUnit: UnitOfMeasurementType;
-  allowedUnits: UnitOfMeasurementType[];
+  defaultUnit: UnitOfMeasurement;
+  allowedUnits: UnitOfMeasurement[];
 }> = {
   FINANCE: {
     icons: ['💰', '💳', '📈', '💵', '🪙', '🧾'],
     defaultIcon: '💰',
-    defaultUnit: UnitOfMeasurementType.USD,
+    defaultUnit: UnitOfMeasurement.USD,
     allowedUnits: [
-      UnitOfMeasurementType.TIMES,
-      UnitOfMeasurementType.USD
+      UnitOfMeasurement.TIMES,
+      UnitOfMeasurement.USD
     ],
   },
   FITNESS: {
     icons: ['💪', '🏃‍♂️', '🏋️‍♀️', '🚴‍♀️', '🧘‍♂️', '🤸‍♂️'],
     defaultIcon: '💪',
-    defaultUnit: UnitOfMeasurementType.TIMES,
+    defaultUnit: UnitOfMeasurement.TIMES,
     allowedUnits: [
-      UnitOfMeasurementType.TIMES,
-      UnitOfMeasurementType.MINS,
-      UnitOfMeasurementType.HOURS,
-      UnitOfMeasurementType.KM,
-      UnitOfMeasurementType.M,
-      UnitOfMeasurementType.STEPS,
+      UnitOfMeasurement.TIMES,
+      UnitOfMeasurement.MINS,
+      UnitOfMeasurement.HOURS,
+      UnitOfMeasurement.KM,
+      UnitOfMeasurement.M,
+      UnitOfMeasurement.STEPS,
     ],
   },
   HEALTH: {
     icons: ['🩺', '🧬', '🏥', '🛌', '💊', '🩻'],
     defaultIcon: '🧬',
-    defaultUnit: UnitOfMeasurementType.TIMES,
+    defaultUnit: UnitOfMeasurement.TIMES,
     allowedUnits: [
-      UnitOfMeasurementType.TIMES,
-      UnitOfMeasurementType.MINS,
-      UnitOfMeasurementType.HOURS,
-      UnitOfMeasurementType.G,
-      UnitOfMeasurementType.MG,
-      UnitOfMeasurementType.KCAL,
+      UnitOfMeasurement.TIMES,
+      UnitOfMeasurement.MINS,
+      UnitOfMeasurement.HOURS,
+      UnitOfMeasurement.G,
+      UnitOfMeasurement.MG,
+      UnitOfMeasurement.KCAL,
     ],
   },
   MINDSET: {
     icons: ['🧠', '📖', '✨', '🎧', '📝', '📿'],
     defaultIcon: '✨',
-    defaultUnit: UnitOfMeasurementType.TIMES,
+    defaultUnit: UnitOfMeasurement.TIMES,
     allowedUnits: [ 
-      UnitOfMeasurementType.TIMES,
-      UnitOfMeasurementType.MINS,
-      UnitOfMeasurementType.SESSIONS,
-      UnitOfMeasurementType.BOOKS,
-      UnitOfMeasurementType.TASKS
+      UnitOfMeasurement.TIMES,
+      UnitOfMeasurement.MINS,
+      UnitOfMeasurement.SESSIONS,
+      UnitOfMeasurement.BOOKS,
+      UnitOfMeasurement.TASKS
     ],
   },
   NUTRITION: {
     icons: ['🥗', '🍎', '🥦', '🍵', '🥛', '🍽️'],
     defaultIcon: '🥦',
-    defaultUnit: UnitOfMeasurementType.G,
+    defaultUnit: UnitOfMeasurement.G,
     allowedUnits: [
-      UnitOfMeasurementType.G,
-      UnitOfMeasurementType.MG,
-      UnitOfMeasurementType.KG,
-      UnitOfMeasurementType.L,
-      UnitOfMeasurementType.ML,
-      UnitOfMeasurementType.KCAL,
-      UnitOfMeasurementType.ITEMS,
+      UnitOfMeasurement.G,
+      UnitOfMeasurement.MG,
+      UnitOfMeasurement.KG,
+      UnitOfMeasurement.L,
+      UnitOfMeasurement.ML,
+      UnitOfMeasurement.KCAL,
+      UnitOfMeasurement.ITEMS,
     ],
   },
   CUSTOM: {
@@ -80,7 +80,7 @@ export const HabitCategoryConfig: Record<HabitDomain, {
       '🙏', '👏', '🧍‍♂️', '🧍‍♀️', '🧑‍🍳', '🧑‍🎓', '🧑‍💻', '💃',
     ],
     defaultIcon: '👏',
-    defaultUnit: UnitOfMeasurementType.TIMES,
-    allowedUnits: Object.values(UnitOfMeasurementType),
+    defaultUnit: UnitOfMeasurement.TIMES,
+    allowedUnits: Object.values(UnitOfMeasurement),
   },
 };

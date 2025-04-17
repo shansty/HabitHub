@@ -1,9 +1,9 @@
 import React from 'react';
-import { TypeUserHabitsList } from '../../../types';
-import Habit from './Habit';
+import { UsersHabitData } from '../../../types';
+import Habit from './habit_item';
 
 interface HabitListProps {
-    habits: TypeUserHabitsList[] | undefined;
+    habits: UsersHabitData[] | undefined;
     selectedDate: Date;
 }
 

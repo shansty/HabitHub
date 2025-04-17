@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PasswordChecklist from 'react-password-checklist';
-import PasswordStrengthBar from './PasswordStrengthBar';
+import PasswordStrengthBar from './password_strength_bar';
 import { formatFieldName } from '../../../utils';
 
 

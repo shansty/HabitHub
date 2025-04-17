@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, JoinColumn, } from 'typeorm';
-import { GoalPeriodicityType, HabitDomain, HabitStatus, HabitType, UnitOfMeasurementType } from '../utils/habit_enums';
+import { GoalPeriodicity, HabitDomain , HabitStatus, UnitOfMeasurement } from '../utils/habit_enums';
 import { User } from '../../users/entities/users.entity';
 import { HabitSchedule } from '../../habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from '../../habit_event/entities/habit_event.entity';
@@ -17,11 +17,11 @@ export class Habit {
     @Column()
     goal: number;
 
-    @Column({ type: 'enum', enum: UnitOfMeasurementType })
-    unit: UnitOfMeasurementType
+    @Column({ type: 'enum', enum: UnitOfMeasurement })
+    unit: UnitOfMeasurement
 
-    @Column({ type: 'enum', enum: GoalPeriodicityType })
-    goalPeriodicity: GoalPeriodicityType
+    @Column({ type: 'enum', enum: GoalPeriodicity })
+    goalPeriodicity: GoalPeriodicity
 
     @Column()
     goalDuration: number;
@@ -38,11 +38,8 @@ export class Habit {
     })
     habitOccurence: HabitOccurrence[];
 
-    @Column({ type: 'enum', enum: HabitType, default: HabitType.GOOD })
-    type: HabitType;
-
-    @Column({ type: 'enum', enum: HabitDomain })
-    category: HabitDomain;
+    @Column({ type: 'enum', enum: HabitDomain  })
+    category: HabitDomain ;
 
     @Column()
     icon: string;

@@ -1,6 +1,6 @@
 import { IsDateString, IsInt, IsBoolean, IsNotEmpty } from 'class-validator';
 
-export class CreateHabitEventDto {
+export class HabitEventDto {
 
   @IsInt()
   habitId: number;

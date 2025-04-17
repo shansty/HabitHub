@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken, isTokenValid } from '../../utils';
-import Modal from '../../utils_components/Modal';
-import UserData from './components/UserData';
-import HabitForm from './forms/HabitForm';
+import Modal from '../../utils_components/modal_notification';
+import UserData from './components/user_data';
+import HabitForm from './forms/habit_form';
 import DatePicker from 'react-datepicker';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { useLazyGetUserHabitsByDateQuery } from '../../services/habit';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useClickOutside } from '../../hooks';
-import HabitList from './components/HabitList';
+import HabitList from './components/habit_list';
 import { Keyboard } from 'lucide-react';
 
 

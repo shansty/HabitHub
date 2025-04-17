@@ -1,9 +1,9 @@
 import { Body, Injectable, NotFoundException } from '@nestjs/common';
-import { HabitDto } from './dto/create-habit.dto';
+import { HabitDto } from './dto/habit.dto';
 import { Habit } from './entities/habit.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, LessThan, MoreThan } from 'typeorm';
-import { HabitCategoryConfig } from './utils/habit-unit-map';
+import { HabitCategoryConfig } from './utils/habit_unit-map';
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity';
 import { HabitEvent } from '../habit_event/entities/habit_event.entity';
 import { HabitEventService } from '../habit_event/habit_event.service';
