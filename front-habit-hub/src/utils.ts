@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-interface ICustomJwtPayload {
+interface CustomJwtPayload {
     userId: string;
     exp: number;
     iat: number;
@@ -12,6 +12,10 @@ export const formatFieldName = (str: string): string => {
         .replace(/^./, (char) => char.toUpperCase());
 };
 
+export const formatString = (str: string): string => {
+    return (str.charAt(0).toLocaleUpperCase() + str.slice(1).toLowerCase())
+}
+
 export function setToken(token: string): void {
     localStorage.setItem("token", token);
 }
@@ -22,6 +26,18 @@ export function getToken(): string | null {
 
 export function getIDFromToken(token: string | null): string | null {
     if (!token) return null;
-    const decoded: ICustomJwtPayload = jwtDecode(token);
+    const decoded: CustomJwtPayload = jwtDecode(token);
     return decoded.userId;
 }
+
+export function isTokenValid(token: string | null): boolean {
+    if (!token) return false;
+  
+    try {
+      const decoded: CustomJwtPayload = jwtDecode(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      return decoded.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
+  }

@@ -1,34 +1,69 @@
-export type TypeUser = {
+import { UnitOfMeasurement, Schedule, GoalPeriodicity } from "./enums"
+
+export type User = {
     username: string,
     password?: string,
     email?: string,
     profile_picture?: File | string | undefined
 }
 
-export type TypeUserProfile = {
+export type UserProfile = {
     username?: string,
     profile_picture?: File | string | undefined
 }
 
-export type TypeResetPasswordCredentials = {
+export type ResetPasswordCredentials = {
     email: string,
     new_password: string,
     confirm_password: string,
 }
 
-export type TypeHabit = {
+export type CategoryData = {
     name: string;
-    category: string;
+    icons: string[];
+    defaultIcon: string;
+    defaultUnit: UnitOfMeasurement;
+    allowedUnits: UnitOfMeasurement[];
 }
 
-export type TypeHabitWithProgress = {
+export type HabitCreateData = {
+    name: string;
+    goal: number;
+    goalDuration: number;
+    unit: UnitOfMeasurement;
+    icon: string;
+    habitSchedule: Schedule;
+    habitScheduleData: {
+        daysOfWeek: number[];
+        daysOfMonth: number[];
+    };
+    goalPeriodicity: GoalPeriodicity;
+    startDate: Date;
+    category: string;
+};
+
+export type UsersHabitData = {
     id: number,
-    name: string;
-    category: string;
-    progress: number
+    name: string,
+    goal: number,
+    unit: UnitOfMeasurement,
+    icon: string,
+    value: number,
+    isGoalCompleted: boolean,
+    isFailure: boolean,
+    category?: string,
+    habitSchedule: {
+        type: Schedule;
+        daysOfWeek: number[];
+        daysOfMonth: number[];
+    };
 }
 
-export type TypeCategory = {
-    name: string,
-    icon: string
+export type HabitEvent = {
+    habitId: number,
+    date: string,
+    value?: number,
+    isGoalCompleted?: boolean,
+    isFailure?: boolean,
 }
+
