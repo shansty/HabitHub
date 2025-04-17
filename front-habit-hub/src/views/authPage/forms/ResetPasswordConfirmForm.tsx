@@ -9,7 +9,7 @@ const ResetPasswordConfirmForm: React.FC = () => {
 
     const [code, setCode] = useState('');
     const [customError, setCustomError] = useState<string | null>(null);
-    const [verifyResetCode, { isLoading, error, isSuccess }] = useVerifyResetCodeMutation();
+    const [verifyResetCode, { isLoading, isSuccess }] = useVerifyResetCodeMutation();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCode(e.target.value)

@@ -26,8 +26,8 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
     icon: habit?.icon ?? '',
     habitSchedule: habit?.habitSchedule.type ?? HabitScheduleEnum.DAILY,
     habitScheduleData: {
-      daysOfWeek: habit?.habitSchedule.daysOfWeek ?? [],
-      daysOfMonth: habit?.habitSchedule.daysOfMonth ?? [],
+      daysOfWeek: habit?.habitSchedule.daysOfWeek?.map(Number) ?? [],
+      daysOfMonth: habit?.habitSchedule.daysOfMonth?.map(Number) ?? [],
     },
     goalPeriodicity: GoalPeriodicityEnum.PER_DAY,
     startDate: new Date(),
@@ -39,6 +39,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
   const [createHabit, { isLoading }] = useCreateHabitMutation();
   const [editHabit] = useEditHabitMutation()
   const [customError, setCustomError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (formData.category) {
@@ -75,8 +76,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) =
 
     try {
       if (!habit) {
-        console.dir({ preparedData })
-        // await createHabit(preparedData).unwrap();
+        await createHabit(preparedData).unwrap();
         onClose();
       } else {
         await editHabit({ habitId: habit.id, habitData: preparedData }).unwrap();
