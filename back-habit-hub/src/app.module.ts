@@ -12,6 +12,7 @@ import { HabitEventModule } from './habit_event/habit_event.module';
 import { HabitSchedule } from './habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from './habit_event/entities/habit_event.entity';
 import { HabitOccurrence } from './habit_occurrence/entities/habit_occurrence.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -6,10 +6,4 @@ import { CreateHabitScheduleDto } from './dto/create-habit_schedule.dto';
 export class HabitScheduleController {
   constructor(private readonly habitScheduleService: HabitScheduleService) {}
 
-  @Post()
-  create(@Body() createHabitScheduleDto: CreateHabitScheduleDto) {
-    return this.habitScheduleService.create(createHabitScheduleDto);
-  }
-
-
 }

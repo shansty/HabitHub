@@ -39,10 +39,9 @@ export class HabitService {
   async createHabit(body: HabitDto, userId: string) {
     const habit = await this.createAndSaveHabit(body, userId);
 
-    await this.habitScheduleService.createSchedule(habit, body.habitSchedule, body.habitScheduleData);
+     await this.habitScheduleService.createSchedule(habit, body.habitSchedule, body.habitScheduleData);
     const occurrences = this.habitOccurrenceService.generateOccurrences(habit, userId, body.habitSchedule, body.habitScheduleData);
     await this.habitOccurrenceRepository.save(occurrences);
-
     return {
       success: true,
       habitId: habit.id,
@@ -120,7 +119,6 @@ export class HabitService {
       habitData.habitScheduleData,
     );
     await this.habitOccurrenceRepository.save(newOccurrences);
-
 
     return habit;
   }

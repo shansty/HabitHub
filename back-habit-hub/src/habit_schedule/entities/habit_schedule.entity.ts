@@ -6,7 +6,7 @@ import { HabitScheduleType } from "../../habit/utils/habit_enums";
 export class HabitSchedule {
     @PrimaryGeneratedColumn()
     id: number;
-      
+
     @OneToOne(() => Habit, (habit) => habit.habitSchedule, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'habitId' })
     habit: Habit;
@@ -14,9 +14,9 @@ export class HabitSchedule {
     @Column({ type: 'enum', enum: HabitScheduleType })
     type: HabitScheduleType;
 
-    @Column({ type: 'simple-array', nullable: true })
-    daysOfWeek: number[]; 
+    @Column("int", { array: true, nullable: true })
+    daysOfWeek: number[];
 
-    @Column({ type: 'simple-array', nullable: true })
-    daysOfMonth: number[]; 
+    @Column("int", { array: true, nullable: true })
+    daysOfMonth: number[];
 }
