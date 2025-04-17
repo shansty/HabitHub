@@ -13,9 +13,9 @@ const ResetPasswordForm = () => {
         new_password: "",
         confirm_password: ""
     })
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const [, setIsPasswordValid] = useState(false);
     const [customError, setCustomError] = useState<string | null>(null);
-    const [resetPassword, { error, isLoading }] = useResetPasswordMutation()
+    const [resetPassword, { isLoading }] = useResetPasswordMutation()
     const navigate = useNavigate();
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -31,7 +31,7 @@ const UserProfilePage: React.FC = () => {
         if (!token || !isValid) {
             setIsModalOpen(true)
         }
-    })
+    }, [token, isValid])
 
     useEffect(() => {
         formattedDate = format(selectedDate, 'yyyy-MM-dd');
@@ -54,7 +54,7 @@ const UserProfilePage: React.FC = () => {
     return (
         <div className="min-h-screen bg-blue-800 flex center justify-center">
             <div className="w-full max-w-350 bg-white rounded-xl p-8 space-y-3 mt-20 mb-20">
-                {!token || !isValid && isModalOpen &&
+                {(!token || !isValid)  && isModalOpen &&
                     <Modal
                         onClose={handleOnModalClose}
                         isOpen={true}

@@ -1,13 +1,8 @@
 import { useDropzone } from 'react-dropzone'
 
-const Dropzone = ({
-    onFileAccepted,
-    previewUrl,
-}: {
-    onFileAccepted: (file: File) => void;
-    previewUrl?: string;
-}) => {
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+const Dropzone = ({ onFileAccepted, previewUrl }: { onFileAccepted: (file: File) => void; previewUrl?: string }) => {
+
+    const { getRootProps, getInputProps } = useDropzone({
         accept: { 'image/*': [] },
         maxFiles: 1,
         onDrop: (acceptedFiles) => {

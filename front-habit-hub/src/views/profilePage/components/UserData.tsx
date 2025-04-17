@@ -72,7 +72,6 @@ const UserData: React.FC = () => {
         setCustomError(null)
     }
 
-
     return (
         <div className="flex items-start space-x-6 w-full">
             <div
@@ -81,6 +80,7 @@ const UserData: React.FC = () => {
                 onMouseLeave={handleMouseLeave}
             >
                 <img
+                    // src={profilePic}
                     src={profilePic}
                     alt="Profile"
                     className="w-16 h-16 rounded-full object-cover shadow"

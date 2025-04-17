@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { TypeResetPasswordCredentials, TypeUser, TypeUserProfile } from '../types'
+import { TypeResetPasswordCredentials, TypeUser } from '../types'
 import { getToken } from '../utils';
-
 
 export const userApi = createApi({
   reducerPath: 'userApi',

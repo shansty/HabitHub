@@ -23,7 +23,7 @@ export const habitApi = createApi({
     }),
     getUserHabitsByDate: builder.query<TypeUserHabitsList[], string>({
       query: (date) => `?date=${date}`,
-      providesTags: (result, error, date) => [{ type: 'Habit', id: date }],
+      providesTags: (_result, _error, date) => [{ type: 'Habit', id: date }],
     }),
     createHabit: builder.mutation<{ success: boolean }, TypeHabitCreateData>({
       query: (body) => ({
