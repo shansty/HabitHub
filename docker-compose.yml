@@ -17,7 +17,7 @@ services:
       context: ./back-habit-hub
       dockerfile: Dockerfile
     env_file:
-      - ./back-habit-hub/.env_docker
+      - ./back-habit-hub/.env_production
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
