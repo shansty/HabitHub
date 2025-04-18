@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EmailModule } from '../email/email.module';
+import { EmailModule } from '../../internal_module/email/email.module';
 import { AuthModule } from '../auth/auth.module';
 
 

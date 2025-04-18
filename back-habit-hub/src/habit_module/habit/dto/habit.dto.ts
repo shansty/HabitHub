@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum,IsNumber, Min, Max, IsDateString, IsOptional, IsArray, IsInt, ValidateIf, ValidateNested} from "class-validator";
 import { Type } from "class-transformer";
-import {UnitOfMeasurement, GoalPeriodicity, Schedule , HabitDomain } from "../utils/habit_enums";
+import {UnitOfMeasurement, GoalPeriodicity, Schedule , HabitDomain } from "../../habit_enums";
 
 class HabitScheduleData {
   @ValidateIf((_, value) => Array.isArray(value))

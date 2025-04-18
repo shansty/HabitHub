@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, JoinColumn, } from 'typeorm';
-import { GoalPeriodicity, HabitDomain , HabitStatus, UnitOfMeasurement } from '../utils/habit_enums';
-import { User } from '../../users/entities/users.entity';
+import { GoalPeriodicity, HabitDomain , HabitStatus, UnitOfMeasurement } from '../../habit_enums';
+import { User } from '../../../user_module/users/entities/users.entity';
 import { HabitSchedule } from '../../habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from '../../habit_event/entities/habit_event.entity';
 import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity';

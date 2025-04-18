@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Habit } from '../../habit/entities/habit.entity';
-import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity';
+import { Habit } from '../../../habit_module/habit/entities/habit.entity';
+import { HabitOccurrence } from '../../../habit_module/habit_occurrence/entities/habit_occurrence.entity';
 
 @Entity()
 export class User {

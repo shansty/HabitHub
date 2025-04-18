@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HabitSchedule } from './entities/habit_schedule.entity';
 import { Habit } from '../habit/entities/habit.entity';
-import { HabitDomain, Schedule  } from '../habit/utils/habit_enums';
+import { Schedule  } from '../habit_enums';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
