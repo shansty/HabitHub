@@ -14,13 +14,13 @@ export class HabitEventService {
 
 
   async addEventValue(habitId: number, logValue: number, date: string) {
-    if(logValue < 0) {
+    if (logValue < 0) {
       throw new BadRequestException("Negative numbers are not available.")
     }
     const habit_event = await this.habitEventRepository.findOne({
       where: {
         habitId: habitId,
-        date: new Date (date)
+        date: new Date(date)
       },
       relations: ['habit']
     })
@@ -34,7 +34,7 @@ export class HabitEventService {
     }
     await this.habitEventRepository.save(habit_event);
 
-    return { 
+    return {
       success: true,
       isGoalCompleted: isCompleted
     };
@@ -97,5 +97,23 @@ export class HabitEventService {
     } else {
       return false
     }
+  }
+
+
+  async findEventByHabitIdAndDate(habitIds: number[], date: Date): Promise<HabitEvent[]> {
+    return this.habitEventRepository.find({
+      where: {
+        habitId: In(habitIds),
+        date
+      }
+    });
+  }
+
+  async createMany(events: Partial<HabitEvent>[]): Promise<void> {
+    await this.habitEventRepository.insert(events);
+  }
+
+  async saveMany(events: HabitEvent[]): Promise<void> {
+    await this.habitEventRepository.save(events);
   }
 }
