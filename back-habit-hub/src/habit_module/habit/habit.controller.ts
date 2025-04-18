@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { HabitService } from './habit.service';
 import { HabitDto } from './dto/habit.dto'
-import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
-import { User } from '../auth/jwt/user.decorator';
+import { JwtAuthGuard } from '../../user_module/auth/jwt/jwt.guard';
+import { User } from '../../user_module/auth/jwt/user.decorator';
 
 @Controller('habit')
 export class HabitController {

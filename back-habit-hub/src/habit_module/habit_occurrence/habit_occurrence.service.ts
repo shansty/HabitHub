@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HabitOccurrence } from './entities/habit_occurrence.entity';
 import { Repository } from 'typeorm';
 import { Habit } from '../habit/entities/habit.entity';
-import { HabitDomain, Schedule  } from '../habit/utils/habit_enums';
+import { Schedule } from '../habit_enums';
 
 @Injectable()
 export class HabitOccurrenceService {

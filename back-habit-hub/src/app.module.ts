@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './user_module/users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './users/entities/users.entity'
-import { EmailModule } from './email/email.module';
-import { HabitModule } from './habit/habit.module';
-import { Habit } from './habit/entities/habit.entity';
-import { HabitOccurrenceModule } from './habit_occurrence/habit_occurrence.module';
-import { HabitScheduleModule } from './habit_schedule/habit_schedule.module';
-import { HabitEventModule } from './habit_event/habit_event.module';
-import { HabitSchedule } from './habit_schedule/entities/habit_schedule.entity';
-import { HabitEvent } from './habit_event/entities/habit_event.entity';
-import { HabitOccurrence } from './habit_occurrence/entities/habit_occurrence.entity';
+import { User } from './user_module/users/entities/users.entity';
+import { EmailModule } from './internal_module/email/email.module';
+import { HabitModule } from './habit_module/habit/habit.module';
+import { Habit } from './habit_module/habit/entities/habit.entity';
+import { HabitOccurrenceModule } from './habit_module/habit_occurrence/habit_occurrence.module';
+import { HabitScheduleModule } from './habit_module/habit_schedule/habit_schedule.module';
+import { HabitEventModule } from './habit_module/habit_event/habit_event.module';
+import { HabitSchedule } from './habit_module/habit_schedule/entities/habit_schedule.entity';
+import { HabitEvent } from './habit_module/habit_event/entities/habit_event.entity';
+import { HabitOccurrence } from './habit_module/habit_occurrence/entities/habit_occurrence.entity';
 
 @Module({
   imports: [

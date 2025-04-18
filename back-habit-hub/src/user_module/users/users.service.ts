@@ -9,7 +9,7 @@ import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto';
 import { UserDto } from './dto/user.dto';
 import { UserProfileDto } from './dto/user_profile.dto';
 import { JwtService } from '@nestjs/jwt';
-import { EmailService } from '../email/email.service';
+import { EmailService } from '../../internal_module/email/email.service';
 import { v4 as uuidv4 } from 'uuid';
 import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils';
 

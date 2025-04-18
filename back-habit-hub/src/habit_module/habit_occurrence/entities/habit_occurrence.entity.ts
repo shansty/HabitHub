@@ -1,4 +1,4 @@
-import { User } from "../../users/entities/users.entity";
+import { User } from "../../../user_module/users/entities/users.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Habit } from "../../habit/entities/habit.entity";
 
