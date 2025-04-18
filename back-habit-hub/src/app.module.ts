@@ -12,6 +12,8 @@ import { HabitEventModule } from './habit_module/habit_event/habit_event.module'
 import { HabitSchedule } from './habit_module/habit_schedule/entities/habit_schedule.entity';
 import { HabitEvent } from './habit_module/habit_event/entities/habit_event.entity';
 import { HabitOccurrence } from './habit_module/habit_occurrence/entities/habit_occurrence.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './schedule_module/task.module';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { HabitOccurrence } from './habit_module/habit_occurrence/entities/habit_
     HabitScheduleModule,
     HabitEventModule,
     HabitOccurrenceModule,
+    TaskModule,
   ],
   controllers: [], 
   providers: [], 

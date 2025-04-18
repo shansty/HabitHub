@@ -49,4 +49,10 @@ export class HabitOccurrenceService {
 
     return false;
   }
+
+  async getByDate(date: Date): Promise<HabitOccurrence[]> {
+    return this.habitOccurrenceRepository.find({
+      where: { date },
+    });
+  }
 }
