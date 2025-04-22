@@ -9,6 +9,7 @@ import { HabitEvent } from '../habit_event/entities/habit_event.entity';
 import { HabitEventService } from '../habit_event/habit_event.service';
 import { HabitScheduleService } from '../habit_schedule/habit_schedule.service';
 import { HabitOccurrenceService } from '../habit_occurrence/habit_occurrence.service';
+import { HabitPreviewResponseDto, HabitDetailedResponseDto, HabitDailyDataResponse } from './dto/response_habit.dto';
 
 
 
@@ -39,7 +40,7 @@ export class HabitService {
   async createHabit(body: HabitDto, userId: string) {
     const habit = await this.createAndSaveHabit(body, userId);
 
-     await this.habitScheduleService.createSchedule(habit, body.habitSchedule, body.habitScheduleData);
+    await this.habitScheduleService.createSchedule(habit, body.habitSchedule, body.habitScheduleData);
     const occurrences = this.habitOccurrenceService.generateOccurrences(habit, userId, body.habitSchedule, body.habitScheduleData);
     await this.habitOccurrenceRepository.save(occurrences);
     return {
@@ -49,7 +50,7 @@ export class HabitService {
   }
 
 
-  async getUserHabitsByDate(userId: string, date: string) {
+  async getUserHabitsByDate(userId: string, date: string): Promise<HabitPreviewResponseDto[]> {
     const dateObj = new Date(date);
     const userHabitOccurrences = await this.habitOccurrenceRepository.find({
       where: {
@@ -73,7 +74,7 @@ export class HabitService {
 
     return habits.map(habit => {
       const event = eventMap.get(habit.id);
-      return this.buildHabitResponse(habit, event);
+      return this.buildHabitPreviewResponse(habit, event);
     });
   };
 
@@ -142,7 +143,25 @@ export class HabitService {
   }
 
 
-  private buildHabitResponse(habit: Habit, event?: HabitEvent) {
+  async getHabitById(habitId: number, userId: number): Promise<HabitDetailedResponseDto> {
+    const habit = await this.habitRepository.findOne({
+      where: {
+        id: habitId,
+        user: { id: userId }
+      },
+      relations: ['habitSchedule', 'events', 'habitOccurrence']
+    });
+
+    if (!habit) {
+      throw new NotFoundException('Error getting habit data');
+    }
+    const response = this.buildHabitDetailedResponse(habit);
+    return response
+  }
+
+
+
+  private buildHabitPreviewResponse(habit: Habit, event?: HabitEvent): HabitPreviewResponseDto {
     return {
       id: habit.id,
       name: habit.name,
@@ -160,6 +179,70 @@ export class HabitService {
       },
     };
   }
+
+
+
+  private buildHabitDetailedResponse(habit: Habit): HabitDetailedResponseDto {
+    const totalValueQuantity = this.getTotalValue(habit);
+    const totalNumberOfCompletedDays = this.getCompletedDays(habit);
+    const habitDailyData = this.getHabitDailyData(habit);
+
+    return {
+      id: habit.id,
+      name: habit.name,
+      goal: habit.goal,
+      unit: habit.unit,
+      icon: habit.icon,
+      category: habit.category,
+      startDate: habit.startDate,
+      goalDuration: habit.goalDuration,
+      goalPeriodicity: habit.goalPeriodicity,
+      status: habit.status,
+      totalValueQuantity,
+      totalNumberOfCompletedDays,
+      habitSchedule: {
+        type: habit.habitSchedule?.type ?? null,
+        daysOfWeek: habit.habitSchedule?.daysOfWeek ?? [],
+        daysOfMonth: habit.habitSchedule?.daysOfMonth ?? [],
+      },
+      habitDailyData,
+    };
+  }
+
+
+  private getTotalValue(habit: Habit): number {
+    return habit.events.reduce((sum, e) => sum + (e.value || 0), 0);
+  }
+
+
+  private getCompletedDays(habit: Habit): number {
+    return habit.events.filter(e => e.isGoalCompleted).length;
+  }
+
+
+  private getHabitDailyData(habit: Habit): HabitDailyDataResponse[] {
+    const eventMap = new Map<string, { isGoalCompleted: boolean; value: number }>();
+
+    habit.events.map(event => {
+      const key = new Date(event.date).toISOString().split('T')[0];
+      eventMap.set(key, {
+        isGoalCompleted: event.isGoalCompleted,
+        value: event.value,
+      });
+    });
+
+    return habit.habitOccurrence.map(occurrence => {
+      const dateKey = new Date(occurrence.date).toISOString().split('T')[0];
+      const eventData = eventMap.get(dateKey);
+      return {
+        date: occurrence.date,
+        isGoalCompleted: eventData?.isGoalCompleted ?? false,
+        value: eventData?.value ?? 0,
+      };
+    });
+  }
+
+
 
   private updateHabitFieldsByHabitData(habit: Habit, habitData: HabitDto) {
     const fieldsToUpdate: (keyof HabitDto)[] = [

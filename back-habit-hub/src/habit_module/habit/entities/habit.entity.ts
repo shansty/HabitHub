@@ -17,6 +17,12 @@ export class Habit {
     @Column()
     goal: number;
 
+    @Column({ default: false })
+    isCompleted: boolean;
+
+    @Column({ default: false })
+    isFailed: boolean;
+
     @Column({ type: 'enum', enum: UnitOfMeasurement })
     unit: UnitOfMeasurement
 
@@ -33,10 +39,10 @@ export class Habit {
     })
     habitSchedule: HabitSchedule;
 
-    @OneToMany(() => HabitOccurrence, (habitOccurence) => habitOccurence.habit, {
+    @OneToMany(() => HabitOccurrence, (habitOccurrence) => habitOccurrence.habit, {
         cascade: ['remove'],
     })
-    habitOccurence: HabitOccurrence[];
+    habitOccurrence: HabitOccurrence[];
 
     @Column({ type: 'enum', enum: HabitDomain  })
     category: HabitDomain ;

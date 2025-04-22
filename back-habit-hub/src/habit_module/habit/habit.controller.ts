@@ -50,4 +50,13 @@ export class HabitController {
   ) {
     return this.habitService.editHabit(+habitId, userId, habitData);
   }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  getHabitById (
+    @Param('id') habitId: string,
+    @User('userId') userId: string,
+  ) {
+    return this.habitService.getHabitById(+habitId, +userId)
+  }
 }

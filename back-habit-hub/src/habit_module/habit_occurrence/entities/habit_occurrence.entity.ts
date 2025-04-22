@@ -14,7 +14,7 @@ export class HabitOccurrence {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Habit, (habit) => habit.habitOccurence, {
+  @ManyToOne(() => Habit, (habit) => habit.habitOccurrence, {
     onDelete: 'CASCADE',
   })
   habit: Habit;

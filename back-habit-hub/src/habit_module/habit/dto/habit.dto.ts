@@ -21,6 +21,7 @@ class HabitScheduleData {
 }
 
 export class HabitDto {
+
   @IsString({ message: 'Habit name must be a valid string. ' })
   @IsNotEmpty({ message: 'Please enter a name for your habit. ' })
   name: string;
