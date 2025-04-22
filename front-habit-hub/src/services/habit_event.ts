@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getToken } from '../utils';
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags';
 
 
 export const habitEventApi = createApi({
   reducerPath: 'habitEventApi',
+  tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG], 
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit-event`,
     prepareHeaders: (headers) => {
@@ -22,6 +24,10 @@ export const habitEventApi = createApi({
         method: 'PATCH',
         body: { logValue, date }
       }),
+      invalidatesTags: (_result, _error, { habitId }) => [
+        { type: HABIT_TAG },
+        { type: HABIT_DETAILS_TAG, id: habitId },
+      ],
     }),
   }),
 });

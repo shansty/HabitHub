@@ -7,13 +7,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import SelectField from '../../../utils_components/select_field';
 import InputNumber from '../../../utils_components/input_number';
 import HabitScheduleDropdown from '../components/custom_habit_schedule_picker';
-import { HabitCreateData, UsersHabitData } from '../../../types';
+import { HabitCreateData, UsersHabitPreviewResponseData } from '../../../types';
 import ErrorHandling from '../../../utils_components/error_handling';
 
 interface HabitFormProps {
   onClose: () => void;
   minStartDate: Date;
-  habit?: UsersHabitData;
+  habit?: UsersHabitPreviewResponseData;
 }
 
 const HabitForm: React.FC<HabitFormProps> = ({ onClose, minStartDate, habit }) => {
