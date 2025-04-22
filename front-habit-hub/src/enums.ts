@@ -29,3 +29,11 @@ export enum GoalPeriodicity {
     DAILY = 'DAILY',
     MONTHLY = 'MONTHLY',
   }
+
+  export enum HabitStatus {
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED',
+    PAUSED = 'PAUSED',
+    ABANDONED = 'ABANDONED',
+  }
+  

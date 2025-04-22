@@ -64,7 +64,9 @@ export class Habit {
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
-
+    
+    @Column({default: 1})
+    attempt: number
 
     @CreateDateColumn()
     createdAt: Date;

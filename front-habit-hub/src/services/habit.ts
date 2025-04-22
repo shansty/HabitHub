@@ -1,11 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { CategoryData, HabitCreateData, UsersHabitData } from '../types';
+import { CategoryData, HabitCreateData, UsersHabitDetailedResponseData, UsersHabitPreviewResponseData } from '../types';
 import { getToken } from '../utils';
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags';
 
 
 export const habitApi = createApi({
   reducerPath: 'habitApi',
-  tagTypes: ['Habit'],
+  tagTypes: ['Habit', 'HabitDetails'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit`,
     prepareHeaders: (headers) => {
@@ -21,9 +22,13 @@ export const habitApi = createApi({
     getHabitCategories: builder.query<CategoryData[], void>({
       query: () => '/categories',
     }),
-    getUserHabitsByDate: builder.query<UsersHabitData[], string>({
+    getUserHabitsByDate: builder.query<UsersHabitPreviewResponseData[], string>({
       query: (date) => `?date=${date}`,
-      providesTags: (_result, _error, date) => [{ type: 'Habit', id: date }],
+      providesTags: (_result, _error, date) => [{ type: HABIT_TAG, id: date }],
+    }),
+    getHabitById: builder.query<UsersHabitDetailedResponseData, string>({
+      query: (id) => `/${id}`,
+      providesTags: (_result, _error, date) => [{ type: HABIT_DETAILS_TAG, id: date }],
     }),
     createHabit: builder.mutation<{ success: boolean }, HabitCreateData>({
       query: (body) => ({
@@ -31,7 +36,7 @@ export const habitApi = createApi({
         method: 'POST',
         body
       }),
-      invalidatesTags: [{ type: 'Habit' }],
+      invalidatesTags: [{ type: HABIT_TAG }],
     }),
     deleteHabit: builder.mutation<{ success: boolean }, number>({
       query: (habitId) => ({
@@ -40,13 +45,13 @@ export const habitApi = createApi({
       }),
       invalidatesTags: [{ type: 'Habit' }],
     }),
-    editHabit: builder.mutation<UsersHabitData, { habitId: number, habitData: HabitCreateData }>({
+    editHabit: builder.mutation<UsersHabitPreviewResponseData, { habitId: number, habitData: HabitCreateData }>({
       query: ({ habitId, habitData }) => ({
         url: `/${habitId}`,
         method: 'PATCH',
         body: habitData,
       }),
-      invalidatesTags: [{ type: 'Habit' }],
+      invalidatesTags: [{ type: HABIT_TAG }, {type: HABIT_DETAILS_TAG}],
     }),
   }),
 });
@@ -56,5 +61,6 @@ export const {
   useCreateHabitMutation,
   useLazyGetUserHabitsByDateQuery,
   useDeleteHabitMutation,
-  useEditHabitMutation
+  useEditHabitMutation,
+  useGetHabitByIdQuery
 } = habitApi;

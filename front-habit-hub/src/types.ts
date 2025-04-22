@@ -1,4 +1,4 @@
-import { UnitOfMeasurement, Schedule, GoalPeriodicity } from "./enums"
+import { UnitOfMeasurement, Schedule, GoalPeriodicity, HabitStatus } from "./enums"
 
 export type User = {
     username: string,
@@ -42,7 +42,7 @@ export type HabitCreateData = {
     category: string;
 };
 
-export type UsersHabitData = {
+export type UsersHabitPreviewResponseData = {
     id: number,
     name: string,
     goal: number,
@@ -56,8 +56,37 @@ export type UsersHabitData = {
         type: Schedule;
         daysOfWeek: number[];
         daysOfMonth: number[];
-    };
+    },
 }
+
+export type UsersHabitDetailedResponseData = {
+    id: number,
+    name: string,
+    goal: number,
+    unit: UnitOfMeasurement,
+    icon: string,
+    category: string,
+    status: HabitStatus
+    habitSchedule: {
+        type: Schedule;
+        daysOfWeek: number[];
+        daysOfMonth: number[];
+    },
+    startDate: Date,
+    goalDuration: number,   
+    goalPeriodicity: GoalPeriodicity,
+    totalValueQuantity: number,
+    totalNumberOfCompletedDays: number,
+    habitDailyData:HabitDailyDataResponse[]
+}
+
+
+type HabitDailyDataResponse = {
+    date: Date,
+    isGoalCompleted: boolean,
+    value: number
+}
+
 
 export type HabitEvent = {
     habitId: number,

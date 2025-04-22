@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { UsersHabitData } from '../../../types';
+import { useNavigate } from 'react-router-dom';
+import { UsersHabitPreviewResponseData } from '../../../types';
 import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit';
 import { useAddEventValueMutation } from '../../../services/habit_event';
 import HabitForm from '../forms/habit_form';
@@ -11,7 +12,7 @@ import { useClickOutside } from '../../../hooks';
 
 
 interface HabitProps {
-    habit: UsersHabitData;
+    habit: UsersHabitPreviewResponseData;
     selectedDate: Date;
 }
 
@@ -31,6 +32,12 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
     const handleMenuOpen = (id: number) => setOpenMenuId(id);
     const handleMenuClose = () => setOpenMenuId(null);
     useClickOutside(dropdownRef, () => setOpenMenuId(null));
+    const navigate = useNavigate();
+
+    const goToHabitPage = () => {
+        navigate(`/habit_page/${habit.id}`);
+    };
+
 
     useEffect(() => {
         const today = new Date().toDateString();
@@ -71,10 +78,18 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                 className="flex items-center justify-between rounded-xl px-5 py-4 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
             >
                 <div className="flex items-center space-x-4">
-                    <div className="text-4xl">{habit.icon}</div>
+                    <div
+                        className="text-4xl cursor-pointer"
+                        onClick={goToHabitPage}
+                    >
+                        {habit.icon}
+                    </div>
 
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <h3
+                            className="text-lg font-semibold text-gray-800 flex items-center gap-2 cursor-pointer"
+                            onClick={goToHabitPage}
+                        >
                             {habit.name}
                             {habit.isGoalCompleted && (
                                 <CheckCheck className='text-lime-500' />

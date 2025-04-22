@@ -5,6 +5,7 @@ import VerifyEmailPage from './views/authPage/verify_email_page';
 import ResetPasswordForm from './views/authPage/forms/reset_password_form';
 import ResetPasswordConfirmForm from './views/authPage/forms/reset_password_confirm_form';
 import UserProfilePage from './views/profilePage/profile_page';
+import HabitPage from './views/habitPage/habit_page';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 
@@ -20,6 +21,7 @@ function App() {
         <Route path='/reset_password' element={<ResetPasswordForm />} />
         <Route path='/confirm_reset_password' element={<ResetPasswordConfirmForm />} />
         <Route path='/profile' element={<UserProfilePage />} />
+        <Route path='/habit_page/:id' element={<HabitPage />} />
       </Routes>
     </BrowserRouter>
 
