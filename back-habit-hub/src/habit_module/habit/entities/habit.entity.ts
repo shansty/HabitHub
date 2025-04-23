@@ -64,6 +64,9 @@ export class Habit {
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
+
+    @Column({default: 0})
+    progress: number
     
     @Column({default: 1})
     attempt: number

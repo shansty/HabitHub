@@ -99,6 +99,12 @@ export class HabitDetailedResponseDto {
     @IsNumber()
     totalNumberOfCompletedDays: number;
 
+    @IsNumber()
+    numberOfFailedDays: number;
+
+    @IsNumber()
+    progress: number;
+
     @ValidateNested({ each: true })
     @Type(() => HabitDailyDataResponse)
     @IsArray()

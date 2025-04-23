@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { HabitService } from './habit.service';
 import { HabitController } from './habit.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,11 +26,12 @@ import { HabitOccurrenceModule } from '../habit_occurrence/habit_occurrence.modu
       }),
     }),
     AuthModule,
-    HabitEventModule,
+    forwardRef(() => HabitEventModule),
     HabitScheduleModule,
     HabitOccurrenceModule
   ],
   controllers: [HabitController],
   providers: [HabitService],
+  exports: [HabitService]
 })
 export class HabitModule { }

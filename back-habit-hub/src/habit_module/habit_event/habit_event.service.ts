@@ -1,14 +1,17 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { HabitEvent } from './entities/habit_event.entity';
 import { Habit } from '../habit/entities/habit.entity';
+import { HabitService } from '../habit/habit.service';
 
 @Injectable()
 export class HabitEventService {
   constructor(
     @InjectRepository(HabitEvent)
-    private habitEventRepository: Repository<HabitEvent>
+    private habitEventRepository: Repository<HabitEvent>,
+    @Inject(forwardRef(() => HabitService))
+    private readonly habitService: HabitService
   ) { }
 
 
@@ -22,7 +25,7 @@ export class HabitEventService {
         habitId: habitId,
         date: new Date(date)
       },
-      relations: ['habit']
+      relations:  ['habit', 'habit.events', 'habit.habitOccurrence']
     })
     if (!habit_event) {
       throw new NotFoundException('Error edding a progress value. Please reload the page.');
@@ -33,6 +36,7 @@ export class HabitEventService {
       habit_event.isGoalCompleted = true;
     }
     await this.habitEventRepository.save(habit_event);
+    await this.habitService.countHabitProgressWithFine(habit_event.habit)
 
     return {
       success: true,
@@ -108,6 +112,16 @@ export class HabitEventService {
       }
     });
   }
+
+
+  async findAllEventsByHabitId(habitId: number): Promise<HabitEvent[]> {
+    return this.habitEventRepository.find({ 
+      where: { 
+        habitId: habitId 
+      } 
+    });
+  }
+
 
   async createMany(events: Partial<HabitEvent>[]): Promise<void> {
     await this.habitEventRepository.insert(events);
