@@ -144,7 +144,7 @@ export class HabitService {
   }
 
 
-  async getHabitById(habitId: number, userId: number): Promise<HabitDetailedResponseDto> {
+  async getHabitByIdAndUserId(habitId: number, userId: number): Promise<HabitDetailedResponseDto> {
     const habit = await this.habitRepository.findOne({
       where: {
         id: habitId,
@@ -161,24 +161,45 @@ export class HabitService {
   }
 
 
-  async countHabitProgressWithFine(habit: Habit) {
+  async getHabitById(habitId: number): Promise<Habit> {
+    const habit = await this.habitRepository.findOne({
+      where: {
+        id: habitId,
+      },
+      relations: ['habitSchedule', 'events', 'habitOccurrence', 'user']
+    });
+    if (!habit) {
+      throw new NotFoundException('Error getting habit data');
+    }
+    return habit
+  }
+
+
+  async countHabitProgressWithFine(habit: Habit): Promise<{updated_progress: number, progress_without_fine: number}> {
     const totalScheduledDays = habit.habitOccurrence?.length ?? 0;
     const allEvents = await this.habitEventService.findAllEventsByHabitId(habit.id);
     const totalLoggedValue = allEvents.reduce((sum, e) => sum + e.value, 0);
     const totalGoal = habit.goal * totalScheduledDays;
     let progress = totalGoal > 0 ? Math.min((totalLoggedValue / totalGoal) * 100, 100) : 0;
-
+    if(progress == 100) {
+      habit.isCompleted = true;
+      habit.status = HabitStatus.COMPLETED
+    }
+    const progress_without_fine = progress;
     const failedDays = this.getNumberOfFailedDays(habit.events)
     if (failedDays === 1) {
-      progress = Math.max(progress - 20, 0);
+      progress = Math.max((progress - 20), 0);
     } else if (failedDays === 2) {
-      progress = Math.max(progress - 50, 0);
+      progress = Math.max((progress - 50), 0);
     } else if (failedDays > 2) {
       progress = 0;
       habit.status = HabitStatus.ABANDONED;
+      habit.isFailed = true;
     }
     habit.progress = Math.round(progress);
+    const updated_progress = habit.progress;
     await this.habitRepository.save(habit);
+    return { updated_progress, progress_without_fine };
   }
 
 

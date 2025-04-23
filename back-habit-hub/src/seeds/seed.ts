@@ -3,8 +3,9 @@ import { Habit } from '../habit_module/habit/entities/habit.entity';
 import { HabitOccurrence } from '../habit_module/habit_occurrence/entities/habit_occurrence.entity';
 import { HabitEvent } from '../habit_module/habit_event/entities/habit_event.entity';
 import { User } from '../user_module/users/entities/users.entity';
-import { subDays } from 'date-fns';
-import { HabitDomain, HabitStatus, GoalPeriodicity, UnitOfMeasurement } from '../habit_module/habit_enums';
+import { subDays, addDays } from 'date-fns';
+import { HabitDomain, HabitStatus, GoalPeriodicity, UnitOfMeasurement, Schedule } from '../habit_module/habit_enums';
+import { HabitSchedule } from '../habit_module/habit_schedule/entities/habit_schedule.entity';
 
 async function seed() {
   await AppDataSource.initialize();
@@ -13,17 +14,19 @@ async function seed() {
   const habitRepo = AppDataSource.getRepository(Habit);
   const occurrenceRepo = AppDataSource.getRepository(HabitOccurrence);
   const eventRepo = AppDataSource.getRepository(HabitEvent);
+  const scheduleRepo = AppDataSource.getRepository(HabitSchedule);
 
-  const yesterday = subDays(new Date(), 1);
+  const today = new Date();
+  const startDate = subDays(today, 21); 
+  const totalDays = 21;
+  const completedCount = 20;
 
- 
   const user = userRepo.create({
-    username: 'testuser',
-    email: 'testuser@example.com',
-    password: 'test123',
+    username: 'Alex',
+    email: 'alex@gmail.com',
+    password: 'mypassword',
   });
   await userRepo.save(user);
-
 
   const habit = habitRepo.create({
     name: 'Run every morning',
@@ -33,37 +36,52 @@ async function seed() {
     goalPeriodicity: GoalPeriodicity.PER_DAY,
     category: HabitDomain.FITNESS,
     icon: '🏃‍♀️',
-    startDate: new Date('2024-04-01'),
+    startDate,
     status: HabitStatus.IN_PROGRESS,
+    progress: 67,
     user,
   });
   await habitRepo.save(habit);
 
+  const schedule = scheduleRepo.create({
+    habit: habit,
+    type: Schedule.DAILY,
+    daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+    daysOfMonth: []
+  })
+ await scheduleRepo.save(schedule);
 
-  const occurrence = occurrenceRepo.create({
-    date: yesterday,
-    user,
-    habit,
-    habitId: habit.id,
-  });
-  await occurrenceRepo.save(occurrence);
+  for (let i = 0; i < habit.goalDuration; i++) {
+    const date = addDays(startDate, i);
+    const occurrence = occurrenceRepo.create({
+      date,
+      user,
+      habit,
+      habitId: habit.id,
+    });
+    await occurrenceRepo.save(occurrence);
+  }
 
- 
-  const event = eventRepo.create({
-    habit,
-    habitId: habit.id,
-    date: yesterday,
-    value: 0,
-    isGoalCompleted: false,
-    isFailure: false,
-  });
-  await eventRepo.save(event);
+  for (let i = 0; i < totalDays; i++) {
+    const date = addDays(startDate, i);
+    const isCompleted = i < completedCount;
+
+    const event = eventRepo.create({
+      habit,
+      habitId: habit.id,
+      date,
+      value: isCompleted ? habit.goal : 0,
+      isGoalCompleted: isCompleted,
+      isFailure: false,
+    });
+    await eventRepo.save(event);
+  }
 
   console.log('Seed completed!');
   process.exit();
 }
 
 seed().catch((err) => {
-  console.error('Seeding error:', err);
+  console.error(' Seeding error:', err);
   process.exit(1);
 });

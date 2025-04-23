@@ -57,6 +57,6 @@ export class HabitController {
     @Param('id') habitId: string,
     @User('userId') userId: string,
   ) {
-    return this.habitService.getHabitById(+habitId, +userId)
+    return this.habitService.getHabitByIdAndUserId(+habitId, +userId)
   }
 }

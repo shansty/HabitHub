@@ -14,7 +14,7 @@ async function cleanup() {
   const eventRepo = AppDataSource.getRepository(HabitEvent);
 
   const user = await userRepo.findOne({
-    where: { email: 'testuser@example.com' },
+    where: { email: 'alex@gmail.com' },
     relations: ['habits'],
   });
 

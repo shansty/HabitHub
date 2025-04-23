@@ -21,7 +21,7 @@ function App() {
         <Route path='/reset_password' element={<ResetPasswordForm />} />
         <Route path='/confirm_reset_password' element={<ResetPasswordConfirmForm />} />
         <Route path='/profile' element={<UserProfilePage />} />
-        <Route path='/habit_page/:id' element={<HabitPage />} />
+        <Route path='/habits/:id' element={<HabitPage />} />
       </Routes>
     </BrowserRouter>
 

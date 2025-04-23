@@ -77,7 +77,9 @@ export type UsersHabitDetailedResponseData = {
     goalPeriodicity: GoalPeriodicity,
     totalValueQuantity: number,
     totalNumberOfCompletedDays: number,
-    habitDailyData:HabitDailyDataResponse[]
+    habitDailyData:HabitDailyDataResponse[],
+    numberOfFailedDays: number,
+    progress: number
 }
 
 

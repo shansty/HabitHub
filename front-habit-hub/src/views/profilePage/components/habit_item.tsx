@@ -35,7 +35,7 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
     const navigate = useNavigate();
 
     const goToHabitPage = () => {
-        navigate(`/habit_page/${habit.id}`);
+        navigate(`/habits/${habit.id}`);
     };
 
 

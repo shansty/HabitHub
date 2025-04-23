@@ -19,28 +19,30 @@ const HabitCompletionCalendar: React.FC<HabitCompletionCalendarProps> = ({ habit
         habit.habitDailyData.some(d => isSameDay(new Date(d.date), date) && d.isGoalCompleted);
 
     const handleDayClick = (date: Date | null) => {
-        if(!date) return
+        if (!date) return
         setStartDate(date)
     };
 
     return (
-        <div className="max-w-3xl px-6 mt-5">
-            <h2 className="mb-3 text-lg font-bold">Habit Calendar</h2>
-            <DatePicker
-                inline
-                selected={startDate}
-                onChange={handleDayClick}
-                dayClassName={(calendar_date: Date) => {
-                    if (isScheduled(calendar_date)) {
-                        return isCompleted(calendar_date)
-                            ? 'bg-green-300 cursor-pointer '
-                            : 'bg-purple-300 cursor-pointer ';
-                    }
-                    return '';
-                }}
-            />
+        <div className="max-w-3xl p-4">
+            <h2 className="mb-3 text-lg font-bold">📅 Habit Calendar</h2>
+            <div >
+                <DatePicker
+                    inline
+                    selected={startDate}
+                    onChange={handleDayClick}
+                    dayClassName={(calendar_date: Date) => {
+                        if (isScheduled(calendar_date)) {
+                            return isCompleted(calendar_date)
+                                ? 'bg-green-300 cursor-pointer '
+                                : 'bg-purple-300 cursor-pointer ';
+                        }
+                        return '';
+                    }}
+                />
+            </div>
             <p className="text-xs text-gray-500 mt-2">
-            🟩 Green = Completed | 🟪 Purple = Scheduled | 🟦 Blue = Selected
+                🟩 Completed | 🟪 Scheduled | 🟦 Selected
             </p>
         </div>
     );

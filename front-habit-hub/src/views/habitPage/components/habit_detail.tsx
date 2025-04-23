@@ -2,7 +2,7 @@ import React from 'react';
 import { differenceInDays, format } from 'date-fns';
 import { UsersHabitDetailedResponseData } from '../../../types';
 import { formatFieldName, formatString } from '../../../utils';
-
+import { HabitStatus } from '../../../enums';
 
 interface HabitDetailProps {
     habit: UsersHabitDetailedResponseData
@@ -13,24 +13,14 @@ const HabitDetail: React.FC<HabitDetailProps> = ({ habit }) => {
     const today = new Date();
     const daysSinceStart = differenceInDays(today, new Date(habit.startDate || today));
     const daysLeft = (habit.goalDuration || 0) - daysSinceStart;
+    const statusColor = habit.status === HabitStatus.ABANDONED ? 'text-red-500'
+        : habit.status === HabitStatus.COMPLETED ? 'text-green-600' : 'text-indigo-900';
 
     return (
 
         <div className="max-w-3xl px-6">
-            <div className="flex items-center justify-between pb-4 mb-6">
-                <div className="flex items-center space-x-4">
-                    <div className="text-5xl">{habit.icon}</div>
-                    <div>
-                        <h1 className="text-2xl font-bold ">{habit.name}</h1>
-                        <p className="text-sm text-gray-500">
-                            {habit.goal} {formatString(habit.unit)} {habit.goalPeriodicity?.toLowerCase().replace('_', ' ')}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <h2 className='mb-3 text-lg font-bold'>Habit detail</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 text-sm text-gray-900 font-semibold ml-5">
+            <h2 className='mb-3 text-lg font-bold'>📋 Habit detail</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4 text-sm text-gray-900 font-semibold">
                 <div>
                     <span className="font-medium text-indigo-900">Category:</span><br />
                     {formatString(habit.category || "")}
@@ -51,9 +41,9 @@ const HabitDetail: React.FC<HabitDetailProps> = ({ habit }) => {
                     <span className="font-medium text-indigo-900">Days Left:</span><br />
                     {daysLeft > 0 ? daysLeft : 'Completed'}
                 </div>
-               <div>
-                    <span className="font-medium text-indigo-900">Habit status</span><br />
-                    {formatFieldName(habit.status)}
+                <div>
+                    <span className={`font-medium  text-indigo-900`}>Habit status</span><br />
+                    <span className={`${statusColor}`}>{formatFieldName(habit.status)}</span>
                 </div>
             </div>
         </div>

@@ -10,9 +10,9 @@ export class HabitOccurrenceService {
   constructor(
     @InjectRepository(HabitOccurrence)
     private readonly habitOccurrenceRepository: Repository<HabitOccurrence>,
-  ) {}
+  ) { }
 
-  generateOccurrences(habit: Habit, userId: string, scheduleType: Schedule , scheduleData: { daysOfWeek?: number[]; daysOfMonth?: number[] }): HabitOccurrence[] {
+  generateOccurrences(habit: Habit, userId: string, scheduleType: Schedule, scheduleData: { daysOfWeek?: number[]; daysOfMonth?: number[] }): HabitOccurrence[] {
     const occurrences: HabitOccurrence[] = [];
     const start = new Date(habit.startDate);
     for (let i = 0; i < habit.goalDuration; i++) {
@@ -33,10 +33,30 @@ export class HabitOccurrenceService {
     return occurrences;
   }
 
-  
-  private shouldIncludeDate(date: Date, schedule: Schedule , data: { daysOfWeek?: number[]; daysOfMonth?: number[] }): boolean {
+
+  generateOccurrencesFromDate(habit: Habit, userId: string, scheduleType: Schedule, scheduleData: { daysOfWeek?: number[]; daysOfMonth?: number[] }, date: Date, count: number): HabitOccurrence[] {
+    const occurrences: HabitOccurrence[] = [];
+    let current = new Date(date);
+    while (occurrences.length < count) {
+      if (this.shouldIncludeDate(current, scheduleType, scheduleData)) {
+        occurrences.push(
+          this.habitOccurrenceRepository.create({
+            date: new Date(current),
+            user: { id: +userId },
+            habit,
+            habitId: habit.id,
+          })
+        );
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    return occurrences;
+  }
+
+
+  private shouldIncludeDate(date: Date, schedule: Schedule, data: { daysOfWeek?: number[]; daysOfMonth?: number[] }): boolean {
     const jsDay = date.getDay();
-    const mappedDay = jsDay === 0 ? 7 : jsDay; 
+    const mappedDay = jsDay === 0 ? 7 : jsDay;
     const dayOfMonth = date.getDate();
 
     if (schedule === Schedule.DAILY) {
@@ -54,5 +74,9 @@ export class HabitOccurrenceService {
     return this.habitOccurrenceRepository.find({
       where: { date },
     });
+  }
+
+  async saveMany(occurrences: HabitOccurrence[]): Promise<HabitOccurrence[]> {
+    return this.habitOccurrenceRepository.save(occurrences);
   }
 }
