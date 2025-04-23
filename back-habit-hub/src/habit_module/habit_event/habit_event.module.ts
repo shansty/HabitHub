@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { HabitEventService } from './habit_event.service';
 import { HabitEventController } from './habit_event.controller';
 import { AuthModule } from '../../user_module/auth/auth.module';
@@ -10,6 +10,7 @@ import { Habit } from '../habit/entities/habit.entity';
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity';
 import { User } from '../../user_module/users/entities/users.entity';
 import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity';
+import { HabitModule } from '../habit/habit.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity'
         signOptions: { expiresIn: '120h' },
       }),
     }),
-    AuthModule
+    AuthModule,
+    forwardRef(() => HabitModule),
   ],
   controllers: [HabitEventController],
   providers: [HabitEventService],

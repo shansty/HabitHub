@@ -10,6 +10,7 @@ import { HabitEventService } from '../habit_event/habit_event.service';
 import { HabitScheduleService } from '../habit_schedule/habit_schedule.service';
 import { HabitOccurrenceService } from '../habit_occurrence/habit_occurrence.service';
 import { HabitPreviewResponseDto, HabitDetailedResponseDto, HabitDailyDataResponse } from './dto/response_habit.dto';
+import { HabitStatus } from '../habit_enums';
 
 
 
@@ -160,6 +161,28 @@ export class HabitService {
   }
 
 
+  async countHabitProgressWithFine(habit: Habit) {
+    const totalScheduledDays = habit.habitOccurrence?.length ?? 0;
+    const allEvents = await this.habitEventService.findAllEventsByHabitId(habit.id);
+    const totalLoggedValue = allEvents.reduce((sum, e) => sum + e.value, 0);
+    const totalGoal = habit.goal * totalScheduledDays;
+    let progress = totalGoal > 0 ? Math.min((totalLoggedValue / totalGoal) * 100, 100) : 0;
+
+    const failedDays = this.getNumberOfFailedDays(habit.events)
+    if (failedDays === 1) {
+      progress = Math.max(progress - 20, 0);
+    } else if (failedDays === 2) {
+      progress = Math.max(progress - 50, 0);
+    } else if (failedDays > 2) {
+      progress = 0;
+      habit.status = HabitStatus.ABANDONED;
+    }
+    habit.progress = Math.round(progress);
+    await this.habitRepository.save(habit);
+  }
+
+
+
 
   private buildHabitPreviewResponse(habit: Habit, event?: HabitEvent): HabitPreviewResponseDto {
     return {
@@ -186,6 +209,7 @@ export class HabitService {
     const totalValueQuantity = this.getTotalValue(habit);
     const totalNumberOfCompletedDays = this.getCompletedDays(habit);
     const habitDailyData = this.getHabitDailyData(habit);
+    const numberOfFailedDays = this.getNumberOfFailedDays(habit.events);
 
     return {
       id: habit.id,
@@ -198,15 +222,22 @@ export class HabitService {
       goalDuration: habit.goalDuration,
       goalPeriodicity: habit.goalPeriodicity,
       status: habit.status,
-      totalValueQuantity,
-      totalNumberOfCompletedDays,
+      progress: habit.progress,
+      totalValueQuantity: totalValueQuantity,
+      totalNumberOfCompletedDays: totalNumberOfCompletedDays,
       habitSchedule: {
         type: habit.habitSchedule?.type ?? null,
         daysOfWeek: habit.habitSchedule?.daysOfWeek ?? [],
         daysOfMonth: habit.habitSchedule?.daysOfMonth ?? [],
       },
-      habitDailyData,
+      habitDailyData: habitDailyData,
+      numberOfFailedDays: numberOfFailedDays,
     };
+  }
+
+
+  private getNumberOfFailedDays(events: HabitEvent[]): number {
+    return events.filter(e => e.isFailure == true).length;
   }
 
 
