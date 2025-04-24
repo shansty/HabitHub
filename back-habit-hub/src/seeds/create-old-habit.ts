@@ -32,7 +32,7 @@ async function seed() {
   }
 
   const habit = habitRepo.create({
-    name: 'Run every morning',
+    name: 'Make Abandoned',
     goal: 5,
     goalDuration: 30,
     unit: UnitOfMeasurement.KM,
@@ -43,6 +43,8 @@ async function seed() {
     status: HabitStatus.IN_PROGRESS,
     progress: 67,
     user,
+    attempt: 1,
+    attemptStartDate: startDate
   });
   await habitRepo.save(habit);
 
@@ -61,6 +63,7 @@ async function seed() {
       user,
       habit,
       habitId: habit.id,
+      habitAttempt: habit.attempt
     });
     await occurrenceRepo.save(occurrence);
   }
@@ -76,6 +79,7 @@ async function seed() {
       value: isCompleted ? habit.goal : 0,
       isGoalCompleted: isCompleted,
       isFailure: false,
+      habitAttempt: habit.attempt
     });
     await eventRepo.save(event);
   }

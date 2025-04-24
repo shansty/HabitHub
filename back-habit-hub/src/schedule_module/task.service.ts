@@ -6,6 +6,7 @@ import { HabitOccurrenceService } from '../habit_module/habit_occurrence/habit_o
 import { HabitEvent } from '../habit_module/habit_event/entities/habit_event.entity';
 import { HabitService } from '../habit_module/habit/habit.service';
 import { Habit } from '../habit_module/habit/entities/habit.entity';
+import { HabitStatus } from '../habit_module/habit_enums';
 
 
 @Injectable()
@@ -95,8 +96,9 @@ export class TasksService {
       const habit = await this.habitService.getHabitById(habitId as number)
       const progress = await this.habitService.countHabitProgressWithFine(habit);
       this.logger.log(`Recounted progress for habit ID: ${habitId} with status ${habit.status} is ${progress.updated_progress}`);
-
-      await this.createAdditionalHabitOccurrences(habit, progress.updated_progress, progress.progress_without_fine)
+      if(habit.status != HabitStatus.ABANDONED) {
+        await this.createAdditionalHabitOccurrences(habit, progress.updated_progress, progress.progress_without_fine)
+      }
     }
   }
 

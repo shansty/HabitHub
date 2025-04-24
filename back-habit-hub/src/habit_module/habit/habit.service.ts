@@ -1,8 +1,8 @@
-import { Body, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { HabitDto } from './dto/habit.dto';
 import { Habit } from './entities/habit.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, LessThan, MoreThan } from 'typeorm';
+import { Repository, In, LessThan, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
 import { HabitCategoryConfig } from '../habit_unit_map';
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity';
 import { HabitEvent } from '../habit_event/entities/habit_event.entity';
@@ -11,11 +11,14 @@ import { HabitScheduleService } from '../habit_schedule/habit_schedule.service';
 import { HabitOccurrenceService } from '../habit_occurrence/habit_occurrence.service';
 import { HabitPreviewResponseDto, HabitDetailedResponseDto, HabitDailyDataResponse } from './dto/response_habit.dto';
 import { HabitStatus } from '../habit_enums';
+import { addDays, format, startOfDay } from 'date-fns';
 
 
 
 @Injectable()
 export class HabitService {
+
+  private readonly logger = new Logger(HabitService.name, { timestamp: true });
   constructor(
     @InjectRepository(Habit)
     private readonly habitRepository: Repository<Habit>,
@@ -23,7 +26,7 @@ export class HabitService {
     private readonly habitOccurrenceRepository: Repository<HabitOccurrence>,
     private readonly habitEventService: HabitEventService,
     private readonly habitScheduleService: HabitScheduleService,
-    private readonly habitOccurrenceService: HabitOccurrenceService,
+    private readonly habitOccurrenceService: HabitOccurrenceService
   ) { }
 
 
@@ -66,9 +69,7 @@ export class HabitService {
       where: { id: In(habitIds) },
       relations: ['events', 'habitSchedule'],
     });
-
     const isToday = this.habitEventService.isSameDay(dateObj, new Date());
-
     const eventMap = isToday
       ? await this.habitEventService.fetchOrCreateHabitEvents(habits, dateObj)
       : this.habitEventService.getExistingEventsForDate(habits, dateObj);
@@ -111,7 +112,8 @@ export class HabitService {
     );
 
     await this.habitOccurrenceRepository.delete({
-      habit: { id: habit.id }
+      habit: { id: habit.id },
+      habitAttempt: habit.attempt
     });
 
     const newOccurrences = this.habitOccurrenceService.generateOccurrences(
@@ -135,6 +137,7 @@ export class HabitService {
       icon: body.icon,
       goalPeriodicity: body.goalPeriodicity,
       startDate: body.startDate,
+      attemptStartDate: body.startDate,
       category: body.category,
       user: { id: +userId },
     });
@@ -175,19 +178,22 @@ export class HabitService {
   }
 
 
-  async countHabitProgressWithFine(habit: Habit): Promise<{updated_progress: number, progress_without_fine: number}> {
-    const totalScheduledDays = habit.habitOccurrence?.length ?? 0;
-    const allEvents = await this.habitEventService.findAllEventsByHabitId(habit.id);
-    const totalLoggedValue = allEvents.reduce((sum, e) => sum + e.value, 0);
+  async countHabitProgressWithFine(habit: Habit): Promise<{ updated_progress: number, progress_without_fine: number }> {
+    const scheduledDays = await this.habitOccurrenceService.getHabitOccurrencesByHabit(habit);
+    const totalScheduledDays = scheduledDays.length ?? 0;
+    const allEvents = await this.habitEventService.findAllEventsByHabitIdAndAttempt(habit.id, habit.attempt);
+    const totalLoggedValue = allEvents.reduce((sum, e) => {
+      const value = Math.min(e.value, habit.goal); 
+      return sum + value;
+    }, 0);
     const totalGoal = habit.goal * totalScheduledDays;
     let progress = totalGoal > 0 ? Math.min((totalLoggedValue / totalGoal) * 100, 100) : 0;
-    console.log(progress)
-    if(progress == 100) {
+    if (progress == 100) {
       habit.isCompleted = true;
       habit.status = HabitStatus.COMPLETED
     }
     const progress_without_fine = progress;
-    const failedDays = this.getNumberOfFailedDays(habit.events)
+    const failedDays = this.getNumberOfFailedDays(habit.events, habit.attempt)
     if (failedDays === 1) {
       progress = Math.max((progress - 20), 0);
     } else if (failedDays === 2) {
@@ -195,16 +201,48 @@ export class HabitService {
     } else if (failedDays > 2) {
       progress = 0;
       habit.status = HabitStatus.ABANDONED;
+      this.handleAbandonedHabit(habit)
       habit.isFailed = true;
     }
     habit.progress = Math.round(progress);
-    console.log(progress)
     const updated_progress = habit.progress;
     await this.habitRepository.save(habit);
     return { updated_progress, progress_without_fine };
   }
 
 
+  async handleAbandonedHabit(habit: Habit) {
+    const tomorrow = startOfDay(new Date())
+    await this.habitOccurrenceRepository.delete({
+      date: MoreThanOrEqual(tomorrow),
+      habitId: habit.id,
+      habitAttempt: habit.attempt
+    });
+    this.logger.log(`Deleted future habit occurrences from ${format(tomorrow, 'yyyy-MM-dd')} onward for habit ID ${habit.id}`);
+  }
+
+
+  async startNewHabitAttempt(habitId: number, date: string, userId: string) {
+    const startDate = new Date(date);
+    const habit = await this.habitRepository.findOne({
+      where: {
+        id: habitId,
+        user: { id: +userId }
+      },
+      relations: ['habitSchedule']
+    })
+    if (!habit) {
+      throw new NotFoundException("Habit data  not found")
+    }
+    habit.attempt = ++habit.attempt;
+    habit.status = HabitStatus.IN_PROGRESS;
+    habit.isFailed = false;
+    habit.attemptStartDate = new Date(date);
+    await this.habitRepository.save(habit)
+    const occurrences = this.habitOccurrenceService.generateOccurrencesForNewAttempt(habit, userId, startDate);
+    await this.habitOccurrenceRepository.save(occurrences);
+    return { success: true }
+  }
 
 
   private buildHabitPreviewResponse(habit: Habit, event?: HabitEvent): HabitPreviewResponseDto {
@@ -229,10 +267,15 @@ export class HabitService {
 
 
   private buildHabitDetailedResponse(habit: Habit): HabitDetailedResponseDto {
-    const totalValueQuantity = this.getTotalValue(habit);
-    const totalNumberOfCompletedDays = this.getCompletedDays(habit);
-    const habitDailyData = this.getHabitDailyData(habit);
-    const numberOfFailedDays = this.getNumberOfFailedDays(habit.events);
+    const currentAttempt = habit.attempt;
+
+    const currentEvents = habit.events.filter(e => e.habitAttempt === currentAttempt);
+    const currentOccurrences = habit.habitOccurrence.filter(o => o.habitAttempt === currentAttempt);
+
+    const totalValueQuantity = this.getTotalValue(currentEvents);
+    const totalNumberOfCompletedDays = this.getCompletedDays(currentEvents);
+    const habitDailyData = this.getHabitDailyData(currentEvents, currentOccurrences);
+    const numberOfFailedDays = this.getNumberOfFailedDays(currentEvents, currentAttempt);
 
     return {
       id: habit.id,
@@ -255,37 +298,36 @@ export class HabitService {
       },
       habitDailyData: habitDailyData,
       numberOfFailedDays: numberOfFailedDays,
+      attemp: habit.attempt,
+      attemptStartDate: habit.attemptStartDate
     };
   }
 
 
-  private getNumberOfFailedDays(events: HabitEvent[]): number {
-    return events.filter(e => e.isFailure == true).length;
+  private getTotalValue(events: HabitEvent[]): number {
+    return events.reduce((sum, e) => sum + (e.value || 0), 0);
   }
-
-
-  private getTotalValue(habit: Habit): number {
-    return habit.events.reduce((sum, e) => sum + (e.value || 0), 0);
+  
+  private getCompletedDays(events: HabitEvent[]): number {
+    return events.filter(e => e.isGoalCompleted).length;
   }
+  
+  private getNumberOfFailedDays(events: HabitEvent[], currentAttempt: number): number {
+    return events.filter(e => e.isFailure && e.habitAttempt === currentAttempt).length;
 
-
-  private getCompletedDays(habit: Habit): number {
-    return habit.events.filter(e => e.isGoalCompleted).length;
   }
-
-
-  private getHabitDailyData(habit: Habit): HabitDailyDataResponse[] {
+  private getHabitDailyData(events: HabitEvent[], occurrences: HabitOccurrence[]): HabitDailyDataResponse[] {
     const eventMap = new Map<string, { isGoalCompleted: boolean; value: number }>();
-
-    habit.events.map(event => {
+  
+    events.map(event => {
       const key = new Date(event.date).toISOString().split('T')[0];
       eventMap.set(key, {
         isGoalCompleted: event.isGoalCompleted,
         value: event.value,
       });
     });
-
-    return habit.habitOccurrence.map(occurrence => {
+  
+    return occurrences.map(occurrence => {
       const dateKey = new Date(occurrence.date).toISOString().split('T')[0];
       const eventData = eventMap.get(dateKey);
       return {

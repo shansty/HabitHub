@@ -87,6 +87,9 @@ export class HabitDetailedResponseDto {
     @IsDate()
     startDate: Date;
 
+    @IsDate()
+    attemptStartDate: Date;
+
     @IsNumber()
     goalDuration: number;
 
@@ -104,6 +107,9 @@ export class HabitDetailedResponseDto {
 
     @IsNumber()
     progress: number;
+
+    @IsNumber()
+    attemp: number;
 
     @ValidateNested({ each: true })
     @Type(() => HabitDailyDataResponse)

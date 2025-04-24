@@ -34,7 +34,6 @@ export enum Schedule   {
 export enum HabitStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
-  PAUSED = 'PAUSED',
   ABANDONED = 'ABANDONED',
 }
 

@@ -20,6 +20,9 @@ export class HabitEvent {
   @Column({ type: 'int' }) 
   value: number;
 
+  @Column({ type: 'int', default: 1}) 
+  habitAttempt: number;
+
   @Column({ default: false })
   isGoalCompleted: boolean;
 

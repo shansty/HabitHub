@@ -22,6 +22,9 @@ export class HabitOccurrence {
   @Column()
   habitId: number;
 
+  @Column({ type: 'int', default: 1}) 
+  habitAttempt: number;
+
   @CreateDateColumn()
   createdAt: Date;
 }
