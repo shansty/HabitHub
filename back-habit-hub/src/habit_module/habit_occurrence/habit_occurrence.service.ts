@@ -26,6 +26,7 @@ export class HabitOccurrenceService {
             user: { id: +userId },
             habit,
             habitId: habit.id,
+            habitAttempt: habit.attempt
           }),
         );
       }
@@ -45,12 +46,50 @@ export class HabitOccurrenceService {
             user: { id: +userId },
             habit,
             habitId: habit.id,
+            habitAttempt: habit.attempt
           })
         );
       }
       current.setDate(current.getDate() + 1);
     }
     return occurrences;
+  }
+
+
+  generateOccurrencesForNewAttempt(habit: Habit, userId: string, date: Date): HabitOccurrence[] {
+    const occurrences: HabitOccurrence[] = [];
+    const startDate = new Date(date);
+    for (let i = 0; i < habit.goalDuration; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      const scheduleData = {
+        daysOfWeek: habit.habitSchedule.daysOfWeek ?? [],
+        daysOfMonth: habit.habitSchedule.daysOfMonth ?? []
+      }
+
+      if (this.shouldIncludeDate(currentDate, habit.habitSchedule.type, scheduleData)) {
+        occurrences.push(
+          this.habitOccurrenceRepository.create({
+            date: currentDate,
+            user: { id: +userId },
+            habit,
+            habitId: habit.id,
+            habitAttempt: habit.attempt
+          }),
+        );
+      }
+    }
+    return occurrences;
+  }
+
+
+  async getHabitOccurrencesByHabit(habit: Habit): Promise<HabitOccurrence[]> {
+    return await this.habitOccurrenceRepository.find({
+      where: {
+        habitId: habit.id,
+        habitAttempt: habit.attempt
+      }
+    })
   }
 
 

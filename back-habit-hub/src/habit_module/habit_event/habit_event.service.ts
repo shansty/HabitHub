@@ -20,12 +20,15 @@ export class HabitEventService {
     if (logValue < 0) {
       throw new BadRequestException("Negative numbers are not available.")
     }
+    const habit = await this.habitService.getHabitById(habitId)
+
     const habit_event = await this.habitEventRepository.findOne({
       where: {
         habitId: habitId,
-        date: new Date(date)
+        date: new Date(date),
+        habitAttempt: habit.attempt
       },
-      relations:  ['habit', 'habit.events', 'habit.habitOccurrence']
+      relations: ['habit', 'habit.events', 'habit.habitOccurrence']
     })
     if (!habit_event) {
       throw new NotFoundException('Error edding a progress value. Please reload the page.');
@@ -65,7 +68,9 @@ export class HabitEventService {
     const map = new Map<number, HabitEvent>();
     for (const habit of habits) {
       for (const event of habit.events) {
-        if (this.isSameDay(new Date(event.date), date)) {
+        const isSameDay = this.isSameDay(new Date(event.date), date);
+        const isSameAttempt = event.habitAttempt === habit.attempt;
+        if (isSameDay && isSameAttempt) {
           map.set(habit.id, event);
           break;
         }
@@ -83,6 +88,7 @@ export class HabitEventService {
       value: 0,
       isGoalCompleted: false,
       isFailure: false,
+      habitAttempt: habit.attempt
     });
     return newEvent
   }
@@ -114,11 +120,12 @@ export class HabitEventService {
   }
 
 
-  async findAllEventsByHabitId(habitId: number): Promise<HabitEvent[]> {
-    return this.habitEventRepository.find({ 
-      where: { 
-        habitId: habitId 
-      } 
+  async findAllEventsByHabitIdAndAttempt(habitId: number, attempt: number): Promise<HabitEvent[]> {
+    return this.habitEventRepository.find({
+      where: {
+        habitId: habitId,
+        habitAttempt: attempt
+      }
     });
   }
 

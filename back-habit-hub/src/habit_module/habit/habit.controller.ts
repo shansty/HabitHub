@@ -53,10 +53,20 @@ export class HabitController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  getHabitById (
+  getHabitById(
     @Param('id') habitId: string,
     @User('userId') userId: string,
   ) {
     return this.habitService.getHabitByIdAndUserId(+habitId, +userId)
+  }
+
+  @Patch(':habitId/attempt')
+  @UseGuards(JwtAuthGuard)
+  startNewAttempt(
+    @User('userId') userId: string,
+    @Param('habitId') habitId: string,
+    @Body('date') date: string
+  ) {
+    return this.habitService.startNewHabitAttempt(+habitId, date, userId);
   }
 }

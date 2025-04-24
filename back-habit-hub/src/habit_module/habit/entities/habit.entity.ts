@@ -53,6 +53,9 @@ export class Habit {
     @Column({ type: 'date' })
     startDate: Date;
 
+    @Column({ type: 'date' })
+    attemptStartDate: Date;
+
     @OneToMany(() => HabitEvent, (event) => event.habit, {
         cascade: ['remove'],
     })
