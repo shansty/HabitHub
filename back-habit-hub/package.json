@@ -22,7 +22,8 @@
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./data-source.ts",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./data-source.ts",
     "seed": "ts-node src/seeds/seed.ts",
-    "cleanup:seed": "ts-node src/seeds/cleanup-seed.ts"
+    "cleanup:seed": "ts-node src/seeds/cleanup-seed.ts",
+    "create:seed": "ts-node src/seeds/create-old-habit.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

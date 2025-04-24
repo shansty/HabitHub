@@ -14,13 +14,13 @@ const HabitDetail: React.FC<HabitDetailProps> = ({ habit }) => {
     const daysSinceStart = differenceInDays(today, new Date(habit.startDate || today));
     const daysLeft = (habit.goalDuration || 0) - daysSinceStart;
     const statusColor = habit.status === HabitStatus.ABANDONED ? 'text-red-500'
-        : habit.status === HabitStatus.COMPLETED ? 'text-green-600' : 'text-indigo-900';
+        : habit.status === HabitStatus.COMPLETED ? 'text-green-600' : 'text-gray-900';
 
     return (
 
-        <div className="max-w-3xl px-6">
+        <div className="max-w-3xl p-4">
             <h2 className='mb-3 text-lg font-bold'>📋 Habit detail</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4 text-sm text-gray-900 font-semibold">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 md:gap-x-6 gap-y-4 text-sm text-gray-900 font-semibold">
                 <div>
                     <span className="font-medium text-indigo-900">Category:</span><br />
                     {formatString(habit.category || "")}
