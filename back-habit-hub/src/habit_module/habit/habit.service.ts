@@ -181,6 +181,7 @@ export class HabitService {
     const totalLoggedValue = allEvents.reduce((sum, e) => sum + e.value, 0);
     const totalGoal = habit.goal * totalScheduledDays;
     let progress = totalGoal > 0 ? Math.min((totalLoggedValue / totalGoal) * 100, 100) : 0;
+    console.log(progress)
     if(progress == 100) {
       habit.isCompleted = true;
       habit.status = HabitStatus.COMPLETED
@@ -197,6 +198,7 @@ export class HabitService {
       habit.isFailed = true;
     }
     habit.progress = Math.round(progress);
+    console.log(progress)
     const updated_progress = habit.progress;
     await this.habitRepository.save(habit);
     return { updated_progress, progress_without_fine };

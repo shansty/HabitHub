@@ -1,7 +1,7 @@
 import React from 'react';
 import { HabitStatus } from '../../../enums';
 import { UsersHabitDetailedResponseData } from '../../../types';
-import { formatFieldName, formatString } from '../../../utils';
+import { formatString } from '../../../utils';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
@@ -9,7 +9,7 @@ interface HabitProgressTrackerProps {
     habit: UsersHabitDetailedResponseData;
 }
 
-const HabitProgressTracker: React.FC<HabitProgressTrackerProps> = ({ habit }) => {
+const HabitProgressWidget: React.FC<HabitProgressTrackerProps> = ({ habit }) => {
     const totalScheduled = habit.habitDailyData.length;
     const totalGoal = habit.goal * totalScheduled;
     const totalLogged = habit.habitDailyData.reduce((p, c) => p + (c.value || 0), 0);
@@ -22,7 +22,7 @@ const HabitProgressTracker: React.FC<HabitProgressTrackerProps> = ({ habit }) =>
     const loggedTextColor = isAbandoned ? 'text-red-500' : isCompleted ? 'text-green-600' : 'text-gray-800';
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col p-4">
             <h2 className="text-lg font-bold mb-3">🔥 Habit Progress</h2>
             <div className="w-32 h-32 ml-4">
                 <CircularProgressbar
@@ -47,4 +47,4 @@ const HabitProgressTracker: React.FC<HabitProgressTrackerProps> = ({ habit }) =>
     );
 };
 
-export default HabitProgressTracker;
+export default HabitProgressWidget;

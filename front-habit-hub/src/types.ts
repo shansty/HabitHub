@@ -83,7 +83,7 @@ export type UsersHabitDetailedResponseData = {
 }
 
 
-type HabitDailyDataResponse = {
+export type HabitDailyDataResponse = {
     date: Date,
     isGoalCompleted: boolean,
     value: number

@@ -5,8 +5,9 @@ import { getToken, isTokenValid } from '../../utils';
 import HabitDetail from './components/habit_detail';
 import { useGetHabitByIdQuery } from '../../services/habit';
 import HabitCompletionCalendar from './components/habit_completetion_calendar';
-import HabitProgressTracker from './components/habit_progress_tracker ';
+import HabitProgressWidget from './components/progress_widget';
 import HabitHeader from './components/habit_header';
+import HabitAnalyticsChart from './components/analytics_chart';
 
 const HabitPage: React.FC = () => {
     const { id } = useParams();
@@ -45,22 +46,22 @@ const HabitPage: React.FC = () => {
                 <div>
                     <HabitHeader habit={habit} />
                 </div>
-                <div className="grid space-y-4">
-                    <div className="flex flex-col md:flex-row gap-6">
+                <div className="grid space-y-5">
+                    <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-2/4">
                             <HabitDetail habit={habit} />
                         </div>
                         <div className="w-full md:w-2/4">
-                            <HabitProgressTracker habit={habit} />
+                            <HabitProgressWidget habit={habit} />
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-2/4 md:order-1">
                             <HabitCompletionCalendar habit={habit} />
                         </div>
                         <div className="w-full md:w-2/4 md:order-2">
-                            {/* <HabitCompletionCalendar habit={habit} /> */}
+                        <HabitAnalyticsChart data={habit.habitDailyData} />
                         </div>
                     </div>
                 </div>

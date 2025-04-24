@@ -32,7 +32,7 @@ export class TasksService {
       }
       const { eventsToUpdate, eventsToCreate } = await this.getFailedAndMissingHabitEvents(occurrences, yesterday);
       this.logger.log(`Found ${eventsToUpdate.length} events to update and ${eventsToCreate.length} to create.`);
-      await this.saveFailedHabitEventsAndCountProgress(eventsToUpdate, eventsToCreate);
+      await this.saveFailedHabitEvents(eventsToUpdate, eventsToCreate);
       await this.countHabitProgressAndCreateHabitOccurences(eventsToUpdate, eventsToCreate)
       this.logger.log(`Finished checking failed habits for ${formattedDate}`);
     } catch (error) {
@@ -73,7 +73,7 @@ export class TasksService {
   }
 
 
-  private async saveFailedHabitEventsAndCountProgress(eventsToUpdate: HabitEvent[], eventsToCreate: Partial<HabitEvent>[]) {
+  private async saveFailedHabitEvents(eventsToUpdate: HabitEvent[], eventsToCreate: Partial<HabitEvent>[]) {
 
     const updatedIds = eventsToUpdate.map(event => event.id).join(', ');
     const createdIds = eventsToCreate.map(event => event.id).join(', ');

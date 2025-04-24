@@ -62,11 +62,9 @@ export class HabitOccurrenceService {
     if (schedule === Schedule.DAILY) {
       return data.daysOfWeek?.includes(mappedDay) ?? false;
     }
-
     if (schedule === Schedule.MONTHLY) {
       return data.daysOfMonth?.includes(dayOfMonth) ?? false;
     }
-
     return false;
   }
 
