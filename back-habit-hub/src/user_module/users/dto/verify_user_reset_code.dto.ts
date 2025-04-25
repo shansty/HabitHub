@@ -1,7 +1,6 @@
-import { IsString } from "class-validator";
-
+import { IsString } from 'class-validator'
 
 export class VerifyUserResetCodeDto {
     @IsString()
-    code: string;
-  }
+    code: string
+}

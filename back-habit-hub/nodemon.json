@@ -3,4 +3,4 @@
     "ext": "ts",
     "exec": "npx ts-node --transpile-only src/main.ts",
     "env": {}
-   }
+}

@@ -1,68 +1,67 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UsersHabitPreviewResponseData } from '../../../types';
-import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit';
-import { useAddEventValueMutation } from '../../../services/habit_event';
-import HabitForm from '../forms/habit_form';
-import { CheckCheck } from 'lucide-react';
-import { formatString } from '../../../utils';
-import ErrorHandling from '../../../utils_components/error_handling';
-import HabitSettings from './habit_settings';
-import { useClickOutside } from '../../../hooks';
-
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { UsersHabitPreviewResponseData } from '../../../types'
+import { useLazyGetUserHabitsByDateQuery } from '../../../services/habit'
+import { useAddEventValueMutation } from '../../../services/habit_event'
+import HabitForm from '../forms/habit_form'
+import { CheckCheck } from 'lucide-react'
+import { formatString } from '../../../utils'
+import ErrorHandling from '../../../utils_components/error_handling'
+import HabitSettings from './habit_settings'
+import { useClickOutside } from '../../../hooks'
 
 interface HabitProps {
-    habit: UsersHabitPreviewResponseData;
-    selectedDate: Date;
+    habit: UsersHabitPreviewResponseData
+    selectedDate: Date
 }
 
 const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
-
-    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-    const [loggingHabitId, setLoggingHabitId] = useState<number | null>(null);
-    const [logValue, setLogValue] = useState<string>('');
+    const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+    const [loggingHabitId, setLoggingHabitId] = useState<number | null>(null)
+    const [logValue, setLogValue] = useState<string>('')
     const [isToday, setIsToday] = useState(true)
     const [isFormOpened, setIsFormOpened] = useState(false)
-    const [customError, setCustomError] = useState<string | null>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [customError, setCustomError] = useState<string | null>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const [addEventValue] = useAddEventValueMutation()
-    const [triggerRefetchHabits] = useLazyGetUserHabitsByDateQuery();
+    const [triggerRefetchHabits] = useLazyGetUserHabitsByDateQuery()
 
-    const handleMenuOpen = (id: number) => setOpenMenuId(id);
-    const handleMenuClose = () => setOpenMenuId(null);
-    useClickOutside(dropdownRef, () => setOpenMenuId(null));
-    const navigate = useNavigate();
+    const handleMenuOpen = (id: number) => setOpenMenuId(id)
+    const handleMenuClose = () => setOpenMenuId(null)
+    useClickOutside(dropdownRef, () => setOpenMenuId(null))
+    const navigate = useNavigate()
 
     const goToHabitPage = () => {
-        navigate(`/habits/${habit.id}`);
-    };
-
+        navigate(`/habits/${habit.id}`)
+    }
 
     useEffect(() => {
-        const today = new Date().toDateString();
-        const selected = selectedDate.toDateString();
-        setIsToday(today === selected);
+        const today = new Date().toDateString()
+        const selected = selectedDate.toDateString()
+        setIsToday(today === selected)
     }, [selectedDate])
-
 
     const handleLogSubmit = async (habitId: number) => {
         try {
-            await addEventValue({ habitId, logValue: Number(logValue), date: selectedDate }).unwrap();
+            await addEventValue({
+                habitId,
+                logValue: Number(logValue),
+                date: selectedDate,
+            }).unwrap()
         } catch (err: any) {
-            setCustomError(err?.data?.message);
+            setCustomError(err?.data?.message)
         }
-        const formattedDate = selectedDate.toISOString().split('T')[0];
-        await triggerRefetchHabits(formattedDate);
-        setLoggingHabitId(null);
-        setLogValue('');
-    };
-
+        const formattedDate = selectedDate.toISOString().split('T')[0]
+        await triggerRefetchHabits(formattedDate)
+        setLoggingHabitId(null)
+        setLogValue('')
+    }
 
     const handleLoginClick = (habitId: number) => {
-        setLoggingHabitId(habitId);
+        setLoggingHabitId(habitId)
         if (!isToday) {
-            setCustomError(" You can only log progress for today. ")
+            setCustomError(' You can only log progress for today. ')
             setTimeout(() => {
                 setCustomError(null)
             }, 2000)
@@ -92,11 +91,17 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                         >
                             {habit.name}
                             {habit.isGoalCompleted && (
-                                <CheckCheck className='text-lime-500' />
+                                <CheckCheck className="text-lime-500" />
                             )}
                         </h3>
                         <p className="text-sm text-gray-500">
-                            Progress: <span className={`font-medium ${habit.isGoalCompleted ? 'text-lime-500' : ""}`}>{habit.value}</span> / {habit.goal} {formatString(habit.unit)}
+                            Progress:{' '}
+                            <span
+                                className={`font-medium ${habit.isGoalCompleted ? 'text-lime-500' : ''}`}
+                            >
+                                {habit.value}
+                            </span>{' '}
+                            / {habit.goal} {formatString(habit.unit)}
                         </p>
                     </div>
                 </div>
@@ -110,21 +115,23 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                             onChange={(e) => setLogValue(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                    handleLogSubmit(habit.id);
+                                    handleLogSubmit(habit.id)
                                 }
                             }}
                             onBlur={() => setLoggingHabitId(null)}
                             autoFocus
                         />
-                    ) : (<>
-                        <ErrorHandling customError={customError} />
-                        <button
-                            className="flex items-center px-4 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition"
-                            onClick={() => handleLoginClick(habit.id)}
-                        >
-                            ⌨️ Log
-                        </button>
-                    </>)}
+                    ) : (
+                        <>
+                            <ErrorHandling customError={customError} />
+                            <button
+                                className="flex items-center px-4 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition"
+                                onClick={() => handleLoginClick(habit.id)}
+                            >
+                                ⌨️ Log
+                            </button>
+                        </>
+                    )}
 
                     <div className="relative inline-block text-left">
                         <button
@@ -134,14 +141,20 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                                     ? handleMenuClose()
                                     : handleMenuOpen(habit.id)
                             }
-                        > ⋮ </button>
+                        >
+                            {' '}
+                            ⋮{' '}
+                        </button>
 
                         {openMenuId === habit.id && (
                             <div
                                 ref={dropdownRef}
                                 className="absolute mt-2 w-auto bg-white border border-indigo-700 rounded-md shadow-lg z-50"
                             >
-                                <HabitSettings habitId={habit.id} setIsFormOpened={setIsFormOpened} />
+                                <HabitSettings
+                                    habitId={habit.id}
+                                    setIsFormOpened={setIsFormOpened}
+                                />
                                 {isFormOpened && (
                                     <HabitForm
                                         onClose={() => setIsFormOpened(false)}
@@ -154,8 +167,8 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                     </div>
                 </div>
             </div>
-        </div >
-    );
-};
+        </div>
+    )
+}
 
-export default Habit;
+export default Habit
