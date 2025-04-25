@@ -1,31 +1,37 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getToken } from '../utils';
-
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { getToken } from '../utils'
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags'
 
 export const habitEventApi = createApi({
-  reducerPath: 'habitEventApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit-event`,
-    prepareHeaders: (headers) => {
-      const token = getToken();
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  refetchOnFocus: true,
-  endpoints: (builder) => ({
-    addEventValue: builder.mutation<{ success: boolean, isGoalCompleted: boolean }, { habitId: number, logValue: number, date: Date }>({
-      query: ({ habitId, logValue, date }) => ({
-        url: `/${habitId}`,
-        method: 'PATCH',
-        body: { logValue, date }
-      }),
+    reducerPath: 'habitEventApi',
+    tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit-event`,
+        prepareHeaders: (headers) => {
+            const token = getToken()
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`)
+            }
+            return headers
+        },
     }),
-  }),
-});
+    refetchOnFocus: true,
+    endpoints: (builder) => ({
+        addEventValue: builder.mutation<
+            { success: boolean; isGoalCompleted: boolean },
+            { habitId: number; logValue: number; date: Date }
+        >({
+            query: ({ habitId, logValue, date }) => ({
+                url: `/${habitId}`,
+                method: 'PATCH',
+                body: { logValue, date },
+            }),
+            invalidatesTags: (_result, _error, { habitId }) => [
+                { type: HABIT_TAG },
+                { type: HABIT_DETAILS_TAG, id: habitId },
+            ],
+        }),
+    }),
+})
 
-export const {
-  useAddEventValueMutation
-} = habitEventApi;
+export const { useAddEventValueMutation } = habitEventApi

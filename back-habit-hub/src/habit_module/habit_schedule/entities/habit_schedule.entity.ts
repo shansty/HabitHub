@@ -1,21 +1,29 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Habit } from "../../habit/entities/habit.entity";
-import { Schedule } from "../../../habit_module/habit_enums";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm'
+import { Habit } from '../../habit/entities/habit.entity'
+import { Schedule } from '../../../habit_module/habit_enums'
 @Entity()
 export class HabitSchedule {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
 
-    @OneToOne(() => Habit, (habit) => habit.habitSchedule, { onDelete: 'CASCADE' })
+    @OneToOne(() => Habit, (habit) => habit.habitSchedule, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'habitId' })
-    habit: Habit;
+    habit: Habit
 
-    @Column({ type: 'enum', enum: Schedule})
-    type: Schedule;
+    @Column({ type: 'enum', enum: Schedule })
+    type: Schedule
 
-    @Column("int", { array: true, nullable: true })
-    daysOfWeek: number[];
+    @Column('int', { array: true, nullable: true })
+    daysOfWeek: number[]
 
-    @Column("int", { array: true, nullable: true })
-    daysOfMonth: number[];
+    @Column('int', { array: true, nullable: true })
+    daysOfMonth: number[]
 }

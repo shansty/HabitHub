@@ -1,16 +1,15 @@
-import { IsEmail, IsOptional,IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsNotEmpty, IsString } from 'class-validator'
 
-
-  export class UserDto {
+export class UserDto {
     @IsString()
     @IsNotEmpty()
     username: string
 
     @IsEmail({}, { message: 'Please provide a valid email address.' })
     @IsNotEmpty()
-    email: string;
+    email: string
 
     @IsString()
     @IsOptional()
-    profile_picture: string | null;
+    profile_picture: string | null
 }

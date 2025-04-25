@@ -1,20 +1,23 @@
-import React from 'react';
+import React from 'react'
 
 interface ModalProps {
-    isOpen: boolean;
-    message: string;
-    title: string;
-    onClose: () => void;
+    isOpen: boolean
+    message: string
+    title: string
+    onClose: () => void
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, message, title, onClose }) => {
- 
-    if (!isOpen) return null;
+    if (!isOpen) return null
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-md text-center max-w-sm">
-                <h2 className="text-xl font-semibold mb-4 text-indigo-600">{title}</h2>
-                <p className="text-gray-700 mb-6">{message || 'Your action was completed successfully.'}</p>
+                <h2 className="text-xl font-semibold mb-4 text-indigo-600">
+                    {title}
+                </h2>
+                <p className="text-gray-700 mb-6">
+                    {message || 'Your action was completed successfully.'}
+                </p>
                 <button
                     onClick={onClose}
                     className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
@@ -23,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, message, title, onClose }) => {
                 </button>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Modal;
+export default Modal

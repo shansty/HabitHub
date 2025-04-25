@@ -1,5 +1,11 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
     --color-test: #121063;
-  }
+}
+
+.react-datepicker__day--selected {
+    background-color: #0d7ae7 !important;
+    color: white;
+    border-radius: 0.375rem;
+}
