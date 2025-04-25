@@ -1,19 +1,21 @@
-import { IsDateString, IsInt, IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsInt, IsBoolean, IsNotEmpty } from 'class-validator'
 
 export class HabitEventDto {
+    @IsInt()
+    habitId: number
 
-  @IsInt()
-  habitId: number;
+    @IsDateString(
+        {},
+        { message: 'Date must be a valid ISO string (yyyy-mm-dd).' }
+    )
+    date: string
 
-  @IsDateString({}, { message: 'Date must be a valid ISO string (yyyy-mm-dd).' })
-  date: string;
+    @IsInt({ message: 'Value must be an integer.' })
+    value: number
 
-  @IsInt({ message: 'Value must be an integer.' })
-  value: number;
+    @IsBoolean({ message: 'isGoalCompleted must be a boolean.' })
+    isGoalCompleted: boolean
 
-  @IsBoolean({ message: 'isGoalCompleted must be a boolean.' })
-  isGoalCompleted: boolean;
-
-  @IsBoolean({ message: 'isFailure must be a boolean.' })
-  isFailure: boolean;
+    @IsBoolean({ message: 'isFailure must be a boolean.' })
+    isFailure: boolean
 }

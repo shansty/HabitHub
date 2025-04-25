@@ -1,23 +1,26 @@
-import React from 'react';
-import { UsersHabitPreviewResponseData } from '../../../types';
-import Habit from './habit_item';
+import React from 'react'
+import { UsersHabitPreviewResponseData } from '../../../types'
+import Habit from './habit_item'
 
 interface HabitListProps {
-    habits: UsersHabitPreviewResponseData[] | undefined;
-    selectedDate: Date;
+    habits: UsersHabitPreviewResponseData[] | undefined
+    selectedDate: Date
 }
 
 const HabitList: React.FC<HabitListProps> = ({ habits, selectedDate }) => {
-
     const sortedHabits = habits?.slice().sort((a, b) => {
-        return Number(a.isGoalCompleted) - Number(b.isGoalCompleted);
-      });
-   
+        return Number(a.isGoalCompleted) - Number(b.isGoalCompleted)
+    })
+
     return (
         <div className="space-y-5 mt-10">
-            {sortedHabits  && sortedHabits.length > 0 ? (
+            {sortedHabits && sortedHabits.length > 0 ? (
                 sortedHabits.map((habit) => (
-                    <Habit habit={habit} selectedDate={selectedDate} key={habit.id}/> 
+                    <Habit
+                        habit={habit}
+                        selectedDate={selectedDate}
+                        key={habit.id}
+                    />
                 ))
             ) : (
                 <p className="text-center text-gray-400 mt-8 text-sm">
@@ -25,7 +28,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits, selectedDate }) => {
                 </p>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default HabitList;
+export default HabitList

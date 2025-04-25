@@ -1,16 +1,21 @@
 import { useDropzone } from 'react-dropzone'
 
-const Dropzone = ({ onFileAccepted, previewUrl }: { onFileAccepted: (file: File) => void; previewUrl?: string }) => {
-
+const Dropzone = ({
+    onFileAccepted,
+    previewUrl,
+}: {
+    onFileAccepted: (file: File) => void
+    previewUrl?: string
+}) => {
     const { getRootProps, getInputProps } = useDropzone({
         accept: { 'image/*': [] },
         maxFiles: 1,
         onDrop: (acceptedFiles) => {
             if (acceptedFiles.length > 0) {
-                onFileAccepted(acceptedFiles[0]);
+                onFileAccepted(acceptedFiles[0])
             }
-        }
-    });
+        },
+    })
 
     return (
         <div
@@ -30,7 +35,7 @@ const Dropzone = ({ onFileAccepted, previewUrl }: { onFileAccepted: (file: File)
                 </p>
             )}
         </div>
-    );
-};
+    )
+}
 
 export default Dropzone

@@ -1,23 +1,29 @@
-import React from 'react';
-import { useDeleteHabitMutation } from '../../../services/habit';
+import React from 'react'
+import { useDeleteHabitMutation } from '../../../services/habit'
 
 interface HabitSettingsProps {
-    habitId: number;
-    setIsFormOpened: React.Dispatch<React.SetStateAction<boolean>>;
+    habitId: number
+    setIsFormOpened: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const HabitSettings: React.FC<HabitSettingsProps> = ({ habitId, setIsFormOpened }) => {
-    const [deleteHabit] = useDeleteHabitMutation();
+const HabitSettings: React.FC<HabitSettingsProps> = ({
+    habitId,
+    setIsFormOpened,
+}) => {
+    const [deleteHabit] = useDeleteHabitMutation()
 
-    const handleDeleteHabit = async (habitId: number, e: React.MouseEvent<HTMLLIElement>) => {
-        e.stopPropagation();
-        await deleteHabit(habitId).unwrap();
+    const handleDeleteHabit = async (
+        habitId: number,
+        e: React.MouseEvent<HTMLLIElement>
+    ) => {
+        e.stopPropagation()
+        await deleteHabit(habitId).unwrap()
     }
 
     const handleEditHabit = (e: React.MouseEvent<HTMLLIElement>) => {
-        e.stopPropagation();
-        setIsFormOpened(true);
-    };
+        e.stopPropagation()
+        setIsFormOpened(true)
+    }
 
     return (
         <>
@@ -36,7 +42,7 @@ const HabitSettings: React.FC<HabitSettingsProps> = ({ habitId, setIsFormOpened 
                 </li>
             </ul>
         </>
-    );
+    )
 }
 
-export default HabitSettings;
+export default HabitSettings

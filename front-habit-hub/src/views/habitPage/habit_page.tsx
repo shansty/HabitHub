@@ -1,36 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Modal from '../../utils_components/modal_notification';
-import { getToken, isTokenValid } from '../../utils';
-import HabitDetail from './components/habit_detail';
-import { useGetHabitByIdQuery } from '../../services/habit';
-import HabitCompletionCalendar from './components/habit_completetion_calendar';
-import HabitProgressWidget from './components/progress_widget';
-import HabitHeader from './components/habit_header';
-import HabitAnalyticsChart from './components/analytics_chart';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import Modal from '../../utils_components/modal_notification'
+import { getToken, isTokenValid } from '../../utils'
+import HabitDetail from './components/habit_detail'
+import { useGetHabitByIdQuery } from '../../services/habit'
+import HabitCompletionCalendar from './components/habit_completetion_calendar'
+import HabitProgressWidget from './components/progress_widget'
+import HabitHeader from './components/habit_header'
+import HabitAnalyticsChart from './components/analytics_chart'
 
 const HabitPage: React.FC = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const token = getToken();
-    const isValid = isTokenValid(token);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data: habit, isLoading, isError } = useGetHabitByIdQuery(id as string, { refetchOnMountOrArgChange: true });
-    console.dir({habit})
+    const { id } = useParams()
+    const navigate = useNavigate()
+    const token = getToken()
+    const isValid = isTokenValid(token)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const {
+        data: habit,
+        isLoading,
+        isError,
+    } = useGetHabitByIdQuery(id as string, { refetchOnMountOrArgChange: true })
 
     useEffect(() => {
         if (!token || !isValid) {
-            setIsModalOpen(true);
+            setIsModalOpen(true)
         }
-    }, [token, isValid]);
+    }, [token, isValid])
 
     const handleOnModalClose = () => {
-        setIsModalOpen(false);
-        navigate('/login');
-    };
+        setIsModalOpen(false)
+        navigate('/login')
+    }
 
-    if (isLoading) return <p className="text-center text-white mt-20">Loading habit...</p>;
-    if (isError || !habit) return <p className="text-center text-white mt-20">Habit not found.</p>;
+    if (isLoading)
+        return <p className="text-center text-white mt-20">Loading habit...</p>
+    if (isError || !habit)
+        return <p className="text-center text-white mt-20">Habit not found.</p>
 
     return (
         <div className="min-h-screen bg-blue-800 flex items-center justify-center px-4">
@@ -61,13 +66,13 @@ const HabitPage: React.FC = () => {
                             <HabitCompletionCalendar habit={habit} />
                         </div>
                         <div className="w-full md:w-2/4 md:order-2">
-                        <HabitAnalyticsChart data={habit.habitDailyData} />
+                            <HabitAnalyticsChart data={habit.habitDailyData} />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default HabitPage;
+export default HabitPage

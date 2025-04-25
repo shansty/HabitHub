@@ -1,30 +1,37 @@
-import { User } from "../../../user_module/users/entities/users.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Habit } from "../../habit/entities/habit.entity";
+import { User } from '../../../user_module/users/entities/users.entity'
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm'
+import { Habit } from '../../habit/entities/habit.entity'
 
 @Entity()
 export class HabitOccurrence {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number
 
-  @Column({ type: 'date' })
-  date: Date;
+    @Column({ type: 'date' })
+    date: Date
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User;
+    @ManyToOne(() => User, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' })
+    user: User
 
-  @ManyToOne(() => Habit, (habit) => habit.habitOccurrence, {
-    onDelete: 'CASCADE',
-  })
-  habit: Habit;
+    @ManyToOne(() => Habit, (habit) => habit.habitOccurrence, {
+        onDelete: 'CASCADE',
+    })
+    habit: Habit
 
-  @Column()
-  habitId: number;
+    @Column()
+    habitId: number
 
-  @Column({ type: 'int', default: 1}) 
-  habitAttempt: number;
+    @Column({ type: 'int', default: 1 })
+    habitAttempt: number
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @CreateDateColumn()
+    createdAt: Date
 }

@@ -1,5 +1,4 @@
-import { IsOptional,IsNotEmpty, IsString } from "class-validator";
-
+import { IsOptional, IsNotEmpty, IsString } from 'class-validator'
 
 export class UserProfileDto {
     @IsString()
@@ -8,5 +7,5 @@ export class UserProfileDto {
 
     @IsString()
     @IsOptional()
-    profile_picture: File | string | null;
+    profile_picture: File | string | null
 }

@@ -1,122 +1,134 @@
-import { Schedule, HabitDomain, UnitOfMeasurement, GoalPeriodicity, HabitStatus } from '../../habit_enums';
-import { IsArray, IsBoolean, IsDate, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { CookieOptions } from 'express';
+import {
+    Schedule,
+    HabitDomain,
+    UnitOfMeasurement,
+    GoalPeriodicity,
+    HabitStatus,
+} from '../../habit_enums'
+import {
+    IsArray,
+    IsBoolean,
+    IsDate,
+    IsEnum,
+    IsNumber,
+    IsOptional,
+    IsString,
+    ValidateNested,
+} from 'class-validator'
+import { Type } from 'class-transformer'
+import { CookieOptions } from 'express'
 
 class HabitScheduleResponse {
     @IsEnum(Schedule)
     @IsOptional()
-    type: Schedule | null;
+    type: Schedule | null
 
     @IsNumber({}, { each: true })
-    daysOfWeek: number[];
+    daysOfWeek: number[]
 
     @IsNumber({}, { each: true })
-    daysOfMonth: number[];
+    daysOfMonth: number[]
 }
 
 export class HabitDailyDataResponse {
     @IsDate()
-    date: Date;
+    date: Date
 
     @IsBoolean()
-    isGoalCompleted: boolean;
+    isGoalCompleted: boolean
 
     @IsNumber()
-    value: number;
+    value: number
 }
-
 
 export class HabitPreviewResponseDto {
     @IsNumber()
-    id: number;
+    id: number
 
     @IsString()
-    name: string;
+    name: string
 
     @IsNumber()
-    goal: number;
+    goal: number
 
     @IsEnum(UnitOfMeasurement)
-    unit: UnitOfMeasurement;
+    unit: UnitOfMeasurement
 
     @IsString()
-    icon: string;
+    icon: string
 
     @IsNumber()
-    value?: number;
+    value?: number
 
     @IsEnum(HabitDomain)
-    category: HabitDomain;
+    category: HabitDomain
 
     @IsBoolean()
-    isGoalCompleted: boolean;
+    isGoalCompleted: boolean
 
     @IsBoolean()
-    isFailure: boolean;
+    isFailure: boolean
 
     @ValidateNested()
     @Type(() => HabitScheduleResponse)
-    habitSchedule: HabitScheduleResponse;
+    habitSchedule: HabitScheduleResponse
 }
-
-
 
 export class HabitDetailedResponseDto {
     @IsNumber()
-    id: number;
+    id: number
 
     @IsString()
-    name: string;
+    name: string
 
     @IsNumber()
-    goal: number;
+    goal: number
 
     @IsEnum(UnitOfMeasurement)
-    unit: UnitOfMeasurement;
+    unit: UnitOfMeasurement
 
     @IsString()
-    icon: string;
+    icon: string
 
     @IsEnum(HabitDomain)
-    category: HabitDomain;
+    category: HabitDomain
 
     @IsEnum({ type: 'enum', enum: HabitStatus })
-    status: HabitStatus;
+    status: HabitStatus
 
     @IsDate()
-    startDate: Date;
+    startDate: Date
 
     @IsDate()
-    attemptStartDate: Date;
+    attemptStartDate: Date
 
     @IsNumber()
-    goalDuration: number;
+    goalDuration: number
 
     @IsEnum({ type: 'enum', enum: GoalPeriodicity })
     goalPeriodicity: GoalPeriodicity
 
     @IsNumber()
-    totalValueQuantity: number;
+    totalValueQuantity: number
 
     @IsNumber()
-    totalNumberOfCompletedDays: number;
+    totalNumberOfCompletedDays: number
 
     @IsNumber()
-    numberOfFailedDays: number;
+    numberOfFailedDays: number
 
     @IsNumber()
-    progress: number;
+    progress: number
 
     @IsNumber()
-    attemp: number;
+    attemp: number
 
     @ValidateNested({ each: true })
     @Type(() => HabitDailyDataResponse)
     @IsArray()
-    habitDailyData: HabitDailyDataResponse[];
+    habitDailyData: HabitDailyDataResponse[]
 
     @ValidateNested()
     @Type(() => HabitScheduleResponse)
-    habitSchedule: HabitScheduleResponse;
+    habitSchedule: HabitScheduleResponse
 }

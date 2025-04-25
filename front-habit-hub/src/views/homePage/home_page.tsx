@@ -1,8 +1,8 @@
-import React from 'react';
-import HeroSection from './coponents/hero_section';
-import CTASection from './coponents/cta_section';
-import HowItWorksSection from './coponents/how_it_works_section';
-import UsersStories from './coponents/users_stories';
+import React from 'react'
+import HeroSection from './coponents/hero_section'
+import CTASection from './coponents/cta_section'
+import HowItWorksSection from './coponents/how_it_works_section'
+import UsersStories from './coponents/users_stories'
 
 const HomePage: React.FC = () => {
     return (
@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
             <HowItWorksSection />
             <UsersStories />
         </div>
-    );
+    )
 }
 
-export default HomePage;
+export default HomePage

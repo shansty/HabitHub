@@ -1,35 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
-import { Habit } from '../../habit/entities/habit.entity';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    CreateDateColumn,
+} from 'typeorm'
+import { Habit } from '../../habit/entities/habit.entity'
 
 @Entity()
 export class HabitEvent {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number
 
-  @ManyToOne(() => Habit, (habit) => habit.events, {
-    onDelete: 'CASCADE',
-  })
-  habit: Habit;
+    @ManyToOne(() => Habit, (habit) => habit.events, {
+        onDelete: 'CASCADE',
+    })
+    habit: Habit
 
-  @Column()
-  habitId: number;
+    @Column()
+    habitId: number
 
-  @Column({ type: 'date' })
-  date: Date;
+    @Column({ type: 'date' })
+    date: Date
 
-  @Column({ type: 'int' }) 
-  value: number;
+    @Column({ type: 'int' })
+    value: number
 
-  @Column({ type: 'int', default: 1}) 
-  habitAttempt: number;
+    @Column({ type: 'int', default: 1 })
+    habitAttempt: number
 
-  @Column({ default: false })
-  isGoalCompleted: boolean;
+    @Column({ default: false })
+    isGoalCompleted: boolean
 
-  @Column({ default: false })
-  isFailure: boolean;
+    @Column({ default: false })
+    isFailure: boolean
 
-  @CreateDateColumn()
-  createdAt: Date;
-
+    @CreateDateColumn()
+    createdAt: Date
 }
