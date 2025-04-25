@@ -1,73 +1,73 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ResetPasswordCredentials } from '../../../types';
-import { useResetPasswordMutation } from '../../../services/user';
-import PasswordField from '../components/password_field';
-import InputField from '../../../utils_components/input_field';
-import ErrorHandling from '../../../utils_components/error_handling';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ResetPasswordCredentials } from '../../../types'
+import { useResetPasswordMutation } from '../../../services/user'
+import PasswordField from '../components/password_field'
+import InputField from '../../../utils_components/input_field'
+import ErrorHandling from '../../../utils_components/error_handling'
 
 const ResetPasswordForm = () => {
-
     const [userData, setUserData] = useState<ResetPasswordCredentials>({
-        email: "",
-        new_password: "",
-        confirm_password: ""
+        email: '',
+        new_password: '',
+        confirm_password: '',
     })
-    const [, setIsPasswordValid] = useState(false);
-    const [customError, setCustomError] = useState<string | null>(null);
+    const [, setIsPasswordValid] = useState(false)
+    const [customError, setCustomError] = useState<string | null>(null)
     const [resetPassword, { isLoading }] = useResetPasswordMutation()
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        const { id, value } = e.target;
+        e.preventDefault()
+        const { id, value } = e.target
         setUserData((prevUser) => ({
             ...prevUser,
             [id]: value,
-        }));
-        setCustomError(null);
-    };
+        }))
+        setCustomError(null)
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        e.preventDefault()
 
         if (!userData.email.trim()) {
-            setCustomError("Email is required")
-            return;
-        };
-        if (!userData.new_password.trim()){
-            setCustomError("New password is required")
+            setCustomError('Email is required')
             return
-        } 
+        }
+        if (!userData.new_password.trim()) {
+            setCustomError('New password is required')
+            return
+        }
         if (!userData.confirm_password.trim()) {
-            setCustomError("You need to confirm password.");
-            return;
+            setCustomError('You need to confirm password.')
+            return
         }
         if (userData.new_password !== userData.confirm_password) {
-            setCustomError("Passwords do not match.");
-            return;
-        };
+            setCustomError('Passwords do not match.')
+            return
+        }
 
         if (userData.confirm_password === userData.new_password) {
             try {
-                const res = await resetPassword(userData).unwrap();
+                const res = await resetPassword(userData).unwrap()
                 if (res.success) {
                     navigate('/confirm_reset_password')
                 }
             } catch (err: any) {
-                setCustomError(err?.data?.message);
+                setCustomError(err?.data?.message)
             }
-        };
-    };
+        }
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-blue-100">
             <div className="bg-white p-8 shadow-xl max-w-md w-full text-center">
-                <h2 className="text-3xl font-bold mb-6 text-indigo-700">Reset password</h2>
+                <h2 className="text-3xl font-bold mb-6 text-indigo-700">
+                    Reset password
+                </h2>
                 <form onSubmit={handleSubmit} className="space-y-4 text-left">
-
                     <InputField
-                        type='email'
+                        type="email"
                         value={userData.email}
                         handleOnChange={handleOnChange}
                         id="email"
@@ -83,7 +83,7 @@ const ResetPasswordForm = () => {
                     />
 
                     <InputField
-                        type='password'
+                        type="password"
                         value={userData.confirm_password}
                         handleOnChange={handleOnChange}
                         id="confirm_password"
@@ -101,7 +101,7 @@ const ResetPasswordForm = () => {
                 {isLoading && <p>Please wait...</p>}
             </div>
         </div>
-    );
+    )
 }
 
-export default ResetPasswordForm;
+export default ResetPasswordForm

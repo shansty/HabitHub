@@ -1,21 +1,41 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, JoinColumn, } from 'typeorm';
-import { GoalPeriodicity, HabitDomain , HabitStatus, UnitOfMeasurement } from '../../habit_enums';
-import { User } from '../../../user_module/users/entities/users.entity';
-import { HabitSchedule } from '../../habit_schedule/entities/habit_schedule.entity';
-import { HabitEvent } from '../../habit_event/entities/habit_event.entity';
-import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity';
-
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToOne,
+    OneToOne,
+    OneToMany,
+    JoinColumn,
+} from 'typeorm'
+import {
+    GoalPeriodicity,
+    HabitDomain,
+    HabitStatus,
+    UnitOfMeasurement,
+} from '../../habit_enums'
+import { User } from '../../../user_module/users/entities/users.entity'
+import { HabitSchedule } from '../../habit_schedule/entities/habit_schedule.entity'
+import { HabitEvent } from '../../habit_event/entities/habit_event.entity'
+import { HabitOccurrence } from '../../habit_occurrence/entities/habit_occurrence.entity'
 
 @Entity()
 export class Habit {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
 
     @Column()
-    name: string;
+    name: string
 
     @Column()
-    goal: number;
+    goal: number
+
+    @Column({ default: false })
+    isCompleted: boolean
+
+    @Column({ default: false })
+    isFailed: boolean
 
     @Column({ type: 'enum', enum: UnitOfMeasurement })
     unit: UnitOfMeasurement
@@ -24,45 +44,57 @@ export class Habit {
     goalPeriodicity: GoalPeriodicity
 
     @Column()
-    goalDuration: number;
+    goalDuration: number
 
     @OneToOne(() => HabitSchedule, (schedule) => schedule.habit, {
         cascade: true,
         onDelete: 'CASCADE',
         eager: true,
     })
-    habitSchedule: HabitSchedule;
+    habitSchedule: HabitSchedule
 
-    @OneToMany(() => HabitOccurrence, (habitOccurence) => habitOccurence.habit, {
-        cascade: ['remove'],
-    })
-    habitOccurence: HabitOccurrence[];
+    @OneToMany(
+        () => HabitOccurrence,
+        (habitOccurrence) => habitOccurrence.habit,
+        {
+            cascade: ['remove'],
+        }
+    )
+    habitOccurrence: HabitOccurrence[]
 
-    @Column({ type: 'enum', enum: HabitDomain  })
-    category: HabitDomain ;
+    @Column({ type: 'enum', enum: HabitDomain })
+    category: HabitDomain
 
     @Column()
-    icon: string;
+    icon: string
 
     @Column({ type: 'date' })
-    startDate: Date;
+    startDate: Date
+
+    @Column({ type: 'date' })
+    attemptStartDate: Date
 
     @OneToMany(() => HabitEvent, (event) => event.habit, {
         cascade: ['remove'],
     })
-    events: HabitEvent[];
+    events: HabitEvent[]
 
     @Column({ type: 'enum', enum: HabitStatus, default: 'IN_PROGRESS' })
     status: HabitStatus
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
-    user: User;
+    user: User
 
+    @Column({ default: 0 })
+    progress: number
+
+    @Column({ default: 1 })
+    attempt: number
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt: Date
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date
 }

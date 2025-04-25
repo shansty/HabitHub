@@ -16,16 +16,21 @@ export enum UnitOfMeasurement {
     BOOKS = 'BOOKS',
     TASKS = 'TASKS',
     ITEMS = 'ITEMS',
-  }
-  
+}
 
 export enum GoalPeriodicity {
     PER_DAY = 'PER DAY',
     PER_WEEK = 'PER WEEK',
     PER_MONTH = 'PER MONTH',
-  }
-  
-  export enum Schedule {
+}
+
+export enum Schedule {
     DAILY = 'DAILY',
     MONTHLY = 'MONTHLY',
-  }
+}
+
+export enum HabitStatus {
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED',
+    ABANDONED = 'ABANDONED',
+}

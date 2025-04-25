@@ -1,71 +1,78 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useGetUserDataQuery, useUpdateUserProfileMutation } from '../../../services/user';
-import { getToken, getIDFromToken } from '../../../utils';
+import React, { useState, useRef, useEffect } from 'react'
+import {
+    useGetUserDataQuery,
+    useUpdateUserProfileMutation,
+} from '../../../services/user'
+import { getToken, getIDFromToken } from '../../../utils'
 import profile from '../../../assets/profile.png'
-import { Camera, Check, Pencil, X } from 'lucide-react';
-import ErrorHandling from '../../../utils_components/error_handling';
-
+import { Camera, Check, Pencil, X } from 'lucide-react'
+import ErrorHandling from '../../../utils_components/error_handling'
 
 const UserData: React.FC = () => {
-    const token = getToken();
-    const userId = getIDFromToken(token);
-    const [isHovered, setIsHovered] = useState(false);
-    const [isEdited, setIsEdited] = useState(false);
-    const [username, setUsername] = useState("")
-    const [customError, setCustomError] = useState<string | null>(null);
-    const { data, refetch } = useGetUserDataQuery(userId);
-    const [updateUserProfile] = useUpdateUserProfileMutation();
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const token = getToken()
+    const userId = getIDFromToken(token)
+    const [isHovered, setIsHovered] = useState(false)
+    const [isEdited, setIsEdited] = useState(false)
+    const [username, setUsername] = useState('')
+    const [customError, setCustomError] = useState<string | null>(null)
+    const { data, refetch } = useGetUserDataQuery(userId)
+    const [updateUserProfile] = useUpdateUserProfileMutation()
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
 
     const profilePic = data?.user.profile_picture
-        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}` : profile;
+        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}`
+        : profile
 
     useEffect(() => {
         if (data?.user.username) {
-            setUsername(data.user.username);
+            setUsername(data.user.username)
         }
-    }, [data?.user.username]);
+    }, [data?.user.username])
 
     const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
+        setIsHovered(true)
+    }
 
     const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
+        setIsHovered(false)
+    }
 
     const handleProfilePicClick = () => {
         if (fileInputRef.current) {
-            fileInputRef.current.click();
+            fileInputRef.current.click()
         }
-    };
+    }
 
-    const handleProfilePhotoOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleProfilePhotoOnChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         setCustomError(null)
-        const formData = new FormData();
+        const formData = new FormData()
         if (e.target.files && e.target.files.length > 0) {
-            formData.append('profile_picture', e.target.files[0]);
+            formData.append('profile_picture', e.target.files[0])
             try {
-                await updateUserProfile(formData).unwrap();
-                refetch();
+                await updateUserProfile(formData).unwrap()
+                refetch()
             } catch (err: any) {
-                setCustomError(err?.data?.message);
+                setCustomError(err?.data?.message)
             }
         }
-    };
+    }
 
-    const handleUsernameOnClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('username', username);
+    const handleUsernameOnClick = async (
+        e: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        e.preventDefault()
+        const formData = new FormData()
+        formData.append('username', username)
         try {
-            await updateUserProfile(formData).unwrap();
-            setIsEdited(false);
-            refetch();
+            await updateUserProfile(formData).unwrap()
+            setIsEdited(false)
+            refetch()
         } catch (err: any) {
-            setCustomError(err?.data?.message);
+            setCustomError(err?.data?.message)
         }
-    };
+    }
 
     const handleUsernameOnClange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value)
@@ -80,7 +87,6 @@ const UserData: React.FC = () => {
                 onMouseLeave={handleMouseLeave}
             >
                 <img
-                    // src={profilePic}
                     src={profilePic}
                     alt="Profile"
                     className="w-16 h-16 rounded-full object-cover shadow"
@@ -115,31 +121,34 @@ const UserData: React.FC = () => {
                             onClick={handleUsernameOnClick}
                             className="text-green-600 hover:underline cursor-pointer"
                         >
-                            <Check className='w-5' />
+                            <Check className="w-5" />
                         </button>
                         <button
                             onClick={() => {
-                                setUsername(data?.user.username || "");
-                                setIsEdited(false);
+                                setUsername(data?.user.username || '')
+                                setIsEdited(false)
                             }}
                             className="text-red-500 hover:underline cursor-pointer"
                         >
-                            <X className='w-5' />
+                            <X className="w-5" />
                         </button>
                     </div>
                 ) : (
                     <div className="flex items-center">
-                        <h2 className="text-2xl font-bold text-indigo-700">{data?.user.username}</h2>
-                        <Pencil className="ml-2 cursor-pointer w-4 text-indigo-800"
-                            onClick={() => setIsEdited(true)} />
+                        <h2 className="text-2xl font-bold text-indigo-700">
+                            {data?.user.username}
+                        </h2>
+                        <Pencil
+                            className="ml-2 cursor-pointer w-4 text-indigo-800"
+                            onClick={() => setIsEdited(true)}
+                        />
                     </div>
                 )}
                 <p className="text-gray-600">{data?.user.email}</p>
-                <ErrorHandling customError={customError}/>
+                <ErrorHandling customError={customError} />
             </div>
         </div>
-    );
+    )
 }
 
-export default UserData;
-
+export default UserData

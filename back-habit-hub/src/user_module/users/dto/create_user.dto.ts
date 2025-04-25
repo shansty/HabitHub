@@ -1,4 +1,12 @@
-import { IsEmail, IsOptional,IsNotEmpty, IsString, IsUUID, IsBoolean, IsDate } from "class-validator";
+import {
+    IsEmail,
+    IsOptional,
+    IsNotEmpty,
+    IsString,
+    IsUUID,
+    IsBoolean,
+    IsDate,
+} from 'class-validator'
 
 export class CreateUserDto {
     @IsString()
@@ -7,23 +15,23 @@ export class CreateUserDto {
 
     @IsEmail({}, { message: 'Please provide a valid email address. ' })
     @IsNotEmpty({ message: 'Email is required. ' })
-    email: string;
+    email: string
 
     @IsString()
     @IsNotEmpty({ message: 'Password is required. ' })
-    password: string;
+    password: string
 
     @IsString()
     @IsOptional()
-    profile_picture: string | null;
-    
+    profile_picture: string | null
+
     @IsUUID()
     @IsOptional()
-    verification_code?: string;
-  
+    verification_code?: string
+
     @IsBoolean()
     @IsOptional()
-    isVerified?: boolean;
+    isVerified?: boolean
 
     @IsDate()
     @IsOptional()
@@ -31,14 +39,13 @@ export class CreateUserDto {
 
     @IsString()
     @IsOptional()
-    temp_password?: string;
+    temp_password?: string
 
     @IsString()
     @IsOptional()
-    reset_code?: string;
+    reset_code?: string
 
     @IsDate()
     @IsOptional()
     reset_code_expires_at?: Date
-    
 }
