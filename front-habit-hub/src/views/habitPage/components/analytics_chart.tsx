@@ -53,22 +53,6 @@ const HabitAnalyticsChart: React.FC<HabitAnalyticsChartProps> = ({ data }) => {
 
     const chartData = getFilteredData()
 
-    const getMinDate = (data: HabitDailyDataResponse[]): Date | undefined => {
-        if (!data.length) return undefined
-        return new Date(
-            Math.min(...data.map((d) => new Date(d.date).getTime()))
-        )
-    }
-
-    const getMaxDate = (data: HabitDailyDataResponse[]): Date | undefined => {
-        if (!data.length) return undefined
-        const today = new Date()
-        const maxDataDate = new Date(
-            Math.max(...data.map((d) => new Date(d.date).getTime()))
-        )
-        return isAfter(maxDataDate, today) ? today : maxDataDate
-    }
-
     return (
         <div className="w-full p-4">
             <div className="flex items-center gap-1 mb-2">
@@ -90,29 +74,29 @@ const HabitAnalyticsChart: React.FC<HabitAnalyticsChartProps> = ({ data }) => {
                     Last 30 Days
                 </button>
 
-                {range !== 'custom' ? (
-                    <button
-                        onClick={() => setRange('custom')}
-                        className="px-3 py-1 rounded-md"
-                    >
-                        Select dates
-                    </button>
-                ) : (
-                    <DatePicker
-                        selectsRange
-                        startDate={customStart}
-                        endDate={customEnd}
-                        onChange={(dates) => {
-                            const [start, end] = dates as [Date, Date]
-                            setCustomStart(start)
-                            setCustomEnd(end)
-                        }}
-                        isClearable
-                        minDate={getMinDate(data)}
-                        maxDate={getMaxDate(data)}
-                        placeholderText="Select dates"
-                        className="border-2 border-indigo-600 rounded-md px-2 w-[120px]"
-                    />
+                {chartData.length > 30 && (
+                    range !== 'custom' ? (
+                        <button
+                            onClick={() => setRange('custom')}
+                            className="px-3 py-1 rounded-md"
+                        >
+                            Select dates
+                        </button>
+                    ) : (
+                        <DatePicker
+                            selectsRange
+                            startDate={customStart}
+                            endDate={customEnd}
+                            onChange={(dates) => {
+                                const [start, end] = dates as [Date, Date];
+                                setCustomStart(start);
+                                setCustomEnd(end);
+                            }}
+                            isClearable
+                            placeholderText="Select dates"
+                            className="border-2 border-indigo-600 rounded-md px-2 w-[120px]"
+                        />
+                    )
                 )}
             </div>
 
