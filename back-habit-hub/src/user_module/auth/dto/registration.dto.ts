@@ -6,9 +6,11 @@ import {
     IsUUID,
     IsBoolean,
     IsDate,
+    MinLength,
+    Matches,
 } from 'class-validator'
 
-export class CreateUserDto {
+export class RegistrationDto {
     @IsString()
     @IsNotEmpty({ message: 'Username is required. ' })
     username: string
@@ -19,6 +21,12 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty({ message: 'Password is required. ' })
+    @MinLength(12, {
+        message: 'Password must be at least 12 characters long'
+    })
+    @Matches(/(?=.*\d)(?=.*[A-Z])(?=.*[!@#$%^&*])/, {
+        message: 'Password must contain: 1 number, 1 uppercase letter, and 1 special character (!@#$%^&*)'
+    })
     password: string
 
     @IsString()

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Modal from '../../utils_components/modal_notification'
+import Modal from '../../common_components/modal_notification'
 import { getToken, isTokenValid } from '../../utils'
-import HabitDetail from './components/habit_detail'
+import HabitDetail from '../habit_page/components/habit_detail'
 import { useGetHabitByIdQuery } from '../../services/habit'
-import HabitCompletionCalendar from './components/habit_completetion_calendar'
-import HabitProgressWidget from './components/progress_widget'
-import HabitHeader from './components/habit_header'
-import HabitAnalyticsChart from './components/analytics_chart'
+import HabitCompletionCalendar from '../habit_page/components/habit_completetion_calendar'
+import HabitProgressWidget from '../habit_page/components/progress_widget'
+import HabitHeader from '../habit_page/components/habit_header'
+import HabitAnalyticsChart from '../habit_page/components/analytics_chart'
 
 const HabitPage: React.FC = () => {
     const { id } = useParams()

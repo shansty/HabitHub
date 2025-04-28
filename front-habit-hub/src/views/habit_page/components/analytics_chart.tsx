@@ -11,7 +11,7 @@ import {
 import { HabitDailyDataResponse } from '../../../types'
 import DatePicker from 'react-datepicker'
 import { isAfter } from 'date-fns'
-import CustomTooltip from '../../../utils_components/tool_tip'
+import CustomTooltip from '../../../common_components/tool_tip'
 import 'react-datepicker/dist/react-datepicker.css'
 
 interface HabitAnalyticsChartProps {

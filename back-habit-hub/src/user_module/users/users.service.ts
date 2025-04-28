@@ -7,108 +7,58 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entities/users.entity'
 import { Repository } from 'typeorm'
-import { CreateUserDto } from './dto/create_user.dto'
-import { LoginUserDto } from './dto/login_user.dto'
 import { ResetUserPasswordDto } from './dto/reset_user_password.dto'
 import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto'
 import { UserDto } from './dto/user.dto'
 import { UserProfileDto } from './dto/user_profile.dto'
-import { JwtService } from '@nestjs/jwt'
 import { EmailService } from '../../internal_module/email/email.service'
 import { v4 as uuidv4 } from 'uuid'
-import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils'
+import { scryptHash } from '../auth/auth.utils'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly jwtService: JwtService,
         private readonly emailService: EmailService
-    ) {}
+    ) { }
 
     private one_hour_exparation = 60 * 60 * 1000
     private fifteen_minutes_exparation = 15 * 60 * 1000
 
-    async login(userData: LoginUserDto): Promise<{ token: string }> {
-        const user = await this.getUserByQuery({
-            username: userData.username,
-        })
-        if (!user) {
-            throw new NotFoundException(
-                'Invalid credentials. Please try again.'
-            )
+
+
+    async sendVerificationEmail(user: User, code: string): Promise<boolean> {
+        if (!user || user.isVerified) {
+            return false;
         }
-        const isValid = await scryptVerify(userData.password, user.password)
-        if (!isValid) {
-            throw new BadRequestException('Invalid password.')
-        }
-        const token = await generateToken(user.id.toString(), this.jwtService)
-        return { token: token }
+        await this.emailService.sendVerificationEmail(
+            user.email,
+            code
+        );
+        return true;
     }
 
-    async registerUserAndSendVerificationLink(
-        userData: CreateUserDto,
-        file?: Express.Multer.File
-    ): Promise<{ emailSent: boolean }> {
-        const existing_user = await this.getUserByQuery({
-            email: userData.email,
-            username: userData.username,
-        })
-        if (existing_user && existing_user.isVerified) {
+
+    async handleUnverifiedUser(existingUser: User): Promise<{ emailSent: boolean }> {
+        const now = new Date();
+        if (existingUser.verification_expires_at && existingUser.verification_expires_at > now) {
             throw new BadRequestException(
-                'User already have an account. Try to log in.'
-            )
-        }
-        const code = uuidv4()
-        const expiresAt = new Date(Date.now() + this.one_hour_exparation)
-        if (existing_user && !existing_user.isVerified) {
-            const now = new Date()
-            if (
-                existing_user.verification_expires_at &&
-                existing_user.verification_expires_at > now
-            ) {
-                throw new BadRequestException(
-                    'Verification email already sent. You can get a new link in 1 hour.'
-                )
-            }
-            existing_user.verification_code = code
-            existing_user.verification_expires_at = expiresAt
-            await this.userRepository.save(existing_user)
-            await this.emailService.sendVerificationEmail(
-                existing_user.email,
-                code
-            )
-            return { emailSent: true }
+                'Verification email already sent. You can get a new link in 1 hour.'
+            );
         }
 
-        const user_with_username = await this.getUserByQuery({
-            username: userData.username,
-        })
-        if (user_with_username) {
-            throw new BadRequestException('Username is already taken')
-        }
-        const user_with_email = await this.getUserByQuery({
-            email: userData.email,
-        })
-        if (user_with_email) {
-            throw new BadRequestException('Email is already taken')
-        }
-        const hashedPassword = await scryptHash(userData.password)
+        const code = uuidv4();
+        const expiresAt = new Date(Date.now() + this.one_hour_exparation);
 
-        const user = await this.userRepository.create({
-            ...userData,
-            password: hashedPassword,
-            profile_picture: file?.filename || null,
-            isVerified: false,
-            verification_code: code,
-            verification_expires_at: expiresAt,
-        })
-        await this.userRepository.save(user)
-        await this.emailService.sendVerificationEmail(userData.email, code)
+        existingUser.verification_code = code;
+        existingUser.verification_expires_at = expiresAt;
+        await this.userRepository.save(existingUser);
 
-        return { emailSent: true }
+        const emailSent = await this.sendVerificationEmail(existingUser, code);
+        return { emailSent };
     }
+
 
     async verifyEmail(code: string): Promise<{ success: boolean }> {
         const user = await this.getUserByQuery({ verification_code: code })
@@ -227,7 +177,7 @@ export class UsersService {
         return { success: true }
     }
 
-    private async getUserByQuery(query: Object): Promise<User | null> {
+    async getUserByQuery(query: Object): Promise<User | null> {
         const user = await this.userRepository.findOneBy(query)
         return user
     }

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import InputField from '../../../utils_components/input_field'
-import { useVerifyResetCodeMutation } from '../../../services/user'
-import ErrorHandling from '../../../utils_components/error_handling'
+import InputField from '../../../../common_components/input_field'
+import { useVerifyResetCodeMutation } from '../../../../services/user'
+import ErrorHandling from '../../../../common_components/error_handling'
 
 const ResetPasswordConfirmForm: React.FC = () => {
     const navigate = useNavigate()

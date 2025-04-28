@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import InputField from '../../../utils_components/input_field'
+import InputField from '../../../../common_components/input_field'
 import {
     useGetHabitCategoriesQuery,
     useCreateHabitMutation,
     useEditHabitMutation,
-} from '../../../services/habit'
-import { UnitOfMeasurement, Schedule, GoalPeriodicity } from '../../../enums'
+} from '../../../../services/habit'
+import { UnitOfMeasurement, Schedule, GoalPeriodicity } from '../../../../enums'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import SelectField from '../../../utils_components/select_field'
-import InputNumber from '../../../utils_components/input_number'
-import HabitScheduleDropdown from '../components/custom_habit_schedule_picker'
-import { HabitCreateData, UsersHabitPreviewResponseData } from '../../../types'
-import ErrorHandling from '../../../utils_components/error_handling'
+import SelectField from '../../../../common_components/select_field'
+import InputNumber from '../../../../common_components/input_number'
+import HabitScheduleDropdown from '../custom_habit_schedule_picker'
+import { HabitCreateData, UsersHabitPreviewResponseData } from '../../../../types'
+import ErrorHandling from '../../../../common_components/error_handling'
 
 interface HabitFormProps {
     onClose: () => void
