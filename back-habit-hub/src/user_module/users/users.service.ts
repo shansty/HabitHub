@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entities/users.entity'
-import { Repository } from 'typeorm'
+import { ILike, Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create_user.dto'
 import { LoginUserDto } from './dto/login_user.dto'
 import { ResetUserPasswordDto } from './dto/reset_user_password.dto'
@@ -17,6 +17,7 @@ import { JwtService } from '@nestjs/jwt'
 import { EmailService } from '../../internal_module/email/email.service'
 import { v4 as uuidv4 } from 'uuid'
 import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils'
+import { SearchUsersDto } from './dto/search-users.dto'
 
 @Injectable()
 export class UsersService {
@@ -25,7 +26,7 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
         private readonly jwtService: JwtService,
         private readonly emailService: EmailService
-    ) {}
+    ) { }
 
     private one_hour_exparation = 60 * 60 * 1000
     private fifteen_minutes_exparation = 15 * 60 * 1000
@@ -226,6 +227,25 @@ export class UsersService {
         await this.userRepository.save(updatedUser)
         return { success: true }
     }
+
+
+    async searchUsers(username: string): Promise<SearchUsersDto[]> {
+        if (!username) {
+            return [];
+        }
+        const users = await this.userRepository.find({
+            where: { username: ILike(`%${username}%`) },
+            take: 20,
+            select: ['id', 'username'],
+        });
+        const searchUsers = users.map(el => ({
+            id: el.id,
+            username: el.username,
+        }));
+        console.dir({searchUsers})
+        return searchUsers;
+    }
+
 
     private async getUserByQuery(query: Object): Promise<User | null> {
         const user = await this.userRepository.findOneBy(query)
