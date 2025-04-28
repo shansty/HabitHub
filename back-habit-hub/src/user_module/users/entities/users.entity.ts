@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { Habit } from '../../../habit_module/habit/entities/habit.entity'
 import { HabitOccurrence } from '../../../habit_module/habit_occurrence/entities/habit_occurrence.entity'
+import { Friendship } from '../../../friendship/entities/friendship.entity'
 
 @Entity()
 export class User {
@@ -52,6 +53,12 @@ export class User {
         (habitOcccurrence) => habitOcccurrence.user
     )
     habitOcccurrences: HabitOccurrence[]
+
+    @OneToMany(() => Friendship, (friendship) => friendship.user1)
+    friendshipsInitiated: Friendship[];
+  
+    @OneToMany(() => Friendship, (friendship) => friendship.user2)
+    friendshipsReceived: Friendship[];
 
     @CreateDateColumn()
     created_at: Date
