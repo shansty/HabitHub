@@ -13,6 +13,7 @@ import { HabitSchedule } from './habit_module/habit_schedule/entities/habit_sche
 import { HabitEvent } from './habit_module/habit_event/entities/habit_event.entity'
 import { HabitOccurrence } from './habit_module/habit_occurrence/entities/habit_occurrence.entity'
 import { TaskModule } from './schedule_module/task.module'
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { TaskModule } from './schedule_module/task.module'
         HabitEventModule,
         HabitOccurrenceModule,
         TaskModule,
+        FriendshipModule,
     ],
     controllers: [],
     providers: [],
