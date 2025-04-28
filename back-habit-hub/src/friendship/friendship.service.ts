@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { Friendship } from './entities/friendship.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,9 +12,11 @@ export class FriendshipService {
     private readonly friendshipRepository: Repository<Friendship>
   ) { }
 
-  async sendFriendRequest(createFriendshipDto: CreateFriendshipDto) {
+  async sendFriendRequest(createFriendshipDto: CreateFriendshipDto, userId: string):Promise<{success: boolean}> {
     const { senderId, receiverId } = createFriendshipDto;
-
+    if (senderId != Number(userId)) {
+      throw new ForbiddenException("Another user cannot send friend requests")
+    }
     const [user1Id, user2Id] = senderId < receiverId
       ? [senderId, receiverId]
       : [receiverId, senderId];
@@ -37,10 +39,10 @@ export class FriendshipService {
     });
 
     await this.friendshipRepository.save(friendship);
-    return friendship;
+    return {success: true};
   }
 
-  
+
   async acceptFriendRequest(createFriendshipDto: CreateFriendshipDto) {
     const { senderId, receiverId } = createFriendshipDto;
 
@@ -73,5 +75,5 @@ export class FriendshipService {
       },
     });
   }
-  
+
 }  

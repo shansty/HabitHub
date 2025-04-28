@@ -27,7 +27,7 @@ import { User } from '../auth/jwt/user.decorator'
 
 @Controller('user')
 export class UsersController {
-    constructor(private readonly userService: UsersService) {}
+    constructor(private readonly userService: UsersService) { }
 
     @Post('login')
     login(@Body() LoginUserDto: LoginUserDto) {
@@ -56,6 +56,12 @@ export class UsersController {
             createUserDto,
             file
         )
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('search')
+    async searchUsers(@Query('username') username: string) {
+        return this.userService.searchUsers(username);
     }
 
     @Patch('email_verification')
