@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import InputField from '../../../utils_components/input_field'
+import InputField from '../../../../common_components/input_field'
 import { Link, useNavigate } from 'react-router-dom'
-import { User } from '../../../types'
-import { useLoginUserMutation } from '../../../services/user'
-import { setToken } from '../../../utils'
-import ErrorHandling from '../../../utils_components/error_handling'
+import { User } from '../../../../types'
+import { useLoginMutation } from '../../../../services/auth'
+import { setToken } from '../../../../utils'
+import ErrorHandling from '../../../../common_components/error_handling'
 
 const LoginForm: React.FC = () => {
     const defaultUserDataValue: User = { username: '', password: '' }
     const [userData, setUserData] = useState<User>(defaultUserDataValue)
-    const [loginUser, { isLoading }] = useLoginUserMutation()
+    const [loginUser, { isLoading }] = useLoginMutation()
     const [customError, setCustomError] = useState<string | null>(null)
     const navigate = useNavigate()
 

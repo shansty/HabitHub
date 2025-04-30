@@ -2,7 +2,6 @@ import {
     Body,
     Controller,
     Get,
-    Post,
     UploadedFile,
     UseInterceptors,
     Param,
@@ -11,8 +10,6 @@ import {
     UseGuards,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { CreateUserDto } from './dto/create_user.dto'
-import { LoginUserDto } from './dto/login_user.dto'
 import { ResetUserPasswordDto } from './dto/reset_user_password.dto'
 import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto'
 import { UserDto } from './dto/user.dto'
@@ -28,34 +25,6 @@ import { FriendshipGuard } from '../../friendship/friendship_guard/friendship.gu
 export class UsersController {
     constructor(private readonly userService: UsersService) { }
 
-    @Post('login')
-    login(@Body() LoginUserDto: LoginUserDto) {
-        return this.userService.login(LoginUserDto)
-    }
-
-    @Post()
-    @UseInterceptors(
-        FileInterceptor('profile_picture', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix =
-                        Date.now() + '-' + Math.round(Math.random() * 1e9)
-                    const ext = extname(file.originalname)
-                    cb(null, `${uniqueSuffix}${ext}`)
-                },
-            }),
-        })
-    )
-    registerUserAndSendVerificationLink(
-        @Body() createUserDto: CreateUserDto,
-        @UploadedFile() file: Express.Multer.File
-    ) {
-        return this.userService.registerUserAndSendVerificationLink(
-            createUserDto,
-            file
-        )
-    }
 
     @UseGuards(JwtAuthGuard)
     @Get('search')
