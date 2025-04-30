@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
-import { JwtAuthGuard } from '../user_module/auth/jwt/jwt.guard';
-import { User } from '../user_module/auth/jwt/user.decorator';
+import { JwtAuthGuard } from '../user_module/auth/jwt_guard/jwt.guard';
+import { User } from '../user_module/auth/jwt_guard/user.decorator';
 
 @Controller('friendship')
 export class FriendshipController {
@@ -21,8 +21,30 @@ export class FriendshipController {
     return this.friendshipService.acceptFriendRequest(updateFriendshipDto);
   }
 
+  // @UseGuards(JwtAuthGuard)
+  // @Get()
+  // getUserFriends(@User('userId') userId: string) {
+  //   return this.friendshipService.getUserFriends(userId);
+  // }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAllFriendships() {
-    return this.friendshipService.findAll();
+  getUserFriendsPaginated(
+    @User('userId') userId: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string
+  ) {
+    const pageNum = parseInt(page || '1', 10);
+    const limitNum = parseInt(limit || '10', 10);
+    return this.friendshipService.getUserFriendsPaginated(userId, pageNum, limitNum);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':friendId')
+  deleteUserFriend(
+    @User('userId') userId: string,
+    @Param('friendId') friendId: string
+  ) {
+    return this.friendshipService.deleteUserFriend(userId, friendId);
   }
 }

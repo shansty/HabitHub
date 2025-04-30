@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode'
 interface CustomJwtPayload {
-    userId: string
+    userId: number
     exp: number
     iat: number
 }
@@ -24,7 +24,7 @@ export function getToken(): string | null {
     return localStorage.getItem('token')
 }
 
-export function getIDFromToken(token: string | null): string | null {
+export function getIDFromToken(token: string | null): number | null {
     if (!token) return null
     const decoded: CustomJwtPayload = jwtDecode(token)
     return decoded.userId

@@ -102,3 +102,10 @@ export type HabitEvent = {
     isGoalCompleted?: boolean
     isFailure?: boolean
 }
+
+
+export type UserPreview = {
+    id: number;
+    username: string;
+    isFriends: boolean
+}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { FriendshipController } from './friendship.controller';
 import { UsersModule } from '../user_module/users/users.module';
@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     TypeOrmModule.forFeature([Friendship]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
