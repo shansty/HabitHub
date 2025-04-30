@@ -9,20 +9,6 @@ export const userApi = createApi({
     }),
     refetchOnFocus: true,
     endpoints: (builder) => ({
-        loginUser: builder.mutation<{ token: string }, User>({
-            query: (body) => ({
-                url: 'login',
-                method: 'POST',
-                body,
-            }),
-        }),
-        registerUser: builder.mutation<{ emailSent: boolean }, FormData>({
-            query: (body) => ({
-                url: '',
-                method: 'POST',
-                body,
-            }),
-        }),
         verifyEmail: builder.mutation<
             { success: boolean; message: string },
             string
@@ -108,9 +94,7 @@ export const userApi = createApi({
 })
 
 export const {
-    useLoginUserMutation,
     useGetUserDataQuery,
-    useRegisterUserMutation,
     useVerifyEmailMutation,
     useResetPasswordMutation,
     useVerifyResetCodeMutation,

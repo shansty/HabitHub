@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import InputField from '../../../utils_components/input_field'
-import PasswordField from '../components/password_field'
+import InputField from '../../../../common_components/input_field'
+import PasswordField from '../password_field'
 import { Link } from 'react-router-dom'
-import { User } from '../../../types'
-import { useRegisterUserMutation } from '../../../services/user'
-import Dropzone from '../../../utils_components/custom_dropzone'
-import Modal from '../../../utils_components/modal_notification'
-import ErrorHandling from '../../../utils_components/error_handling'
+import { User } from '../../../../types'
+import { useRegisterMutation } from '../../../../services/auth'
+import Dropzone from '../../../../common_components/custom_dropzone'
+import Modal from '../../../../common_components/modal_notification'
+import ErrorHandling from '../../../../common_components/error_handling'
 
 const SignUpForm: React.FC = () => {
     const defaultUserDataValue: User = { username: '', password: '', email: '' }
@@ -15,7 +15,7 @@ const SignUpForm: React.FC = () => {
     const [customError, setCustomError] = useState<string | null>(null)
 
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [registerUser, { isLoading }] = useRegisterUserMutation()
+    const [registerUser, { isLoading }] = useRegisterMutation()
 
     const handlePhotoDrop = (file: File) => {
         setUserData((prev) => ({ ...prev, profile_picture: file }))

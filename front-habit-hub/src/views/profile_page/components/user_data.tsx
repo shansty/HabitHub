@@ -6,7 +6,7 @@ import {
 import { getToken, getIDFromToken } from '../../../utils'
 import profile from '../../../assets/profile.png'
 import { Camera, Check, Pencil, X } from 'lucide-react'
-import ErrorHandling from '../../../utils_components/error_handling'
+import ErrorHandling from '../../../common_components/error_handling'
 
 const UserData: React.FC = () => {
     const token = getToken()

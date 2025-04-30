@@ -6,7 +6,7 @@ import {
     UsersHabitPreviewResponseData,
 } from '../types'
 import { getToken } from '../utils'
-import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags'
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './api_tags'
 
 export const habitApi = createApi({
     reducerPath: 'habitApi',

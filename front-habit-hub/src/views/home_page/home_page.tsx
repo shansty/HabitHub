@@ -1,8 +1,8 @@
 import React from 'react'
-import HeroSection from './coponents/hero_section'
-import CTASection from './coponents/cta_section'
-import HowItWorksSection from './coponents/how_it_works_section'
-import UsersStories from './coponents/users_stories'
+import HeroSection from '../home_page/coponents/hero_section'
+import CTASection from '../home_page/coponents/cta_section'
+import HowItWorksSection from '../home_page/coponents/how_it_works_section'
+import UsersStories from '../home_page/coponents/users_stories'
 
 const HomePage: React.FC = () => {
     return (

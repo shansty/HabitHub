@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getToken } from '../utils'
-import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags'
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './api_tags'
 
 export const habitEventApi = createApi({
     reducerPath: 'habitEventApi',
