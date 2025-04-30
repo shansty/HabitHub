@@ -13,6 +13,7 @@ import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.e
 import { HabitEventModule } from '../habit_event/habit_event.module'
 import { HabitScheduleModule } from '../habit_schedule/habit_schedule.module'
 import { HabitOccurrenceModule } from '../habit_occurrence/habit_occurrence.module'
+import { FriendshipModule } from '../../friendship/friendship.module'
 
 @Module({
     imports: [
@@ -35,6 +36,7 @@ import { HabitOccurrenceModule } from '../habit_occurrence/habit_occurrence.modu
         forwardRef(() => HabitEventModule),
         HabitScheduleModule,
         HabitOccurrenceModule,
+        FriendshipModule
     ],
     controllers: [HabitController],
     providers: [HabitService],

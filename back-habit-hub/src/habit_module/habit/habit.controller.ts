@@ -11,12 +11,20 @@ import {
 } from '@nestjs/common'
 import { HabitService } from './habit.service'
 import { HabitDto } from './dto/habit.dto'
-import { JwtAuthGuard } from '../../user_module/auth/jwt/jwt.guard'
-import { User } from '../../user_module/auth/jwt/user.decorator'
+import { JwtAuthGuard } from '../../user_module/auth/jwt_guard/jwt.guard'
+import { User } from '../../user_module/auth/jwt_guard/user.decorator'
+import { FriendshipGuard } from '../../friendship/friendship_guard/friendship.guard'
 
 @Controller('habit')
 export class HabitController {
-    constructor(private readonly habitService: HabitService) {}
+    constructor(private readonly habitService: HabitService) { }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('categories')
+    getCategories() {
+        return this.habitService.getHabitCategories()
+    }
+
 
     @UseGuards(JwtAuthGuard)
     @Post()
@@ -33,11 +41,17 @@ export class HabitController {
         return this.habitService.getUserHabitsByDate(userId, date)
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get('categories')
-    getCategories() {
-        return this.habitService.getHabitCategories()
+
+    @UseGuards(JwtAuthGuard, FriendshipGuard)
+    @Get('friend/:friendId')
+    getFriendHabitsByDate(
+        @User('userId') userId: string,
+        @Param('friendId') friendId: string,
+        @Query('date') date: string,
+    ) {
+        return this.habitService.getUserHabitsByDate(friendId, date);
     }
+
 
     @Delete(':habitId')
     @UseGuards(JwtAuthGuard)
@@ -62,6 +76,16 @@ export class HabitController {
     @UseGuards(JwtAuthGuard)
     getHabitById(@Param('id') habitId: string, @User('userId') userId: string) {
         return this.habitService.getHabitByIdAndUserId(+habitId, +userId)
+    }
+
+    @UseGuards(JwtAuthGuard, FriendshipGuard)
+    @Get('friend/:friendId/habits/:habitId')
+    getFriendHabitById(
+        @User('userId') userId: string,
+        @Param('friendId') friendId: string,
+        @Param('habitId') habitId: string,
+    ) {
+        return this.habitService.getHabitByIdAndUserId(+habitId, +friendId);
     }
 
     @Patch(':habitId/attempt')

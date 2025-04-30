@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ResetPasswordCredentials, User } from '../types'
+import { ResetPasswordCredentials, User, UserPreview } from '../types'
 import { getToken } from '../utils'
 
 export const userApi = createApi({
@@ -38,7 +38,7 @@ export const userApi = createApi({
                 body,
             }),
         }),
-        getUserData: builder.query<{ user: User }, string | null>({
+        getUserData: builder.query<{ user: User }, number | null>({
             query: (id) => {
                 const token = getToken()
                 return {
@@ -66,6 +66,30 @@ export const userApi = createApi({
                 }
             },
         }),
+        searchUsers: builder.query<UserPreview[], string>({
+            query: (searchTerm) => {
+                const token = getToken();
+                return {
+                    url: `search?username=${encodeURIComponent(searchTerm)}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+            },
+        }),
+        getFriendUserData: builder.query<{ friend: User }, number | null>({
+            query: (friendId) => {
+                const token = getToken()
+                return {
+                    url: `friend/${friendId}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            },
+        }),
     }),
 })
 
@@ -75,4 +99,6 @@ export const {
     useResetPasswordMutation,
     useVerifyResetCodeMutation,
     useUpdateUserProfileMutation,
+    useSearchUsersQuery,
+    useGetFriendUserDataQuery
 } = userApi

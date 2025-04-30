@@ -1,3 +1,4 @@
+import FriendProfilePage from './views/friend_profile_page/friend_profile_page'
 import HomePage from './views/home_page/home_page'
 import LoginForm from './views/auth_page/components/forms/login_form'
 import SignUpForm from './views/auth_page/components/forms/sign_up_form'
@@ -7,6 +8,7 @@ import ResetPasswordConfirmForm from './views/auth_page/components/forms/reset_p
 import UserProfilePage from './views/profile_page/profile_page'
 import HabitPage from './views/habit_page/habit_page'
 import { Route, BrowserRouter, Routes } from 'react-router-dom'
+import FriendHabitPage from './views/friend_habit_page/friend_habit_page'
 
 function App() {
     return (
@@ -22,6 +24,8 @@ function App() {
                     element={<ResetPasswordConfirmForm />}
                 />
                 <Route path="/profile" element={<UserProfilePage />} />
+                <Route path="/friend/:friendId" element={<FriendProfilePage />} />
+                <Route path="/friend/:friendId/habits/:habitId" element={<FriendHabitPage />} />
                 <Route path="/habits/:id" element={<HabitPage />} />
             </Routes>
         </BrowserRouter>

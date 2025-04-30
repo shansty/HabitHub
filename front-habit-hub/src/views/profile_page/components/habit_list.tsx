@@ -13,7 +13,7 @@ const HabitList: React.FC<HabitListProps> = ({ habits, selectedDate }) => {
     })
 
     return (
-        <div className="space-y-5 mt-10">
+        <div className="space-y-5">
             {sortedHabits && sortedHabits.length > 0 ? (
                 sortedHabits.map((habit) => (
                     <Habit
