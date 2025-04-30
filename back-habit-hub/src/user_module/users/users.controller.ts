@@ -6,10 +6,8 @@ import {
     UploadedFile,
     UseInterceptors,
     Param,
-    Put,
     Patch,
     Query,
-    Req,
     UseGuards,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
@@ -22,8 +20,9 @@ import { UserProfileDto } from './dto/user_profile.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
-import { JwtAuthGuard } from '../auth/jwt/jwt.guard'
-import { User } from '../auth/jwt/user.decorator'
+import { JwtAuthGuard } from '../auth/jwt_guard/jwt.guard'
+import { User } from '../auth/jwt_guard/user.decorator'
+import { FriendshipGuard } from '../../friendship/friendship_guard/friendship.guard'
 
 @Controller('user')
 export class UsersController {
@@ -60,8 +59,11 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard)
     @Get('search')
-    async searchUsers(@Query('username') username: string) {
-        return this.userService.searchUsers(username);
+    async searchUsers(
+        @Query('username') username: string,
+        @User('userId') userId: string
+    ) {
+        return this.userService.searchUsers(username, userId);
     }
 
     @Patch('email_verification')
@@ -106,5 +108,14 @@ export class UsersController {
         @UploadedFile() file: Express.Multer.File
     ) {
         return this.userService.updateUserProfile(data, userId, file)
+    }
+
+
+    @UseGuards(JwtAuthGuard, FriendshipGuard)
+    @Get('friend/:friendId')
+    getFrienUserData(
+        @Param('friendId') friendId: string,
+        @User('userId') userId: string) {
+        return this.userService.getFriendUserData(friendId, userId)
     }
 }

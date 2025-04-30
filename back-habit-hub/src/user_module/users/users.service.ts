@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './entities/users.entity'
-import { ILike, Repository } from 'typeorm'
+import { ILike, Not, Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create_user.dto'
 import { LoginUserDto } from './dto/login_user.dto'
 import { ResetUserPasswordDto } from './dto/reset_user_password.dto'
@@ -18,12 +18,15 @@ import { EmailService } from '../../internal_module/email/email.service'
 import { v4 as uuidv4 } from 'uuid'
 import { generateToken, scryptHash, scryptVerify } from '../auth/auth.utils'
 import { SearchUsersDto } from './dto/search-users.dto'
+import { Friendship } from '../../friendship/entities/friendship.entity'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        @InjectRepository(Friendship)
+        private readonly friendshipRepository: Repository<Friendship>,
         private readonly jwtService: JwtService,
         private readonly emailService: EmailService
     ) { }
@@ -229,21 +232,76 @@ export class UsersService {
     }
 
 
-    async searchUsers(username: string): Promise<SearchUsersDto[]> {
-        if (!username) {
-            return [];
+    async searchUsers(username: string, userId: string): Promise<SearchUsersDto[]> {
+        if (!username) return []
+    
+        const exactMatch = await this.userRepository.findOne({
+            where: {
+                username: username,
+                id: Not(Number(userId)), // exclude self
+            },
+            relations: ['friendshipsInitiated', 'friendshipsReceived'],
+        })
+    
+        if (exactMatch) {
+            const isFriends = [...exactMatch.friendshipsInitiated, ...exactMatch.friendshipsReceived].some(
+                (f) =>
+                    f.isAccepted &&
+                    (f.user1.id === Number(userId) || f.user2.id === Number(userId))
+            )
+    
+            return [
+                {
+                    id: exactMatch.id,
+                    username: exactMatch.username,
+                    isFriends,
+                },
+            ]
         }
+    
         const users = await this.userRepository.find({
-            where: { username: ILike(`%${username}%`) },
-            take: 20,
-            select: ['id', 'username'],
-        });
-        const searchUsers = users.map(el => ({
-            id: el.id,
-            username: el.username,
-        }));
-        console.dir({searchUsers})
-        return searchUsers;
+            where: {
+                username: ILike(`%${username}%`),
+                id: Not(Number(userId)), // again exclude self
+            },
+            take: 10,
+            relations: ['friendshipsInitiated', 'friendshipsReceived'],
+        })
+    
+        const searchUsers = users.map((user) => {
+            const isFriends = [...user.friendshipsInitiated, ...user.friendshipsReceived].some(
+                (f) =>
+                    f.isAccepted &&
+                    (f.user1.id === Number(userId) || f.user2.id === Number(userId))
+            )
+    
+            return {
+                id: user.id,
+                username: user.username,
+                isFriends,
+            }
+        })
+    
+        return searchUsers
+    }
+    
+
+    async getFriendUserData(friendId: string, userId: string) {
+        const friend = await this.getUserByQuery({ id: friendId })
+        if (!friend) {
+            throw new NotFoundException('User data not found.')
+        }
+        const friendUserData = {
+            username: friend.username,
+            email: friend.email,
+            profile_picture: friend.profile_picture,
+        }
+        return { friend: friendUserData }
+    }
+
+
+    private generate6DigitCode(): string {
+        return Math.floor(100000 + Math.random() * 900000).toString()
     }
 
 
@@ -251,8 +309,6 @@ export class UsersService {
         const user = await this.userRepository.findOneBy(query)
         return user
     }
-
-    private generate6DigitCode(): string {
-        return Math.floor(100000 + Math.random() * 900000).toString()
-    }
 }
+
+

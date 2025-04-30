@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength, IsNumber } from 'class-validator';
+import { IsString, IsOptional, MinLength, IsNumber, IsBoolean } from 'class-validator';
 
 export class SearchUsersDto {
   @IsNumber()
@@ -7,4 +7,7 @@ export class SearchUsersDto {
   @IsOptional()
   @IsString()
   username?: string;
+
+  @IsBoolean()
+  isFriends: boolean
 }

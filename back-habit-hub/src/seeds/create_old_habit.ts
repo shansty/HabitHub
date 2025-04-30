@@ -33,6 +33,7 @@ async function seed() {
         },
     })
 
+
     if (!user) {
         throw new Error('User not found')
     }

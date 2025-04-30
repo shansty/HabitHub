@@ -7,10 +7,12 @@ import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { EmailModule } from '../../internal_module/email/email.module'
 import { AuthModule } from '../auth/auth.module'
+import { Friendship } from '../../friendship/entities/friendship.entity'
+import { FriendshipModule } from '../../friendship/friendship.module'
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([User, Friendship]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -21,6 +23,7 @@ import { AuthModule } from '../auth/auth.module'
         }),
         EmailModule,
         AuthModule,
+        FriendshipModule,
     ],
     providers: [UsersService],
     controllers: [UsersController],

@@ -11,6 +11,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { useClickOutside } from '../../hooks'
 import HabitList from './components/habit_list'
 import { Keyboard } from 'lucide-react'
+import SearchUsers from './components/search/search'
+import FriendNotificationTabs from './components/feed/users_tabs'
 
 const UserProfilePage: React.FC = () => {
     const navigate = useNavigate()
@@ -25,6 +27,7 @@ const UserProfilePage: React.FC = () => {
     useClickOutside(calendarRef, () => setShowCalendar(false))
     const isValid = isTokenValid(token)
     let formattedDate: string
+
 
     useEffect(() => {
         if (!token || !isValid) {
@@ -50,7 +53,8 @@ const UserProfilePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-blue-800 flex center justify-center">
-            <div className="w-full max-w-350 bg-white rounded-xl p-8 space-y-3 mt-20 mb-20">
+            <div
+                className="w-full max-w-350 bg-white rounded-xl p-8 space-y-3 mt-20 mb-20">
                 {(!token || !isValid) && isModalOpen && (
                     <Modal
                         onClose={handleOnModalClose}
@@ -61,6 +65,7 @@ const UserProfilePage: React.FC = () => {
                 )}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <UserData />
+                    <SearchUsers />
 
                     <div
                         className="relative flex sm:flex-row items-start sm:items-center gap-2"
@@ -102,7 +107,14 @@ const UserProfilePage: React.FC = () => {
                         minStartDate={new Date()}
                     />
                 )}
-                <HabitList habits={data} selectedDate={selectedDate} />
+                <div className="grid grid-cols-6 gap-4">
+                    <div className="col-span-2">
+                        <FriendNotificationTabs  />
+                    </div>
+                    <div className="col-span-4">
+                        <HabitList habits={data} selectedDate={selectedDate} />
+                    </div>
+                </div>
             </div>
         </div>
     )

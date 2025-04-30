@@ -10,7 +10,7 @@ import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags'
 
 export const habitApi = createApi({
     reducerPath: 'habitApi',
-    tagTypes: ['Habit', 'HabitDetails'],
+    tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit`,
         prepareHeaders: (headers) => {
@@ -35,10 +35,25 @@ export const habitApi = createApi({
                 { type: HABIT_TAG, id: date },
             ],
         }),
+        getFriendUserHabitsByDate: builder.query<
+            UsersHabitPreviewResponseData[],
+            { friendId: string; date: string }
+        >({
+            query: ({ friendId, date }) => `friend/${friendId}?date=${date}`,
+            providesTags: (_result, _error, { date }) => [
+                { type: HABIT_TAG, id: date },
+            ],
+        }),
         getHabitById: builder.query<UsersHabitDetailedResponseData, string>({
             query: (id) => `/${id}`,
             providesTags: (_result, _error, date) => [
                 { type: HABIT_DETAILS_TAG, id: date },
+            ],
+        }),
+        getFriendHabitById: builder.query<UsersHabitDetailedResponseData, { friendId: string; habitId: string }>({
+            query: ({ friendId, habitId }) => `friend/${friendId}/habits/${habitId}`,
+            providesTags: (_result, _error, { habitId }) => [
+                { type: HABIT_DETAILS_TAG, id: habitId },
             ],
         }),
         createHabit: builder.mutation<{ success: boolean }, HabitCreateData>({
@@ -85,8 +100,10 @@ export const {
     useGetHabitCategoriesQuery,
     useCreateHabitMutation,
     useLazyGetUserHabitsByDateQuery,
+    useLazyGetFriendUserHabitsByDateQuery,
     useDeleteHabitMutation,
     useEditHabitMutation,
     useGetHabitByIdQuery,
+    useGetFriendHabitByIdQuery,
     useStartNewHabitAttemptMutation,
 } = habitApi

@@ -6,7 +6,9 @@ import ResetPasswordForm from './views/authPage/forms/reset_password_form'
 import ResetPasswordConfirmForm from './views/authPage/forms/reset_password_confirm_form'
 import UserProfilePage from './views/profilePage/profile_page'
 import HabitPage from './views/habitPage/habit_page'
+import FriendProfilePage from './views/friend_profile_page/friend_profile_page'
 import { Route, BrowserRouter, Routes } from 'react-router-dom'
+import FriendHabitPage from './views/friend_habit_page/friend_habit_page'
 
 function App() {
     return (
@@ -22,6 +24,8 @@ function App() {
                     element={<ResetPasswordConfirmForm />}
                 />
                 <Route path="/profile" element={<UserProfilePage />} />
+                <Route path="/friend/:friendId" element={<FriendProfilePage />} />
+                <Route path="/friend/:friendId/habits/:habitId" element={<FriendHabitPage />} />
                 <Route path="/habits/:id" element={<HabitPage />} />
             </Routes>
         </BrowserRouter>
