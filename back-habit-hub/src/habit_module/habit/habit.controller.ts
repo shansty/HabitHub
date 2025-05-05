@@ -78,16 +78,6 @@ export class HabitController {
         return this.habitService.getHabitByIdAndUserId(+habitId, +userId)
     }
 
-    @UseGuards(JwtAuthGuard, FriendshipGuard)
-    @Get('friend/:friendId/habits/:habitId')
-    getFriendHabitById(
-        @User('userId') userId: string,
-        @Param('friendId') friendId: string,
-        @Param('habitId') habitId: string,
-    ) {
-        return this.habitService.getHabitByIdAndUserId(+habitId, +friendId);
-    }
-
     @Patch(':habitId/attempt')
     @UseGuards(JwtAuthGuard)
     startNewAttempt(

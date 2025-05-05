@@ -21,12 +21,6 @@ export class FriendshipController {
     return this.friendshipService.acceptFriendRequest(updateFriendshipDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get()
-  // getUserFriends(@User('userId') userId: string) {
-  //   return this.friendshipService.getUserFriends(userId);
-  // }
-
   @UseGuards(JwtAuthGuard)
   @Get()
   getUserFriendsPaginated(

@@ -8,6 +8,7 @@ import {
     Unique,
   } from 'typeorm';
 import { User } from '../../user_module/users/entities/users.entity';
+import { FriendshipStatus } from '../friendship_enum';
   
   @Entity()
   @Unique(['user1', 'user2'])
@@ -20,9 +21,9 @@ import { User } from '../../user_module/users/entities/users.entity';
   
     @ManyToOne(() => User, { eager: true })
     user2: User;
-    
-    @Column({ default: false })
-    isAccepted: boolean;
+
+    @Column({type: 'enum', enum: FriendshipStatus })
+    status: FriendshipStatus
   
     @CreateDateColumn()
     created_at: Date;

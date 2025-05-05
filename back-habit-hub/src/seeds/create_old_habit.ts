@@ -39,9 +39,9 @@ async function seed() {
     }
 
     const habit = habitRepo.create({
-        name: 'Make Abandoned',
+        name: 'Completed',
         goal: 5,
-        goalDuration: 30,
+        goalDuration: 22,
         unit: UnitOfMeasurement.KM,
         goalPeriodicity: GoalPeriodicity.PER_DAY,
         category: HabitDomain.FITNESS,

@@ -9,6 +9,7 @@ import {
 import { Habit } from '../../../habit_module/habit/entities/habit.entity'
 import { HabitOccurrence } from '../../../habit_module/habit_occurrence/entities/habit_occurrence.entity'
 import { Friendship } from '../../../friendship/entities/friendship.entity'
+import { Notification } from '../../../notification/entities/notification.entity'
 
 @Entity()
 export class User {
@@ -56,9 +57,15 @@ export class User {
 
     @OneToMany(() => Friendship, (friendship) => friendship.user1)
     friendshipsInitiated: Friendship[];
-  
+
     @OneToMany(() => Friendship, (friendship) => friendship.user2)
     friendshipsReceived: Friendship[];
+
+    @OneToMany(() => Notification, (notification) => notification.sender)
+    notificationsSent: Notification[];
+
+    @OneToMany(() => Notification, (notification) => notification.recipient)
+    notificationsReceived: Notification[];
 
     @CreateDateColumn()
     created_at: Date

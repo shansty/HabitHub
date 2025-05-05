@@ -11,6 +11,8 @@ import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.e
 import { User } from '../../user_module/users/entities/users.entity'
 import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity'
 import { HabitModule } from '../habit/habit.module'
+import { NotificationModule } from '../../notification/notification.module'
+import { FriendshipModule } from '../../friendship/friendship.module'
 
 @Module({
     imports: [
@@ -31,9 +33,11 @@ import { HabitModule } from '../habit/habit.module'
         }),
         AuthModule,
         forwardRef(() => HabitModule),
+        NotificationModule,
+        FriendshipModule
     ],
     controllers: [HabitEventController],
     providers: [HabitEventService],
     exports: [HabitEventService],
 })
-export class HabitEventModule {}
+export class HabitEventModule { }

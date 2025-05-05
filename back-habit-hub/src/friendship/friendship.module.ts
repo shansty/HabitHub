@@ -4,8 +4,9 @@ import { FriendshipController } from './friendship.controller';
 import { UsersModule } from '../user_module/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Friendship } from './entities/friendship.entity';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: '120h' },
       }),
     }),
+    NotificationModule
   ],
   controllers: [FriendshipController],
   providers: [FriendshipService],

@@ -63,6 +63,9 @@ export class HabitPreviewResponseDto {
     @IsEnum(HabitDomain)
     category: HabitDomain
 
+    @IsNumber()
+    progress: number
+
     @IsBoolean()
     isGoalCompleted: boolean
 

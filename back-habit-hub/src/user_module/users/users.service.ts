@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { SearchUsersDto } from './dto/search-users.dto'
 import { Friendship } from '../../friendship/entities/friendship.entity'
 import { scryptHash } from '../auth/auth.utils'
+import { FriendshipPreviewDto } from 'src/friendship/dto/friendship_preview.dto'
 
 @Injectable()
 export class UsersService {
@@ -182,7 +183,6 @@ export class UsersService {
 
     async searchUsers(username: string, userId: string): Promise<SearchUsersDto[]> {
         if (!username) return []
-
         const exactMatch = await this.userRepository.findOne({
             where: {
                 username: username,
@@ -191,16 +191,15 @@ export class UsersService {
             relations: ['friendshipsInitiated', 'friendshipsReceived'],
         })
         if (exactMatch) {
-            const isFriends = [...exactMatch.friendshipsInitiated, ...exactMatch.friendshipsReceived].some(
-                (f) =>
-                    f.isAccepted &&
-                    (f.user1.id === Number(userId) || f.user2.id === Number(userId))
-            )
+            const friendship = [...exactMatch.friendshipsInitiated, ...exactMatch.friendshipsReceived]
+              .find(f =>
+                (f.user1.id == +userId || f.user2.id == +userId)
+              );
             return [
                 {
                     id: exactMatch.id,
                     username: exactMatch.username,
-                    isFriends,
+                    status: friendship?.status ?? null
                 },
             ]
         }
@@ -213,15 +212,14 @@ export class UsersService {
             relations: ['friendshipsInitiated', 'friendshipsReceived'],
         })
         const searchUsers = users.map((user) => {
-            const isFriends = [...user.friendshipsInitiated, ...user.friendshipsReceived].some(
-                (f) =>
-                    f.isAccepted &&
-                    (f.user1.id === Number(userId) || f.user2.id === Number(userId))
-            )
+            const friendship = [...user.friendshipsInitiated, ...user.friendshipsReceived]
+              .find(f =>
+                (f.user1.id == +userId || f.user2.id == +userId)
+              );
             return {
                 id: user.id,
                 username: user.username,
-                isFriends,
+                status: friendship?.status ?? null,
             }
         })
         return searchUsers

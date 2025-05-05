@@ -15,6 +15,8 @@ import { HabitOccurrence } from './habit_module/habit_occurrence/entities/habit_
 import { TaskModule } from './schedule_module/task.module'
 import { FriendshipModule } from './friendship/friendship.module';
 import { Friendship } from './friendship/entities/friendship.entity'
+import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/entities/notification.entity'
 
 @Module({
     imports: [
@@ -29,7 +31,7 @@ import { Friendship } from './friendship/entities/friendship.entity'
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DATABASE,
-            entities: [User, Habit, HabitSchedule, HabitEvent, HabitOccurrence, Friendship],
+            entities: [User, Habit, HabitSchedule, HabitEvent, HabitOccurrence, Friendship, Notification],
             synchronize: false,
         }),
         UsersModule,
@@ -41,6 +43,7 @@ import { Friendship } from './friendship/entities/friendship.entity'
         HabitOccurrenceModule,
         TaskModule,
         FriendshipModule,
+        NotificationModule,
     ],
     controllers: [],
     providers: [],

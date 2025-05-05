@@ -3,15 +3,17 @@ import { Friendship } from './entities/friendship.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateFriendshipDto } from './dto/create-friendship.dto';
-import { User } from 'src/user_module/users/entities/users.entity';
-
-
+import { NotificationService } from '../notification/notification.service';
+import { FriendshipStatus } from './friendship_enum';
+import { FriendshipPreviewDto } from './dto/friendship_preview.dto';
 @Injectable()
 export class FriendshipService {
   constructor(
     @InjectRepository(Friendship)
-    private readonly friendshipRepository: Repository<Friendship>
+    private readonly friendshipRepository: Repository<Friendship>,
+    private readonly notificationService: NotificationService,
   ) { }
+
 
   async sendFriendRequest(createFriendshipDto: CreateFriendshipDto, userId: string): Promise<{ success: boolean }> {
     const { senderId, receiverId } = createFriendshipDto;
@@ -21,56 +23,32 @@ export class FriendshipService {
     const [user1Id, user2Id] = senderId < receiverId
       ? [senderId, receiverId]
       : [receiverId, senderId];
-
     const existingFriendship = await this.friendshipRepository.findOne({
       where: {
         user1: { id: user1Id },
         user2: { id: user2Id },
       },
     });
-
     if (existingFriendship) {
       throw new BadRequestException('Waiting for friend request to be accepted.');
     }
-
     const friendship = this.friendshipRepository.create({
       user1: { id: user1Id },
       user2: { id: user2Id },
-      isAccepted: false,
+      status: FriendshipStatus.PENDING
     });
-
     await this.friendshipRepository.save(friendship);
+    await this.notificationService.notifyFriendRequest(senderId, receiverId)
     return { success: true };
   }
 
-
-  async acceptFriendRequest(createFriendshipDto: CreateFriendshipDto) {
-    const { senderId, receiverId } = createFriendshipDto;
-    const [user1Id, user2Id] = this.getUserIdsOrder(senderId, receiverId);
-    const friendship = await this.friendshipRepository.findOne({
-      where: {
-        user1: { id: user1Id },
-        user2: { id: user2Id },
-      },
-    });
-
-    if (!friendship) {
-      throw new BadRequestException('No friend request found.');
-    }
-
-    friendship.isAccepted = true;
-    await this.friendshipRepository.save(friendship);
-
-    return friendship;
-  }
-
-
-  async getUserFriendsPaginated(userId: string, page: number = 1, limit: number = 3): Promise<{ friends: { id: number; username: string }[]; nextPage: number | null }> {
+  
+  async getUserFriendsPaginated(userId: string, page: number = 1, limit: number = 3): Promise<{ friends: FriendshipPreviewDto[]; nextPage: number | null }> {
     const skip = (page - 1) * limit;
     const [friendships, total] = await this.friendshipRepository.findAndCount({
       where: [
-        { user1: { id: +userId }, isAccepted: true },
-        { user2: { id: +userId }, isAccepted: true },
+        { user1: { id: +userId }, status: FriendshipStatus.ACCEPTED },
+        { user2: { id: +userId }, status: FriendshipStatus.ACCEPTED },
       ],
       relations: ['user1', 'user2'],
       order: {
@@ -84,6 +62,7 @@ export class FriendshipService {
       return {
         id: friend.id,
         username: friend.username,
+        status: friendship.status
       };
     });
     const hasMore = friends.length === limit;
@@ -113,13 +92,48 @@ export class FriendshipService {
     return id1 < id2 ? [id1, id2] : [id2, id1];
   }
 
- async areFriends(userId1: number, userId2: number): Promise<boolean> {
+
+  async areFriends(userId1: number, userId2: number): Promise<boolean> {
     const friendship = await this.friendshipRepository.findOne({
       where: [
-        { user1: { id: userId1 }, user2: { id: userId2 }, isAccepted: true },
-        { user1: { id: userId2 }, user2: { id: userId1 }, isAccepted: true },
+        { user1: { id: userId1 }, user2: { id: userId2 }, status: FriendshipStatus.ACCEPTED },
+        { user1: { id: userId2 }, user2: { id: userId1 }, status: FriendshipStatus.ACCEPTED },
       ],
     });
     return !!friendship;
+  }
+
+
+  async getFriendIdsForUser(userId: number): Promise<number[]> {
+    const friendships = await this.friendshipRepository.find({
+      where: [
+        { user1: { id: userId }, status: FriendshipStatus.ACCEPTED },
+        { user2: { id: userId }, status: FriendshipStatus.ACCEPTED },
+      ],
+      relations: ['user1', 'user2'],
+    });
+
+    return friendships.map(friendship => {
+      return friendship.user1.id === userId
+        ? friendship.user2.id
+        : friendship.user1.id;
+    });
+  }
+
+
+  async getFriendshipWithAnyStatus(senderId: number, recipientId: number): Promise<Friendship | null> {
+    const [id1, id2] = this.getUserIdsOrder(senderId, recipientId)
+    return await this.friendshipRepository.findOne({
+      where: {
+        user1: { id: id1 },
+        user2: { id: id2 }
+      },
+      relations: ['user1', 'user2'],
+    })
+  }
+
+
+  async saveFriendship(friendship: Friendship): Promise<void> {
+    await this.friendshipRepository.save(friendship);
   }
 }

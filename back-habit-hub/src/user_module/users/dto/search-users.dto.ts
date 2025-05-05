@@ -1,4 +1,5 @@
-import { IsString, IsOptional, MinLength, IsNumber, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { FriendshipStatus } from '../../../friendship/friendship_enum';
 
 export class SearchUsersDto {
   @IsNumber()
@@ -9,5 +10,5 @@ export class SearchUsersDto {
   username?: string;
 
   @IsBoolean()
-  isFriends: boolean
+  status: FriendshipStatus | null
 }
