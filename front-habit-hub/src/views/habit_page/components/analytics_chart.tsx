@@ -21,7 +21,7 @@ interface HabitAnalyticsChartProps {
 const possibleRange = {
     week: 7,
     month: 30,
-    custom: 'cuctom',
+    custom: 'custom',
 } as const
 
 type Range = keyof typeof possibleRange
@@ -90,30 +90,31 @@ const HabitAnalyticsChart: React.FC<HabitAnalyticsChartProps> = ({ data }) => {
                     Last 30 Days
                 </button>
 
-                {range !== 'custom' ? (
-                    <button
-                        onClick={() => setRange('custom')}
-                        className="px-3 py-1 rounded-md"
-                    >
-                        Select dates
-                    </button>
-                ) : (
-                    <DatePicker
-                        selectsRange
-                        startDate={customStart}
-                        endDate={customEnd}
-                        onChange={(dates) => {
-                            const [start, end] = dates as [Date, Date]
-                            setCustomStart(start)
-                            setCustomEnd(end)
-                        }}
-                        isClearable
-                        minDate={getMinDate(data)}
-                        maxDate={getMaxDate(data)}
-                        placeholderText="Select dates"
-                        className="border-2 border-indigo-600 rounded-md px-2 w-[120px]"
-                    />
-                )}
+                {chartData.length > 30 &&
+                    (range !== 'custom' ? (
+                        <button
+                            onClick={() => setRange('custom')}
+                            className="px-3 py-1 rounded-md"
+                        >
+                            Select dates
+                        </button>
+                    ) : (
+                        <DatePicker
+                            selectsRange
+                            startDate={customStart}
+                            endDate={customEnd}
+                            onChange={(dates) => {
+                                const [start, end] = dates as [Date, Date]
+                                setCustomStart(start)
+                                setCustomEnd(end)
+                            }}
+                            isClearable
+                            minDate={getMinDate(data)}
+                            maxDate={getMaxDate(data)}
+                            placeholderText="Select dates"
+                            className="border-2 border-indigo-600 rounded-md px-2 w-[120px]"
+                        />
+                    ))}
             </div>
 
             <ResponsiveContainer width="100%" height={250}>

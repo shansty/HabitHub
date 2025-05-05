@@ -8,7 +8,6 @@ import ResetPasswordConfirmForm from './views/auth_page/components/forms/reset_p
 import UserProfilePage from './views/profile_page/profile_page'
 import HabitPage from './views/habit_page/habit_page'
 import { Route, BrowserRouter, Routes } from 'react-router-dom'
-import FriendHabitPage from './views/friend_habit_page/friend_habit_page'
 
 function App() {
     return (
@@ -25,7 +24,6 @@ function App() {
                 />
                 <Route path="/profile" element={<UserProfilePage />} />
                 <Route path="/friend/:friendId" element={<FriendProfilePage />} />
-                <Route path="/friend/:friendId/habits/:habitId" element={<FriendHabitPage />} />
                 <Route path="/habits/:id" element={<HabitPage />} />
             </Routes>
         </BrowserRouter>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import FriendList from './friends_list'
+import NotificationList from './notification_list'
 
 
 const FriendNotificationTabs: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'friends' | 'notifications'>('friends')
-    const mockNotifications = ['New habit added', 'Friend request accepted', 'Reminder: Walk 5km']
 
     return (
         <div className="w-full p-4">
@@ -34,11 +34,8 @@ const FriendNotificationTabs: React.FC = () => {
                 }
 
                 {activeTab === 'notifications' &&
-                    mockNotifications.map((note, index) => (
-                        <div key={index} className="p-2 rounded hover:bg-gray-100">
-                            🔔 {note}
-                        </div>
-                    ))}
+                    <NotificationList />
+                    }
             </div>
         </div>
     )

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useGetUserFriendsInfiniteQuery } from '../../../../services/friendship'
-import ErrorHandling from '../../../../utils_components/error_handling'
+import ErrorHandling from '../../../../common_components/error_handling';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useClickOutside } from '../../../../hooks';
 import FriendSettings from './friend_settings';
@@ -23,9 +23,9 @@ const FriendList: React.FC = () => {
         return <p className="text-gray-500 text-sm">You have no friends yet.</p>
 
     return (
-        <div className="space-y-2 min-h-50"
+        <div className="space-y-2 min-h-20"
             style={{
-                maxHeight: '350px',
+                maxHeight: '300px',
                 overflowY: 'auto',
             }}>
             {customError && (

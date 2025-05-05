@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ResetPasswordCredentials, User, UserPreview } from '../types'
+import { FriendshipPreview, ResetPasswordCredentials, User, UserPreview } from '../types'
 import { getToken } from '../utils'
+import { FRIENDSHIP_REQUEST_TAG } from './api_tags';
 
 export const userApi = createApi({
     reducerPath: 'userApi',
+    tagTypes: [FRIENDSHIP_REQUEST_TAG],
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/user`,
     }),
@@ -66,7 +68,7 @@ export const userApi = createApi({
                 }
             },
         }),
-        searchUsers: builder.query<UserPreview[], string>({
+        searchUsers: builder.query<FriendshipPreview[], string>({
             query: (searchTerm) => {
                 const token = getToken();
                 return {
@@ -77,6 +79,7 @@ export const userApi = createApi({
                     },
                 };
             },
+            providesTags: [FRIENDSHIP_REQUEST_TAG]
         }),
         getFriendUserData: builder.query<{ friend: User }, number | null>({
             query: (friendId) => {

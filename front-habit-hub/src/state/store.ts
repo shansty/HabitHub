@@ -5,6 +5,7 @@ import { habitApi } from '../services/habit'
 import { habitEventApi } from '../services/habit_event'
 import { friendshipApi } from '../services/friendship'
 import { authApi } from '../services/auth'
+import { notificationApi } from '../services/notification'
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
         [habitEventApi.reducerPath]: habitEventApi.reducer,
         [friendshipApi.reducerPath]: friendshipApi.reducer,
         [authApi.reducerPath]: authApi.reducer,
+        [notificationApi.reducerPath]: notificationApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat([
@@ -20,7 +22,8 @@ export const store = configureStore({
             habitApi.middleware,
             habitEventApi.middleware,
             friendshipApi.middleware,
-            authApi.middleware
+            authApi.middleware,
+            notificationApi.middleware
         ]),
 })
 

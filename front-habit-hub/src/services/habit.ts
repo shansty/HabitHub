@@ -50,12 +50,6 @@ export const habitApi = createApi({
                 { type: HABIT_DETAILS_TAG, id: date },
             ],
         }),
-        getFriendHabitById: builder.query<UsersHabitDetailedResponseData, { friendId: string; habitId: string }>({
-            query: ({ friendId, habitId }) => `friend/${friendId}/habits/${habitId}`,
-            providesTags: (_result, _error, { habitId }) => [
-                { type: HABIT_DETAILS_TAG, id: habitId },
-            ],
-        }),
         createHabit: builder.mutation<{ success: boolean }, HabitCreateData>({
             query: (body) => ({
                 url: ``,
@@ -104,6 +98,5 @@ export const {
     useDeleteHabitMutation,
     useEditHabitMutation,
     useGetHabitByIdQuery,
-    useGetFriendHabitByIdQuery,
     useStartNewHabitAttemptMutation,
 } = habitApi

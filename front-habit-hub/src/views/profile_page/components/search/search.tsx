@@ -4,8 +4,8 @@ import { useSendFriendRequestMutation } from '../../../../services/friendship';
 import { useClickOutside } from '../../../../hooks';
 import { Search } from 'lucide-react';
 import { getIDFromToken, getToken } from '../../../../utils';
-import Modal from '../../../../utils_components/modal_notification';
-import ErrorHandling from '../../../../utils_components/error_handling';
+import Modal from '../../../../common_components/modal_notification';
+import ErrorHandling from '../../../../common_components/error_handling';
 import SearchUserItem from './search_item';
 
 const SearchUsers: React.FC = () => {
@@ -24,8 +24,6 @@ const SearchUsers: React.FC = () => {
     });
     const [sendFriendRequest, { isLoading: isSendingFriendRequest }] = useSendFriendRequestMutation();
     const double_sending_request_message = "Waiting for friend request to be accepted."
-
-    console.dir({data})
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -98,10 +96,10 @@ const SearchUsers: React.FC = () => {
                         <p className="text-sm text-gray-500 p-2">Loading...</p>
                     )}
 
-                    {data?.map((user) => (
+                    {data?.map((friendship) => (
                         <SearchUserItem
-                            key={user.id}
-                            user={user}
+                            key={friendship.id}
+                            friendship={friendship}
                             handleAddFriend={handleAddFriend}
                             isSendingFriendRequest={isSendingFriendRequest}
                             sendingFriendId={sendingFriendId}
