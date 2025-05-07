@@ -42,11 +42,7 @@ const NotificationList: React.FC = () => {
         return <p className="text-sm text-gray-500">You have no notifications.</p>
 
     return (
-        <div className="space-y-2 min-h-20"
-            style={{
-                maxHeight: '300px',
-                overflowY: 'auto',
-            }}>
+        <div className="space-y-2 min-h-[80px] max-h-[100px] md:max-h-[300px] md:min-h-[180px] overflow-y-auto">
             <InfiniteScroll
                 loadMore={fetchNextPage}
                 hasMore={hasNextPage}

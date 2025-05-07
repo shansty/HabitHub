@@ -23,11 +23,7 @@ const FriendList: React.FC = () => {
         return <p className="text-gray-500 text-sm">You have no friends yet.</p>
 
     return (
-        <div className="space-y-2 min-h-20"
-            style={{
-                maxHeight: '300px',
-                overflowY: 'auto',
-            }}>
+        <div className="space-y-2  min-h-[80px] max-h-[100px] md:max-h-[300px] md:min-h-[180px] overflow-y-auto">
             {customError && (
                 <p className="text-sm text-red-500">Failed to delete friend.</p>
             )}

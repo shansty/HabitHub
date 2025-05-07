@@ -10,7 +10,7 @@ interface HabitHeaderProps {
 }
 
 const HabitHeader: React.FC<HabitHeaderProps> = ({ habit }) => {
-    const [startNewHabitAttempt, { error }] = useStartNewHabitAttemptMutation()
+    const [startNewHabitAttempt] = useStartNewHabitAttemptMutation()
     const { id } = useParams<{ id: string }>()
 
     const handleStartAgain = async () => {

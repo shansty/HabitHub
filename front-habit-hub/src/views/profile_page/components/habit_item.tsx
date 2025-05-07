@@ -71,10 +71,10 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
     }
 
     return (
-        <div className="space-y-5 mt-10">
+        <div className="space-y-1 mt-1 md:mt-10">
             <div
                 key={habit.id}
-                className="flex items-center justify-between rounded-xl px-5 py-4 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
+                className="flex items-center justify-between rounded-xl px-1 py-4 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
             >
                 <div className="flex items-center space-x-4">
                     <div

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getToken } from '../utils'
-import { FRIENDSHIP_REQUEST_TAG, FRIENDSHIP_TAG, NOTIFICATION_TAG } from './api_tags'
+import { FRIENDSHIP_TAG, NOTIFICATION_TAG } from './api_tags'
 import { NotificationPreview } from '../types'
 import { FriendshipStatus } from '../enums';
 
@@ -14,7 +14,7 @@ export const notificationApi = createApi({
     reducerPath: 'notificationApi',
     tagTypes: [NOTIFICATION_TAG, FRIENDSHIP_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/notification`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/notification`,
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {

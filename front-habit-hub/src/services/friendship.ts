@@ -15,7 +15,7 @@ export const friendshipApi = createApi({
     reducerPath: 'friendshipApi',
     tagTypes: [FRIENDSHIP_TAG, FRIENDSHIP_REQUEST_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/friendship`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/friendship`,
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {

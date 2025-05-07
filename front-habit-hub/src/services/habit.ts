@@ -12,7 +12,7 @@ export const habitApi = createApi({
     reducerPath: 'habitApi',
     tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/habit`,
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {

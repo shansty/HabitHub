@@ -28,13 +28,6 @@ const SearchUserItem: React.FC<SearchUserItemProps> = ({
           </button>
         );
 
-      case FriendshipStatus.REJECTED:
-        return (
-          <button className="bg-white border border-red-600 text-red-700 text-xs px-2 py-1 rounded-md cursor-default">
-            Request rejected
-          </button>
-        );
-
       case FriendshipStatus.PENDING:
         return (
           <button

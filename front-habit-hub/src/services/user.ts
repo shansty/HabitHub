@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { FriendshipPreview, ResetPasswordCredentials, User, UserPreview } from '../types'
+import { FriendshipPreview, ResetPasswordCredentials, User } from '../types'
 import { getToken } from '../utils'
 import { FRIENDSHIP_REQUEST_TAG } from './api_tags';
 
@@ -7,7 +7,7 @@ export const userApi = createApi({
     reducerPath: 'userApi',
     tagTypes: [FRIENDSHIP_REQUEST_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/user`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/user`,
     }),
     refetchOnFocus: true,
     endpoints: (builder) => ({

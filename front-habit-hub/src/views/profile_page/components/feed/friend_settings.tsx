@@ -32,15 +32,15 @@ const FriendSettings: React.FC<FriendSettingsProps> = ({
     }
 
     return (
-        <ul className="py-1 text-sm text-gray-700">
+        <ul className="py-1 md:py-3 text-sm text-gray-700 ">
             <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                className="px-4 py-1 md:py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => handleProfileFriend(friendId)}
             >
                 Profile
             </li>
             <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                className="px-4 py-1 md:py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => handleDeleteFriend(friendId)}
             >
                 Delete

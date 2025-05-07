@@ -20,7 +20,7 @@ const UserData: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
 
     const profilePic = data?.user.profile_picture
-        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.user.profile_picture}`
+        ? `${import.meta.env.VITE_API_URL}/uploads/${data.user.profile_picture}`
         : profile
 
     useEffect(() => {

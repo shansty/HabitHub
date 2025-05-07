@@ -13,6 +13,7 @@ import HabitList from '../profile_page/components/habit_list'
 import { Keyboard } from 'lucide-react'
 import SearchUsers from './components/search/search'
 import FriendNotificationTabs from './components/feed/users_tabs'
+import DateActionBar from './components/date_action_buttons'
 
 const UserProfilePage: React.FC = () => {
     const navigate = useNavigate()
@@ -67,7 +68,23 @@ const UserProfilePage: React.FC = () => {
                     <UserData />
                     <SearchUsers />
 
-                    <div
+                    <div className="hidden sm:block">
+                        <DateActionBar
+                            selectedDate={selectedDate}
+                            showCalendar={showCalendar}
+                            onToggleCalendar={() => setShowCalendar(!showCalendar)}
+                            onDateChange={(date) => {
+                                setSelectedDate(date);
+                                setShowCalendar(false);
+                            }}
+                            onAddHabit={() => setIsFormOpened(true)}
+                            calendarRef={calendarRef}
+                            getDateLabel={getDateLabel}
+                        />
+                    </div>
+
+
+                    {/* <div
                         className="relative flex sm:flex-row items-start sm:items-center gap-2"
                         ref={calendarRef}
                     >
@@ -99,7 +116,7 @@ const UserProfilePage: React.FC = () => {
                                 />
                             </div>
                         )}
-                    </div>
+                    </div> */}
                 </div>
                 {isFormOpened && (
                     <HabitForm
@@ -107,10 +124,25 @@ const UserProfilePage: React.FC = () => {
                         minStartDate={new Date()}
                     />
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
                     <div className="md:col-span-2">
                         <FriendNotificationTabs />
                     </div>
+                    <div className="block sm:hidden md:col-span-6">
+                        <DateActionBar
+                            selectedDate={selectedDate}
+                            showCalendar={showCalendar}
+                            onToggleCalendar={() => setShowCalendar(!showCalendar)}
+                            onDateChange={(date) => {
+                                setSelectedDate(date);
+                                setShowCalendar(false);
+                            }}
+                            onAddHabit={() => setIsFormOpened(true)}
+                            calendarRef={calendarRef}
+                            getDateLabel={getDateLabel}
+                        />
+                    </div>
+
                     <div className="md:col-span-4">
                         <HabitList habits={data} selectedDate={selectedDate} />
                     </div>

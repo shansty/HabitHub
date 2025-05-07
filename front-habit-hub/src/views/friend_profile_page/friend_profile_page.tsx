@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { format } from 'date-fns'
 import { useLazyGetFriendUserHabitsByDateQuery } from '../../services/habit'
 import 'react-datepicker/dist/react-datepicker.css'
