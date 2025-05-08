@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { join } from 'path'
 import { loadEnv } from './config/loadEnv'
 
+console.dir({queue: 2})
 loadEnv();
 
 

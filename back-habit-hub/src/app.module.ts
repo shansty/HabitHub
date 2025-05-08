@@ -18,7 +18,7 @@ import { Friendship } from './friendship/entities/friendship.entity'
 import { NotificationModule } from './notification/notification.module';
 import { Notification } from './notification/entities/notification.entity'
 
-
+console.dir({queue: 3})
 @Module({
     imports: [
         ConfigModule.forRoot({
