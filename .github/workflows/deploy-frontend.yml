@@ -25,10 +25,15 @@ jobs:
         cd front-habit-hub
         npm install
 
+      - name: Type-check (tsc)
+      run: |
+        cd front-habit-hub
+        tsc -b
+
     - name: Build React app
       run: |
         cd front-habit-hub
-        npm run build
+        vite build
 
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@v0.5.1
