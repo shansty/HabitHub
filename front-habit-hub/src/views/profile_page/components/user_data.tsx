@@ -19,16 +19,11 @@ const UserData: React.FC = () => {
     const [updateUserProfile] = useUpdateUserProfileMutation()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-    // const profilePic = data?.user.profile_picture
-    //     ? `${import.meta.env.VITE_API_URL}/uploads/${data.user.profile_picture}`
-    //     : profile
     const profilePic = data?.user.profile_picture
         ? data.user.profile_picture
         : profile
     const profilePicSrc =
         profilePic instanceof File ? URL.createObjectURL(profilePic) : profilePic;
-
-    console.dir({ profilePic: profilePic })
 
     useEffect(() => {
         if (data?.user.username) {

@@ -156,7 +156,6 @@ export class UsersService {
         userId: string,
         file?: Express.Multer.File
     ): Promise<{ success: boolean }> {
-        console.log("update")
         const user = await this.getUserByQuery({ id: userId })
         if (!user) {
             throw new ForbiddenException('You need to log in to see this data.')

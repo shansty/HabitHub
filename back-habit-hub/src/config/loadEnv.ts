@@ -1,7 +1,5 @@
 import { config } from 'dotenv';
 
-console.dir({queue: 1})
-console.dir({process: process.env.NODE_ENV})
 export function loadEnv() {
   switch (process.env.NODE_ENV) {
     case 'docker':

@@ -25,7 +25,9 @@
         "seed": "ts-node src/seeds/seed.ts",
         "cleanup:seed": "ts-node src/seeds/cleanup_seed.ts",
         "create:seed": "ts-node src/seeds/create_old_habit.ts",
-        "create:users": "ts-node src/seeds/create_users_seed.ts"
+        "create:users": "ts-node src/seeds/create_users_seed.ts",
+        "docker:build": "docker build -t habit-hub-backend -f Dockerfile .",
+        "docker:build:dev": "docker build -t habit-hub-backend-dev -f Dockerfile.dev ."
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.804.0",

@@ -25,7 +25,6 @@ const UserProfilePage: React.FC = () => {
     const calendarRef = useRef<HTMLDivElement>(null)
     useClickOutside(calendarRef, () => setShowCalendar(false))
     const isValid = isTokenValid(token)
-    let formattedDate: string
 
 
     useEffect(() => {
@@ -35,9 +34,10 @@ const UserProfilePage: React.FC = () => {
     }, [token, isValid])
 
     useEffect(() => {
-        formattedDate = format(selectedDate, 'yyyy-MM-dd')
-        getHabits(formattedDate)
-    }, [selectedDate])
+        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+        getHabits(formattedDate);
+        console.log('Fetching habits for:', formattedDate);
+    }, [selectedDate]);
 
     const handleOnModalClose = () => {
         setIsModalOpen(false)
