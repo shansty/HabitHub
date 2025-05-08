@@ -18,7 +18,7 @@ async function start() {
         },
         logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     })
-    console.log("Check if back changes")
+    console.log("Check if back changes2")
     app.useGlobalPipes(new ValidationPipe())
     app.useStaticAssets(join(__dirname, '..', 'uploads'), {
         prefix: '/uploads/',
