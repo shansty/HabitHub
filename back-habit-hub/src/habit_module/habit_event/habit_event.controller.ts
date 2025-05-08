@@ -1,6 +1,6 @@
 import { Controller, Body, Patch, Param, UseGuards } from '@nestjs/common'
 import { HabitEventService } from './habit_event.service'
-import { JwtAuthGuard } from '../../user_module/auth/jwt/jwt.guard'
+import { JwtAuthGuard } from '../../user_module/auth/jwt_guard/jwt.guard'
 @Controller('habit-event')
 export class HabitEventController {
     constructor(private readonly habitEventService: HabitEventService) {}

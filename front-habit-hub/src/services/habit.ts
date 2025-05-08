@@ -2,13 +2,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { CategoryData, HabitCreateData, UsersHabitDetailedResponseData, UsersHabitPreviewResponseData,
 } from '../types'
 import { getToken } from '../utils'
-import { HABIT_TAG, HABIT_DETAILS_TAG } from './apiTags'
+import { HABIT_TAG, HABIT_DETAILS_TAG } from './api_tags'
 
 export const habitApi = createApi({
     reducerPath: 'habitApi',
-    tagTypes: ['Habit', 'HabitDetails'],
+    tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/habit`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/habit`,
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {
@@ -28,6 +28,15 @@ export const habitApi = createApi({
         >({
             query: (date) => `?date=${date}`,
             providesTags: (_result, _error, date) => [
+                { type: HABIT_TAG, id: date },
+            ],
+        }),
+        getFriendUserHabitsByDate: builder.query<
+            UsersHabitPreviewResponseData[],
+            { friendId: string; date: string }
+        >({
+            query: ({ friendId, date }) => `friend/${friendId}?date=${date}`,
+            providesTags: (_result, _error, { date }) => [
                 { type: HABIT_TAG, id: date },
             ],
         }),
@@ -81,6 +90,7 @@ export const {
     useGetHabitCategoriesQuery,
     useCreateHabitMutation,
     useLazyGetUserHabitsByDateQuery,
+    useLazyGetFriendUserHabitsByDateQuery,
     useDeleteHabitMutation,
     useEditHabitMutation,
     useGetHabitByIdQuery,

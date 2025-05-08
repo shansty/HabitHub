@@ -1,28 +1,23 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from './entities/users.entity'
 import { UsersService } from './users.service'
 import { UsersController } from './users.controller'
-import { JwtModule } from '@nestjs/jwt'
-import { ConfigModule, ConfigService } from '@nestjs/config'
 import { EmailModule } from '../../internal_module/email/email.module'
 import { AuthModule } from '../auth/auth.module'
+import { Friendship } from '../../friendship/entities/friendship.entity'
+import { FriendshipModule } from '../../friendship/friendship.module'
+import { S3Service } from '../../internal_module/s3/s3.service'
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User]),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('SECRET'),
-                signOptions: { expiresIn: '120h' },
-            }),
-        }),
+        TypeOrmModule.forFeature([User, Friendship]),
         EmailModule,
-        AuthModule,
+        forwardRef(() => AuthModule),
+        FriendshipModule,
     ],
-    providers: [UsersService],
+    providers: [UsersService, S3Service],
     controllers: [UsersController],
+    exports: [UsersService]
 })
-export class UsersModule {}
+export class UsersModule { }

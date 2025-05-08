@@ -89,6 +89,9 @@ export class Habit {
     @Column({ default: 0 })
     progress: number
 
+    @Column({ default: 0 })
+    penalizedFailedDays: number;
+
     @Column({ default: 1 })
     attempt: number
 

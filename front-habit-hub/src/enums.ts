@@ -34,3 +34,15 @@ export enum HabitStatus {
     COMPLETED = 'COMPLETED',
     ABANDONED = 'ABANDONED',
 }
+
+export enum NotificationType {
+    DAILY_GOAL_COMPLETED = 'DAILY_GOAL_COMPLETED',
+    HABIT_COMPLETED = 'HABIT_COMPLETED',
+    RECEIVE_FRIENDSHIP_REQUEST = 'RECEIVE_FRIENDSHIP_REQUEST'
+}
+
+export enum FriendshipStatus {
+    REJECTED = "REJECTED",
+    PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED"
+}

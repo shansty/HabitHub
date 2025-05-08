@@ -23,6 +23,8 @@ import {
 } from './dto/response_habit.dto'
 import { HabitStatus } from '../habit_enums'
 import { addDays, format, startOfDay } from 'date-fns'
+import { NotificationService } from '../../notification/notification.service'
+import { FriendshipService } from '../../friendship/friendship.service'
 
 @Injectable()
 export class HabitService {
@@ -34,8 +36,10 @@ export class HabitService {
         private readonly habitOccurrenceRepository: Repository<HabitOccurrence>,
         private readonly habitEventService: HabitEventService,
         private readonly habitScheduleService: HabitScheduleService,
-        private readonly habitOccurrenceService: HabitOccurrenceService
-    ) {}
+        private readonly habitOccurrenceService: HabitOccurrenceService,
+        private readonly notificationService: NotificationService,
+        private readonly friendshipService: FriendshipService
+    ) { }
 
     getHabitCategories() {
         return Object.entries(HabitCategoryConfig).map(([name, config]) => ({
@@ -91,9 +95,9 @@ export class HabitService {
         const isToday = this.habitEventService.isSameDay(dateObj, new Date())
         const eventMap = isToday
             ? await this.habitEventService.fetchOrCreateHabitEvents(
-                  habits,
-                  dateObj
-              )
+                habits,
+                dateObj
+            )
             : this.habitEventService.getExistingEventsForDate(habits, dateObj)
 
         return habits.map((habit) => {
@@ -226,27 +230,35 @@ export class HabitService {
         if (progress == 100) {
             habit.isCompleted = true
             habit.status = HabitStatus.COMPLETED
+            const friendIds = await this.friendshipService.getFriendIdsForUser(habit.user.id)
+            await this.notificationService.notifyHabitCompleted(habit, habit.user.id, friendIds)
+
         }
         const progress_without_fine = progress
         const failedDays = this.getNumberOfFailedDays(
             habit.events,
             habit.attempt
         )
-        if (failedDays === 1) {
-            progress = Math.max(progress - 20, 0)
-        } else if (failedDays === 2) {
-            progress = Math.max(progress - 50, 0)
-        } else if (failedDays > 2) {
-            progress = 0
-            habit.status = HabitStatus.ABANDONED
-            this.handleAbandonedHabit(habit)
-            habit.isFailed = true
+        const newFailures = failedDays - (habit.penalizedFailedDays ?? 0);
+        if (newFailures > 0) {
+            if (failedDays === 1) {
+                progress = Math.max(progress - 20, 0);
+            } else if (failedDays === 2) {
+                progress = Math.max(progress - 50, 0);
+            } else if (failedDays > 2) {
+                progress = 0;
+                habit.status = HabitStatus.ABANDONED;
+                habit.isFailed = true;
+                await this.handleAbandonedHabit(habit);
+            }
+            habit.penalizedFailedDays = failedDays;
         }
         habit.progress = Math.round(progress)
         const updated_progress = habit.progress
         await this.habitRepository.save(habit)
         return { updated_progress, progress_without_fine }
     }
+
 
     async handleAbandonedHabit(habit: Habit) {
         const tomorrow = startOfDay(new Date())
@@ -260,6 +272,7 @@ export class HabitService {
         )
     }
 
+    
     async startNewHabitAttempt(habitId: number, date: string, userId: string) {
         const startDate = new Date(date)
         const habit = await this.habitRepository.findOne({
@@ -299,6 +312,7 @@ export class HabitService {
             icon: habit.icon,
             value: event?.value ?? 0,
             category: habit.category,
+            progress: habit.progress,
             isGoalCompleted: event?.isGoalCompleted ?? false,
             isFailure: event?.isFailure ?? false,
             habitSchedule: {

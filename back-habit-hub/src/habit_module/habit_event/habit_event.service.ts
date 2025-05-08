@@ -10,6 +10,8 @@ import { In, Repository } from 'typeorm'
 import { HabitEvent } from './entities/habit_event.entity'
 import { Habit } from '../habit/entities/habit.entity'
 import { HabitService } from '../habit/habit.service'
+import { NotificationService } from '../../notification/notification.service'
+import { FriendshipService } from '../../friendship/friendship.service'
 
 @Injectable()
 export class HabitEventService {
@@ -17,22 +19,24 @@ export class HabitEventService {
         @InjectRepository(HabitEvent)
         private habitEventRepository: Repository<HabitEvent>,
         @Inject(forwardRef(() => HabitService))
-        private readonly habitService: HabitService
-    ) {}
+        private readonly habitService: HabitService,
+        private readonly notificationService: NotificationService,
+        private readonly friendshipService: FriendshipService
+    ) { }
 
+    
     async addEventValue(habitId: number, logValue: number, date: string) {
         if (logValue < 0) {
             throw new BadRequestException('Negative numbers are not available.')
         }
         const habit = await this.habitService.getHabitById(habitId)
-
         const habit_event = await this.habitEventRepository.findOne({
             where: {
                 habitId: habitId,
                 date: new Date(date),
                 habitAttempt: habit.attempt,
             },
-            relations: ['habit', 'habit.events', 'habit.habitOccurrence'],
+            relations: ['habit', 'habit.events', 'habit.habitOccurrence', 'habit.user'],
         })
         if (!habit_event) {
             throw new NotFoundException(
@@ -46,6 +50,8 @@ export class HabitEventService {
         )
         if (isCompleted) {
             habit_event.isGoalCompleted = true
+            const friendsIds = await this.friendshipService.getFriendIdsForUser(habit.user.id)
+            this.notificationService.notifyDailyGoalCompleted(habit, habit.user.id, friendsIds)
         }
         await this.habitEventRepository.save(habit_event)
         await this.habitService.countHabitProgressWithFine(habit_event.habit)

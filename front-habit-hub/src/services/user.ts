@@ -1,28 +1,16 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ResetPasswordCredentials, User } from '../types'
+import { FriendshipPreview, ResetPasswordCredentials, User } from '../types'
 import { getToken } from '../utils'
+import { FRIENDSHIP_REQUEST_TAG } from './api_tags';
 
 export const userApi = createApi({
     reducerPath: 'userApi',
+    tagTypes: [FRIENDSHIP_REQUEST_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_LOCAL_HOST}/user`,
+        baseUrl: `${import.meta.env.VITE_API_URL}/user`,
     }),
     refetchOnFocus: true,
     endpoints: (builder) => ({
-        loginUser: builder.mutation<{ token: string }, User>({
-            query: (body) => ({
-                url: 'login',
-                method: 'POST',
-                body,
-            }),
-        }),
-        registerUser: builder.mutation<{ emailSent: boolean }, FormData>({
-            query: (body) => ({
-                url: '',
-                method: 'POST',
-                body,
-            }),
-        }),
         verifyEmail: builder.mutation<
             { success: boolean; message: string },
             string
@@ -52,7 +40,7 @@ export const userApi = createApi({
                 body,
             }),
         }),
-        getUserData: builder.query<{ user: User }, string | null>({
+        getUserData: builder.query<{ user: User }, number | null>({
             query: (id) => {
                 const token = getToken()
                 return {
@@ -80,15 +68,40 @@ export const userApi = createApi({
                 }
             },
         }),
+        searchUsers: builder.query<FriendshipPreview[], string>({
+            query: (searchTerm) => {
+                const token = getToken();
+                return {
+                    url: `search?username=${encodeURIComponent(searchTerm)}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+            },
+            providesTags: [FRIENDSHIP_REQUEST_TAG]
+        }),
+        getFriendUserData: builder.query<{ friend: User }, number | null>({
+            query: (friendId) => {
+                const token = getToken()
+                return {
+                    url: `friend/${friendId}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            },
+        }),
     }),
 })
 
 export const {
-    useLoginUserMutation,
     useGetUserDataQuery,
-    useRegisterUserMutation,
     useVerifyEmailMutation,
     useResetPasswordMutation,
     useVerifyResetCodeMutation,
     useUpdateUserProfileMutation,
+    useSearchUsersQuery,
+    useGetFriendUserDataQuery
 } = userApi

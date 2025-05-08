@@ -2,60 +2,35 @@ import {
     Body,
     Controller,
     Get,
-    Post,
     UploadedFile,
     UseInterceptors,
     Param,
-    Put,
     Patch,
     Query,
-    Req,
     UseGuards,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { CreateUserDto } from './dto/create_user.dto'
-import { LoginUserDto } from './dto/login_user.dto'
 import { ResetUserPasswordDto } from './dto/reset_user_password.dto'
 import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto'
 import { UserDto } from './dto/user.dto'
 import { UserProfileDto } from './dto/user_profile.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname } from 'path'
-import { JwtAuthGuard } from '../auth/jwt/jwt.guard'
-import { User } from '../auth/jwt/user.decorator'
+import { JwtAuthGuard } from '../auth/jwt_guard/jwt.guard'
+import { User } from '../auth/jwt_guard/user.decorator'
+import { FriendshipGuard } from '../../friendship/friendship_guard/friendship.guard'
 
 @Controller('user')
 export class UsersController {
-    constructor(private readonly userService: UsersService) {}
+    constructor(private readonly userService: UsersService) { }
 
-    @Post('login')
-    login(@Body() LoginUserDto: LoginUserDto) {
-        return this.userService.login(LoginUserDto)
-    }
 
-    @Post()
-    @UseInterceptors(
-        FileInterceptor('profile_picture', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix =
-                        Date.now() + '-' + Math.round(Math.random() * 1e9)
-                    const ext = extname(file.originalname)
-                    cb(null, `${uniqueSuffix}${ext}`)
-                },
-            }),
-        })
-    )
-    registerUserAndSendVerificationLink(
-        @Body() createUserDto: CreateUserDto,
-        @UploadedFile() file: Express.Multer.File
+    @UseGuards(JwtAuthGuard)
+    @Get('search')
+    async searchUsers(
+        @Query('username') username: string,
+        @User('userId') userId: string
     ) {
-        return this.userService.registerUserAndSendVerificationLink(
-            createUserDto,
-            file
-        )
+        return this.userService.searchUsers(username, userId);
     }
 
     @Patch('email_verification')
@@ -81,24 +56,21 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard)
     @Patch('profile')
-    @UseInterceptors(
-        FileInterceptor('profile_picture', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix =
-                        Date.now() + '-' + Math.round(Math.random() * 1e9)
-                    const ext = extname(file.originalname)
-                    cb(null, `${uniqueSuffix}${ext}`)
-                },
-            }),
-        })
-    )
+    @UseInterceptors(FileInterceptor('profile_picture'))
     updateUserProfile(
         @Body() data: UserProfileDto,
         @User('userId') userId: string,
         @UploadedFile() file: Express.Multer.File
     ) {
         return this.userService.updateUserProfile(data, userId, file)
+    }
+
+
+    @UseGuards(JwtAuthGuard, FriendshipGuard)
+    @Get('friend/:friendId')
+    getFrienUserData(
+        @Param('friendId') friendId: string,
+        @User('userId') userId: string) {
+        return this.userService.getFriendUserData(friendId, userId)
     }
 }

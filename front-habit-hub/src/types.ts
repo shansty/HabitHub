@@ -3,6 +3,8 @@ import {
     Schedule,
     GoalPeriodicity,
     HabitStatus,
+    NotificationType,
+    FriendshipStatus,
 } from './enums'
 
 export type User = {
@@ -56,6 +58,7 @@ export type UsersHabitPreviewResponseData = {
     value: number
     isGoalCompleted: boolean
     isFailure: boolean
+    progress: number
     category?: string
     habitSchedule: {
         type: Schedule
@@ -101,4 +104,23 @@ export type HabitEvent = {
     value?: number
     isGoalCompleted?: boolean
     isFailure?: boolean
+}
+
+export type UserPreview = {
+    id: number;
+    username: string;
+}
+
+export type NotificationPreview = {
+    id: number;
+    senderId: number;
+    message: string;
+    type: NotificationType;
+    createdAt: Date;
+  }
+
+export type FriendshipPreview = {
+    id: number;
+    username: string;
+    status: FriendshipStatus | null
 }
