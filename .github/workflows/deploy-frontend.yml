@@ -27,6 +27,7 @@ jobs:
 
     - name: Build React app
       run: |
+        cd front-habit-hub
         npm run build
 
     - name: Deploy to S3
