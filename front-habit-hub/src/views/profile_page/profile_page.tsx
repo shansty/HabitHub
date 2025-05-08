@@ -25,7 +25,7 @@ const UserProfilePage: React.FC = () => {
     const calendarRef = useRef<HTMLDivElement>(null)
     useClickOutside(calendarRef, () => setShowCalendar(false))
     const isValid = isTokenValid(token)
-
+    console.log('selectedDate:', selectedDate);
 
     useEffect(() => {
         if (!token || !isValid) {

@@ -10,8 +10,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '../users/entities/users.entity'
 import { S3Service } from '../../internal_module/s3/s3.service'
 
-console.dir({queue: 5})
-
 @Module({
     imports: [
         TypeOrmModule.forFeature([User]),
