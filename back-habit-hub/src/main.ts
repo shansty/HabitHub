@@ -6,10 +6,11 @@ import { join } from 'path'
 import { loadEnv } from './config/loadEnv'
 
 console.dir({queue: 2})
-loadEnv();
+
 
 
 async function start() {
+    loadEnv();
     const PORT = process.env.PORT || 3000
 
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
