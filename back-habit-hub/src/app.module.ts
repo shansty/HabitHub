@@ -23,6 +23,7 @@ import { Notification } from './notification/entities/notification.entity'
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
+            envFilePath: `.env_${process.env.NODE_ENV || ''}`,
         }),
         TypeOrmModule.forRoot({
             type: 'postgres',
