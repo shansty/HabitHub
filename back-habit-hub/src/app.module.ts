@@ -32,9 +32,9 @@ import { Notification } from './notification/entities/notification.entity'
             database: process.env.POSTGRES_DATABASE,
             entities: [User, Habit, HabitSchedule, HabitEvent, HabitOccurrence, Friendship, Notification],
             synchronize: false,
-            // ssl: {
-            //     rejectUnauthorized: false,
-            //   },
+            ssl: {
+                rejectUnauthorized: false,
+              },
         }),
         UsersModule,
         EmailModule,
