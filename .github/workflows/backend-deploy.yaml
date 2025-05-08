@@ -23,6 +23,6 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/ubuntu/app/back-habit-hub
-          git pull origin main
+          git pull origin master
           npm install 
           pm2 restart habit-backend
