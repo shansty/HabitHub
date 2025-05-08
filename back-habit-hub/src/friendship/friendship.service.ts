@@ -29,8 +29,17 @@ export class FriendshipService {
         user2: { id: user2Id },
       },
     });
-    if (existingFriendship) {
+    if (existingFriendship?.status == FriendshipStatus.PENDING) {
       throw new BadRequestException('Waiting for friend request to be accepted.');
+    }
+    if (existingFriendship?.status == FriendshipStatus.REJECTED) {
+      existingFriendship.status = FriendshipStatus.PENDING
+      await this.friendshipRepository.save(existingFriendship);
+      await this.notificationService.notifyFriendRequest(senderId, receiverId)
+      return { success: true };
+    }
+    if (existingFriendship?.status == FriendshipStatus.ACCEPTED) {
+      throw new BadRequestException('You are already friends.');
     }
     const friendship = this.friendshipRepository.create({
       user1: { id: user1Id },
@@ -42,7 +51,7 @@ export class FriendshipService {
     return { success: true };
   }
 
-  
+
   async getUserFriendsPaginated(userId: string, page: number = 1, limit: number = 3): Promise<{ friends: FriendshipPreviewDto[]; nextPage: number | null }> {
     const skip = (page - 1) * limit;
     const [friendships, total] = await this.friendshipRepository.findAndCount({

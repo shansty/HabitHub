@@ -12,6 +12,7 @@
         "start:dev": "nodemon --config nodemon.json",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main.js",
+        "start:ec2": "NODE_ENV=prod node dist/src/main.js",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "jest",
         "test:watch": "jest --watch",
@@ -27,6 +28,7 @@
         "create:users": "ts-node src/seeds/create_users_seed.ts"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.804.0",
         "@nestjs/common": "^11.0.1",
         "@nestjs/config": "^4.0.2",
         "@nestjs/core": "^11.0.1",
@@ -41,6 +43,8 @@
         "crypto": "^1.0.1",
         "date-fns": "^4.1.0",
         "dotenv": "^16.4.7",
+        "multer": "^1.4.5-lts.2",
+        "multer-s3": "^3.0.1",
         "nodemailer": "^6.10.0",
         "passport": "^0.7.0",
         "passport-jwt": "^4.0.1",

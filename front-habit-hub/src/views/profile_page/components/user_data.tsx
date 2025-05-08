@@ -4,9 +4,9 @@ import {
     useUpdateUserProfileMutation,
 } from '../../../services/user'
 import { getToken, getIDFromToken } from '../../../utils'
-import profile from '../../../assets/profile.png'
 import { Camera, Check, Pencil, X } from 'lucide-react'
 import ErrorHandling from '../../../common_components/error_handling'
+import profile from '@/assets/profile.png'
 
 const UserData: React.FC = () => {
     const token = getToken()
@@ -19,9 +19,16 @@ const UserData: React.FC = () => {
     const [updateUserProfile] = useUpdateUserProfileMutation()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
 
+    // const profilePic = data?.user.profile_picture
+    //     ? `${import.meta.env.VITE_API_URL}/uploads/${data.user.profile_picture}`
+    //     : profile
     const profilePic = data?.user.profile_picture
-        ? `${import.meta.env.VITE_API_URL}/uploads/${data.user.profile_picture}`
+        ? data.user.profile_picture
         : profile
+    const profilePicSrc =
+        profilePic instanceof File ? URL.createObjectURL(profilePic) : profilePic;
+
+    console.dir({ profilePic: profilePic })
 
     useEffect(() => {
         if (data?.user.username) {
@@ -87,7 +94,7 @@ const UserData: React.FC = () => {
                 onMouseLeave={handleMouseLeave}
             >
                 <img
-                    src={profilePic}
+                    src={profilePicSrc}
                     alt="Profile"
                     className="w-16 h-16 rounded-full object-cover shadow"
                 />

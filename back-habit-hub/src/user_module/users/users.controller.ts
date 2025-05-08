@@ -15,8 +15,6 @@ import { VerifyUserResetCodeDto } from './dto/verify_user_reset_code.dto'
 import { UserDto } from './dto/user.dto'
 import { UserProfileDto } from './dto/user_profile.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname } from 'path'
 import { JwtAuthGuard } from '../auth/jwt_guard/jwt.guard'
 import { User } from '../auth/jwt_guard/user.decorator'
 import { FriendshipGuard } from '../../friendship/friendship_guard/friendship.guard'
@@ -58,19 +56,7 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard)
     @Patch('profile')
-    @UseInterceptors(
-        FileInterceptor('profile_picture', {
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix =
-                        Date.now() + '-' + Math.round(Math.random() * 1e9)
-                    const ext = extname(file.originalname)
-                    cb(null, `${uniqueSuffix}${ext}`)
-                },
-            }),
-        })
-    )
+    @UseInterceptors(FileInterceptor('profile_picture'))
     updateUserProfile(
         @Body() data: UserProfileDto,
         @User('userId') userId: string,

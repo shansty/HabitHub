@@ -10,7 +10,7 @@ const FriendUserData: React.FC = () => {
     const { data } = useGetFriendUserDataQuery(Number(friendId))
 
     const profilePic = data?.friend.profile_picture
-        ? `${import.meta.env.VITE_LOCAL_HOST}/uploads/${data.friend.profile_picture}`
+        ? `${import.meta.env.VITE_API_URL}/uploads/${data.friend.profile_picture}`
         : profile
 
 

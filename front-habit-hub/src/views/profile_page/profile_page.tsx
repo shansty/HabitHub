@@ -4,13 +4,11 @@ import { getToken, isTokenValid } from '../../utils'
 import Modal from '../../common_components/modal_notification'
 import UserData from '../profile_page/components/user_data'
 import HabitForm from './components/forms/habit_form'
-import DatePicker from 'react-datepicker'
 import { format, isToday, isTomorrow } from 'date-fns'
 import { useLazyGetUserHabitsByDateQuery } from '../../services/habit'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useClickOutside } from '../../hooks'
 import HabitList from '../profile_page/components/habit_list'
-import { Keyboard } from 'lucide-react'
 import SearchUsers from './components/search/search'
 import FriendNotificationTabs from './components/feed/users_tabs'
 import DateActionBar from './components/date_action_buttons'
@@ -82,41 +80,6 @@ const UserProfilePage: React.FC = () => {
                             getDateLabel={getDateLabel}
                         />
                     </div>
-
-
-                    {/* <div
-                        className="relative flex sm:flex-row items-start sm:items-center gap-2"
-                        ref={calendarRef}
-                    >
-                        <button
-                            onClick={() => setShowCalendar(!showCalendar)}
-                            className="text-indigo-700 font-medium border px-3 py-2 rounded-md w-full min-w-auto text-nowrap flex items-center gap-2"
-                        >
-                            <Keyboard />
-                            {getDateLabel()}
-                        </button>
-                        <button
-                            onClick={() => setIsFormOpened(true)}
-                            className="bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-2 rounded-md w-full min-w-auto text-nowrap"
-                        >
-                            Add Habit
-                        </button>
-
-                        {showCalendar && (
-                            <div className="absolute top-10 mr-20 z-10 shadow-lg bg-white p-2 rounded">
-                                <DatePicker
-                                    selected={selectedDate}
-                                    onChange={(date: Date | null) => {
-                                        if (date) {
-                                            setSelectedDate(date)
-                                            setShowCalendar(false)
-                                        }
-                                    }}
-                                    inline
-                                />
-                            </div>
-                        )}
-                    </div> */}
                 </div>
                 {isFormOpened && (
                     <HabitForm

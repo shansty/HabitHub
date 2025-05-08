@@ -7,6 +7,9 @@ import { User } from '../user_module/users/entities/users.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FriendshipModule } from '../friendship/friendship.module';
+import { loadEnv } from '../config/loadEnv';
+
+loadEnv()
 
 @Module({
   imports: [

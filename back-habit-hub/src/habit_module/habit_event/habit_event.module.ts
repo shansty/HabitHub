@@ -13,6 +13,9 @@ import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity'
 import { HabitModule } from '../habit/habit.module'
 import { NotificationModule } from '../../notification/notification.module'
 import { FriendshipModule } from '../../friendship/friendship.module'
+import { loadEnv } from '../../config/loadEnv'
+
+loadEnv()
 
 @Module({
     imports: [

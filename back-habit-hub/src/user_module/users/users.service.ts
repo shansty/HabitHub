@@ -14,18 +14,17 @@ import { UserProfileDto } from './dto/user_profile.dto'
 import { EmailService } from '../../internal_module/email/email.service'
 import { v4 as uuidv4 } from 'uuid'
 import { SearchUsersDto } from './dto/search-users.dto'
-import { Friendship } from '../../friendship/entities/friendship.entity'
 import { scryptHash } from '../auth/auth.utils'
-import { FriendshipPreviewDto } from 'src/friendship/dto/friendship_preview.dto'
+import { S3Service } from '../../internal_module/s3/s3.service'
+
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        @InjectRepository(Friendship)
-        private readonly friendshipRepository: Repository<Friendship>,
-        private readonly emailService: EmailService
+        private readonly emailService: EmailService,
+        private readonly s3Service: S3Service
     ) { }
 
     private one_hour_exparation = 60 * 60 * 1000
@@ -170,11 +169,14 @@ export class UsersService {
                 throw new BadRequestException('Username is already taken.')
             }
         }
+        console.dir({'Received file': file});
+        const uploadedImageUrl = file ? await this.s3Service.uploadFile(file) : user.profile_picture;
+
         const updatedUser = {
-            ...user,
-            username: body.username || user.username,
-            profile_picture: file ? file.filename : user.profile_picture,
-        }
+          ...user,
+          username: body.username || user.username,
+          profile_picture: uploadedImageUrl,
+        };
 
         await this.userRepository.save(updatedUser)
         return { success: true }
@@ -240,7 +242,7 @@ export class UsersService {
     }
 
 
-    private async getUserByQuery(query: Object): Promise<User | null> {
+    async getUserByQuery(query: Object): Promise<User | null> {
         const user = await this.userRepository.findOneBy(query)
         return user
     }

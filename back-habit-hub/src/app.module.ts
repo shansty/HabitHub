@@ -18,11 +18,11 @@ import { Friendship } from './friendship/entities/friendship.entity'
 import { NotificationModule } from './notification/notification.module';
 import { Notification } from './notification/entities/notification.entity'
 
+
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: '.env',
         }),
         TypeOrmModule.forRoot({
             type: 'postgres',
@@ -33,6 +33,9 @@ import { Notification } from './notification/entities/notification.entity'
             database: process.env.POSTGRES_DATABASE,
             entities: [User, Habit, HabitSchedule, HabitEvent, HabitOccurrence, Friendship, Notification],
             synchronize: false,
+            ssl: {
+                rejectUnauthorized: false,
+              },
         }),
         UsersModule,
         EmailModule,

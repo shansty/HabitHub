@@ -13,6 +13,7 @@ import { RegistrationDto } from './dto/registration.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../users/entities/users.entity'
 import { Repository } from 'typeorm'
+import { S3Service } from '../../internal_module/s3/s3.service'
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,8 @@ export class AuthService {
         private readonly emailService: EmailService,
         private readonly userService: UsersService,
         @InjectRepository(User) 
-        private readonly userRepository: Repository<User> 
+        private readonly userRepository: Repository<User> ,
+        private readonly s3Service: S3Service
     ) {}
 
     private one_hour_exparation = 60 * 60 * 1000
@@ -79,10 +81,15 @@ export class AuthService {
         }
         const hashedPassword = await scryptHash(userData.password)
 
+        let profilePictureUrl: string | null = null;
+        if (file) {
+          profilePictureUrl = await this.s3Service.uploadFile(file); 
+        }
+
         const user = this.userRepository.create({
             ...userData,
             password: hashedPassword,
-            profile_picture: file?.filename || null,
+            profile_picture: profilePictureUrl,
             isVerified: false,
             verification_code: code,
             verification_expires_at: expiresAt,

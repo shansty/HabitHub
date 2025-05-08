@@ -8,6 +8,7 @@ import { EmailModule } from '../../internal_module/email/email.module'
 import { UsersModule } from '../users/users.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '../users/entities/users.entity'
+import { S3Service } from '../../internal_module/s3/s3.service'
 
 @Module({
     imports: [
@@ -24,7 +25,7 @@ import { User } from '../users/entities/users.entity'
             }),
         }),
     ],
-    providers: [JwtStrategy, AuthService],
+    providers: [JwtStrategy, AuthService, S3Service],
     exports: [JwtModule],
     controllers: [AuthController],
 })

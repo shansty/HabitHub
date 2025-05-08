@@ -16,11 +16,6 @@ export class FriendshipController {
     return this.friendshipService.sendFriendRequest(createFriendshipDto, userId);
   }
 
-  @Patch('accept')
-  acceptFriendRequest(@Body() updateFriendshipDto: CreateFriendshipDto) {
-    return this.friendshipService.acceptFriendRequest(updateFriendshipDto);
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get()
   getUserFriendsPaginated(

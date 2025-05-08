@@ -11,6 +11,7 @@ import { HabitOccurrence } from './entities/habit_occurrence.entity'
 import { User } from '../../user_module/users/entities/users.entity'
 import { HabitSchedule } from '../habit_schedule/entities/habit_schedule.entity'
 
+
 @Module({
     imports: [
         TypeOrmModule.forFeature([

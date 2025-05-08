@@ -7,6 +7,7 @@ import { EmailModule } from '../../internal_module/email/email.module'
 import { AuthModule } from '../auth/auth.module'
 import { Friendship } from '../../friendship/entities/friendship.entity'
 import { FriendshipModule } from '../../friendship/friendship.module'
+import { S3Service } from '../../internal_module/s3/s3.service'
 
 @Module({
     imports: [
@@ -15,7 +16,7 @@ import { FriendshipModule } from '../../friendship/friendship.module'
         forwardRef(() => AuthModule),
         FriendshipModule,
     ],
-    providers: [UsersService],
+    providers: [UsersService, S3Service],
     controllers: [UsersController],
     exports: [UsersService]
 })

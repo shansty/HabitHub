@@ -8,7 +8,6 @@ import { HabitOccurrence } from './src/habit_module/habit_occurrence/entities/ha
 import { Friendship } from './src/friendship/entities/friendship.entity'
 import { Notification } from './src/notification/entities/notification.entity'
 
-config({ path: process.env.NODE_ENV === 'prod' ? '.env_production' : '.env' })
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
