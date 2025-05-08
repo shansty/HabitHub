@@ -1,9 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {
-    CategoryData,
-    HabitCreateData,
-    UsersHabitDetailedResponseData,
-    UsersHabitPreviewResponseData,
+import { CategoryData, HabitCreateData, UsersHabitDetailedResponseData, UsersHabitPreviewResponseData,
 } from '../types'
 import { getToken } from '../utils'
 import { HABIT_TAG, HABIT_DETAILS_TAG } from './api_tags'
