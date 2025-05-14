@@ -28,6 +28,7 @@ jobs:
         ECR_REPOSITORY: habit-backend
         IMAGE_TAG: latest
       run: |
+        echo "Registry: $ECR_REGISTRY"
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-habit-hub
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
