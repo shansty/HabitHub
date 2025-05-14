@@ -40,7 +40,7 @@ jobs:
       run: |
         cp back-habit-hub/deploy/habit-backend-task-def.json task-def-updated.json
         sed -i "s|\${POSTGRES_USER}|${{ secrets.POSTGRES_USER }}|g" task-def-updated.json
-        sed -i "s|\${POSTGRES_PASS}|${{ secrets.POSTGRES_PASS }}|g" task-def-updated.json
+        sed -i "s|\${POSTGRES_PASSWORD}|${{ secrets.POSTGRES_PASSWORD }}|g" task-def-updated.json
         sed -i "s|\${POSTGRES_PORT}|${{ secrets.POSTGRES_PORT }}|g" task-def-updated.json
         sed -i "s|\${POSTGRES_NAME}|${{ secrets.POSTGRES_NAME }}|g" task-def-updated.json
         sed -i "s|\${POSTGRES_HOST}|${{ secrets.POSTGRES_HOST }}|g" task-def-updated.json  
