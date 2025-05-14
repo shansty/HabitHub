@@ -55,6 +55,9 @@ jobs:
         sed -i "s|\${AWS_S3_BUCKET_NAME}|${{ secrets.AWS_S3_BUCKET_NAME }}|g" task-def-updated.json
         sed -i "s|\${AWS_REGION}|${{ secrets.AWS_REGION }}|g" task-def-updated.json  
 
+    - name: Debug injected task definition
+      run: cat task-def-updated.json
+
     - name: Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
