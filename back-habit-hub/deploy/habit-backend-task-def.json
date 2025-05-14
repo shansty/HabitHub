@@ -1,0 +1,57 @@
+{
+    "family": "habit-hub-task-2",
+    "networkMode": "bridge",
+    "containerDefinitions": [
+        {
+            "name": "habit-hub",
+            "image": "064160141751.dkr.ecr.eu-north-1.amazonaws.com/habit-backend:latest",
+            "cpu": 0,
+            "memory": 512,
+            "memoryReservation": 256,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "POSTGRES_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "POSTGRES_PASS",
+                    "value": "uno2Dfj8"
+                },
+                {
+                    "name": "POSTGRES_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "POSTGRES_NAME",
+                    "value": "postgres"
+                },
+                {
+                    "name": "POSTGRES_HOST",
+                    "value": "habit-hub-db.c9sqe0uqeweg.eu-north-1.rds.amazonaws.com"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/habit-hub-task-2",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "eu-north-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "512"
+}
