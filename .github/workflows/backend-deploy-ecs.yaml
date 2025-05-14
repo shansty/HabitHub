@@ -36,10 +36,29 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-habit-hub
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+    - name: Prepare task definition with secrets
+      run: |
+        cp back-habit-hub/deploy/habit-backend-task-def.json task-def-updated.json
+        sed -i "s|\${POSTGRES_USER}|${{ secrets.POSTGRES_USER }}|g" task-def-updated.json
+        sed -i "s|\${POSTGRES_PASS}|${{ secrets.POSTGRES_PASS }}|g" task-def-updated.json
+        sed -i "s|\${POSTGRES_PORT}|${{ secrets.POSTGRES_PORT }}|g" task-def-updated.json
+        sed -i "s|\${POSTGRES_NAME}|${{ secrets.POSTGRES_NAME }}|g" task-def-updated.json
+        sed -i "s|\${POSTGRES_HOST}|${{ secrets.POSTGRES_HOST }}|g" task-def-updated.json  
+        sed -i "s|\${PORT}|${{ secrets.PORT }}|g" task-def-updated.json
+        sed -i "s|\${SECRET}|${{ secrets.SECRET }}|g" task-def-updated.json
+        sed -i "s|\${EMAIL_USER}|${{ secrets.EMAIL_USER }}|g" task-def-updated.json
+        sed -i "s|\${EMAIL_PASS}|${{ secrets.EMAIL_PASS }}|g" task-def-updated.json
+        sed -i "s|\${SALT}|${{ secrets.SALT }}|g" task-def-updated.json
+        sed -i "s|\${LOCAL_HOST}|${{ secrets.LOCAL_HOST }}|g" task-def-updated.json
+        sed -i "s|\${AWS_ACCESS_KEY_ID}|${{ secrets.AWS_ACCESS_KEY_ID }}|g" task-def-updated.json
+        sed -i "s|\${AWS_SECRET_ACCESS_KEY}|${{ secrets.AWS_SECRET_ACCESS_KEY }}|g" task-def-updated.json
+        sed -i "s|\${AWS_S3_BUCKET_NAME}|${{ secrets.AWS_S3_BUCKET_NAME }}|g" task-def-updated.json
+        sed -i "s|\${AWS_REGION}|${{ secrets.AWS_REGION }}|g" task-def-updated.json  
+
     - name: Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition:  back-habit-hub/deploy/habit-backend-task-def.json
+        task-definition: ./task-def-updated.json
         service: habit-hub-task-2-service-back
         cluster: habit-hub-cluster-2
         wait-for-service-stability: true

@@ -19,23 +19,63 @@
             "environment": [
                 {
                     "name": "POSTGRES_USER",
-                    "value": "postgres"
+                    "value": "${POSTGRES_USER}"
                 },
                 {
                     "name": "POSTGRES_PASS",
-                    "value": "uno2Dfj8"
+                    "value": "${POSTGRES_PASS}"
                 },
                 {
                     "name": "POSTGRES_PORT",
-                    "value": "5432"
+                    "value": "${POSTGRES_PORT}"
                 },
                 {
                     "name": "POSTGRES_NAME",
-                    "value": "postgres"
+                    "value": "${POSTGRES_NAME}"
                 },
                 {
                     "name": "POSTGRES_HOST",
-                    "value": "habit-hub-db.c9sqe0uqeweg.eu-north-1.rds.amazonaws.com"
+                    "value": "${POSTGRES_HOST}"
+                },
+                {
+                    "name": "PORT",
+                    "value": "${PORT}"
+                },
+                {
+                    "name": "SECRET",
+                    "value": "${SECRET}"
+                },
+                {
+                    "name": "EMAIL_USER",
+                    "value": "${EMAIL_USER}"
+                },
+                {
+                    "name": "EMAIL_PASS",
+                    "value": "${EMAIL_PASS}"
+                },
+                {
+                    "name": "SALT",
+                    "value": "${SALT}"
+                },
+                {
+                    "name": "LOCAL_HOST",
+                    "value": "${LOCAL_HOST}"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "value": "${AWS_ACCESS_KEY_ID}"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "value": "${AWS_SECRET_ACCESS_KEY}"
+                },
+                {
+                    "name": "AWS_S3_BUCKET_NAME",
+                    "value": "${AWS_S3_BUCKET_NAME}"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "${AWS_REGION}"
                 }
             ],
             "logConfiguration": {

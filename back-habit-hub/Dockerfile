@@ -5,4 +5,4 @@ RUN npm install
 COPY . .
 RUN npm run build
 EXPOSE 3000
-CMD ["npm", "run", "start:ec2"]
+CMD ["npm", "run", "start:prod"]
