@@ -2,7 +2,7 @@ name: Deploy Backend to ECS
 
 on:
   workflow_run:
-    workflows: ["Run Tests"]
+    workflows: ["Run All Tests"]
     types:
       - completed
 
