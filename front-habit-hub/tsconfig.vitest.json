@@ -7,9 +7,9 @@
         ]
     },
     "include": [
-        "../../src/**/*.test.ts",
-        "../../src/**/*.test.tsx",
-        "../../src/setupTests.ts",
-        "../../src/global.d.ts"
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/setupTests.ts",
+        "src/global.d.ts"
     ]
 }
