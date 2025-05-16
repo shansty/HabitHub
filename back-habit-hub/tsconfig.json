@@ -18,8 +18,9 @@
         "strictBindCallApply": false,
         "noFallthroughCasesInSwitch": false,
         "types": [
-            "jest",
-            "node"
+            "node",
+            "express",
+            "multer"
         ]
     }
 }
