@@ -4,11 +4,14 @@ import { CategoryData, HabitCreateData, UsersHabitDetailedResponseData, UsersHab
 import { getToken } from '../utils'
 import { HABIT_TAG, HABIT_DETAILS_TAG } from './api_tags'
 
+
 export const habitApi = createApi({
     reducerPath: 'habitApi',
     tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_API_URL}/habit`,
+        // baseUrl: `${import.meta.env.VITE_API_URL}/habit`,
+        baseUrl: `/habit`,
+
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {

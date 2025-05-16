@@ -18,7 +18,6 @@ export class TasksService {
     ) {}
 
     @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-    // @Cron('* * * * *')
     async checkIsYesterdayHabitEventFailed() {
         const yesterday = subDays(new Date(), 1)
         const formattedDate = format(yesterday, 'yyyy-MM-dd')

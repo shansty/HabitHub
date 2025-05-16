@@ -5,10 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import {
     Repository,
     In,
-    LessThan,
-    MoreThan,
     MoreThanOrEqual,
-    Not,
 } from 'typeorm'
 import { HabitCategoryConfig } from '../habit_unit_map'
 import { HabitOccurrence } from '../habit_occurrence/entities/habit_occurrence.entity'
@@ -22,7 +19,7 @@ import {
     HabitDailyDataResponse,
 } from './dto/response_habit.dto'
 import { HabitStatus } from '../habit_enums'
-import { addDays, format, startOfDay } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { NotificationService } from '../../notification/notification.service'
 import { FriendshipService } from '../../friendship/friendship.service'
 
@@ -272,7 +269,7 @@ export class HabitService {
         )
     }
 
-    
+
     async startNewHabitAttempt(habitId: number, date: string, userId: string) {
         const startDate = new Date(date)
         const habit = await this.habitRepository.findOne({
@@ -300,7 +297,7 @@ export class HabitService {
         return { success: true }
     }
 
-    private buildHabitPreviewResponse(
+    buildHabitPreviewResponse(
         habit: Habit,
         event?: HabitEvent
     ): HabitPreviewResponseDto {

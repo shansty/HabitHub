@@ -20,6 +20,7 @@ const SelectField = <T extends string>({
 }: SelectFieldProps<T>) => {
     return (
         <select
+            aria-label={placeholder}
             name={name}
             value={value}
             onChange={handleOnChange}

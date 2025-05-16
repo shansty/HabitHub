@@ -6,7 +6,9 @@ export const habitEventApi = createApi({
     reducerPath: 'habitEventApi',
     tagTypes: [HABIT_TAG, HABIT_DETAILS_TAG],
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_API_URL}/habit-event`,
+        // baseUrl: `${import.meta.env.VITE_API_URL}/habit-event`,
+        baseUrl: `habit-event`,
+        
         prepareHeaders: (headers) => {
             const token = getToken()
             if (token) {

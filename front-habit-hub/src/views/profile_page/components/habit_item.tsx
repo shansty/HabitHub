@@ -152,11 +152,13 @@ const Habit: React.FC<HabitProps> = ({ habit, selectedDate }) => {
                                 className="absolute mt-2 w-auto bg-white border border-indigo-700 rounded-md shadow-lg z-50"
                             >
                                 <HabitSettings
+                                    data-testId="habit-settings"
                                     habitId={habit.id}
                                     setIsFormOpened={setIsFormOpened}
                                 />
                                 {isFormOpened && (
                                     <HabitForm
+                                        data-testId="habit-form"
                                         onClose={() => setIsFormOpened(false)}
                                         minStartDate={new Date()}
                                         habit={habit}
