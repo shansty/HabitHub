@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Testing a form filled with correct data', async ({ page }) => {
 
-    await page.goto('/');
+    // await page.goto('/');
 
     // const heading = page.locator('h1');
     // await expect(heading).toBeVisible();
@@ -36,8 +36,8 @@ test('Testing a form filled with correct data', async ({ page }) => {
     await expect(add_habit_button).toBeVisible();
 });
 
-test('Testing a form filled with incorrect data', async ({ page }) => {
-
+// test('Testing a form filled with incorrect data', async ({ page }) => {
+// 
     // await page.goto('/');
 
     // const heading = page.locator('h1');
@@ -57,4 +57,4 @@ test('Testing a form filled with incorrect data', async ({ page }) => {
     // await expect(error).toHaveText('Invalid credentials. Please try again.', { timeout: 10000 });
 
     // await expect(error).toHaveText('Invalid credentials. Please try again.');
-});
+// });
