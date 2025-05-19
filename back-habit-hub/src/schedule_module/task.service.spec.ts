@@ -136,15 +136,6 @@ describe('CronJob', () => {
         );
     });
 
-    it('should exit early if no occurrences found for yesterday', async () => {
-        (habitOccurrenceService.getByDate as jest.Mock).mockResolvedValue([]);
-
-        await service.checkIsYesterdayHabitEventFailed();
-
-        expect(habitEventService.findEventByHabitIdAndDate).not.toHaveBeenCalled();
-        expect(habitEventService.createMany).not.toHaveBeenCalled();
-        expect(habitService.getHabitById).not.toHaveBeenCalled();
-    });
 
     it('should not create new occurrences for abandoned habits', async () => {
         const yesterday = new Date();

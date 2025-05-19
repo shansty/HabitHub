@@ -27,7 +27,7 @@ test('Testing a form filled with correct data', async ({ page }) => {
     await expect(add_habit_button).toBeVisible();
 });
 
-test('Testing a form filled with incorrect data', async ({ page }) => {
+test('Testing a login form filled with incorrect data', async ({ page }) => {
 
     const username_field = page.getByPlaceholder("Enter your username")
     await username_field.fill("Wrong")

@@ -11,7 +11,7 @@ env:
   ECR_REPOSITORY: habit-backend
   ECS_SERVICE: habit-hub-task-2-service-back
   ECS_CLUSTER: habit-hub-cluster-2
-  CONTAINER_NAME: habit-backend-container  
+  CONTAINER_NAME: habit-hub 
 
 
 jobs:
