@@ -44,6 +44,7 @@ jobs:
         echo "Registry: $ECR_REGISTRY"
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./back-habit-hub
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
     - name: Prepare task definition with secrets
       run: |
@@ -75,7 +76,7 @@ jobs:
     - name: Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
       with:
-        task-definition: ./task-def-updated.json
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: habit-hub-task-2-service-back
         cluster: habit-hub-cluster-2
         wait-for-service-stability: true
