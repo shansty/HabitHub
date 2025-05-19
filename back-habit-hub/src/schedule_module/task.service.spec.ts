@@ -40,7 +40,8 @@ describe('CronJob', () => {
         service = module.get<TasksService>(TasksService);
     });
 
-    it('should update and create failed habit events correctly', async () => {
+
+    it('should create failed events and new occurrences when events are missing', async () => {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
 
@@ -56,7 +57,7 @@ describe('CronJob', () => {
             user: { id: 123 },
             habitOccurrence: [{ date: yesterday }],
             habitSchedule: {
-                type: Schedule.DAILY,
+                type: 'DAILY',
                 daysOfWeek: [1, 3, 5],
                 daysOfMonth: [],
             },
@@ -67,32 +68,114 @@ describe('CronJob', () => {
             progress_without_fine: 80,
         });
 
-        (habitOccurrenceService.generateOccurrencesFromDate as jest.Mock).mockReturnValue([
-            { date: new Date(), habitId: 1 },
-        ]);
+        const generatedOccurrences = [{ date: new Date(), habitId: 1 }];
+        (habitOccurrenceService.generateOccurrencesFromDate as jest.Mock).mockReturnValue(generatedOccurrences);
 
         (habitEventService.createMany as jest.Mock).mockResolvedValue([]);
         (habitOccurrenceService.saveMany as jest.Mock).mockResolvedValue([]);
 
         await service.checkIsYesterdayHabitEventFailed();
+
         expect(habitEventService.createMany).toHaveBeenCalledWith(
             expect.arrayContaining([
                 expect.objectContaining({
                     habitId: 1,
                     isFailure: true,
-                    value: 0,
                     isGoalCompleted: false,
-                    date: expect.any(Date),
+                    value: 0,
                 }),
             ])
         );
+
         expect(habitService.countHabitProgressWithFine).toHaveBeenCalled();
-        expect(habitOccurrenceService.saveMany).toHaveBeenCalledWith(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    habitId: 1,
-                    date: expect.any(Date),
-                }),
-            ]));
+        expect(habitOccurrenceService.saveMany).toHaveBeenCalledWith(generatedOccurrences);
     });
+
+    it('should update existing habit events as failed if not completed', async () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const existingEvent = {
+            habitId: 1,
+            id: 101,
+            isGoalCompleted: false,
+            isFailure: false,
+        };
+
+        (habitOccurrenceService.getByDate as jest.Mock).mockResolvedValue([{ habitId: 1 }]);
+        (habitEventService.findEventByHabitIdAndDate as jest.Mock).mockResolvedValue([existingEvent]);
+        (habitEventService.saveMany as jest.Mock).mockResolvedValue([]);
+
+        (habitService.getHabitById as jest.Mock).mockResolvedValue({
+            id: 1,
+            goalDuration: 30,
+            status: HabitStatus.IN_PROGRESS,
+            user: { id: 123 },
+            habitOccurrence: [{ date: yesterday }],
+            habitSchedule: {
+                type: 'DAILY',
+                daysOfWeek: [1, 3, 5],
+                daysOfMonth: [],
+            },
+        });
+
+        (habitService.countHabitProgressWithFine as jest.Mock).mockResolvedValue({
+            updated_progress: 70,
+            progress_without_fine: 90,
+        });
+
+        (habitOccurrenceService.generateOccurrencesFromDate as jest.Mock).mockReturnValue([{ habitId: 1, date: new Date() }]);
+        (habitOccurrenceService.saveMany as jest.Mock).mockResolvedValue([]);
+
+        await service.checkIsYesterdayHabitEventFailed();
+
+        expect(habitEventService.saveMany).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({ habitId: 1, isFailure: true }),
+            ])
+        );
+    });
+
+    it('should exit early if no occurrences found for yesterday', async () => {
+        (habitOccurrenceService.getByDate as jest.Mock).mockResolvedValue([]);
+
+        await service.checkIsYesterdayHabitEventFailed();
+
+        expect(habitEventService.findEventByHabitIdAndDate).not.toHaveBeenCalled();
+        expect(habitEventService.createMany).not.toHaveBeenCalled();
+        expect(habitService.getHabitById).not.toHaveBeenCalled();
+    });
+
+    it('should not create new occurrences for abandoned habits', async () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        (habitOccurrenceService.getByDate as jest.Mock).mockResolvedValue([{ habitId: 1 }]);
+        (habitEventService.findEventByHabitIdAndDate as jest.Mock).mockResolvedValue([]);
+        (habitEventService.createMany as jest.Mock).mockResolvedValue([]);
+
+        (habitService.getHabitById as jest.Mock).mockResolvedValue({
+            id: 1,
+            goalDuration: 30,
+            status: HabitStatus.ABANDONED, 
+            user: { id: 123 },
+            habitOccurrence: [{ date: yesterday }],
+            habitSchedule: {
+                type: 'DAILY',
+                daysOfWeek: [1, 3, 5],
+                daysOfMonth: [],
+            },
+        });
+
+        (habitService.countHabitProgressWithFine as jest.Mock).mockResolvedValue({
+            updated_progress: 60,
+            progress_without_fine: 80,
+        });
+
+        await service.checkIsYesterdayHabitEventFailed();
+
+        expect(habitOccurrenceService.generateOccurrencesFromDate).not.toHaveBeenCalled();
+        expect(habitOccurrenceService.saveMany).not.toHaveBeenCalled();
+    });
+
 });
