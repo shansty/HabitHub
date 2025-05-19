@@ -75,19 +75,24 @@ describe('CronJob', () => {
         (habitOccurrenceService.saveMany as jest.Mock).mockResolvedValue([]);
 
         await service.checkIsYesterdayHabitEventFailed();
-
-        // expect(habitOccurrenceService.getByDate).toHaveBeenCalled();
-        // expect(habitEventService.findEventByHabitIdAndDate).toHaveBeenCalled();
         expect(habitEventService.createMany).toHaveBeenCalledWith(
             expect.arrayContaining([
                 expect.objectContaining({
                     habitId: 1,
                     isFailure: true,
+                    value: 0,
+                    isGoalCompleted: false,
+                    date: expect.any(Date),
                 }),
             ])
         );
-        expect(habitService.getHabitById).toHaveBeenCalled();
         expect(habitService.countHabitProgressWithFine).toHaveBeenCalled();
-        expect(habitOccurrenceService.saveMany).toHaveBeenCalled();
+        expect(habitOccurrenceService.saveMany).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    habitId: 1,
+                    date: expect.any(Date),
+                }),
+            ]));
     });
 });

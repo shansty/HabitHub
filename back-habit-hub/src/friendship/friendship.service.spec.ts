@@ -28,15 +28,16 @@ describe('FriendshipService', () => {
         service = module.get<FriendshipService>(FriendshipService);
     });
 
-    describe('getUserIdsOrder', () => {
-        it('should return ids in ascending order', () => {
-            expect((service as any).getUserIdsOrder(2, 1)).toEqual([1, 2]);
-            expect((service as any).getUserIdsOrder(1, 2)).toEqual([1, 2]);
-            expect((service as any).getUserIdsOrder(3, 3)).toEqual([3, 3]);
+    describe('getNumbersOrder', () => {
+        it('should return numbers in ascending order', () => {
+            expect((service as any).getNumbersOrder(2, 1)).toEqual([1, 2]);
+            expect((service as any).getNumbersOrder(1, 2)).toEqual([1, 2]);
+            expect((service as any).getNumbersOrder(3, 3)).toEqual([3, 3]);
         });
 
-        // it("getUserIdsOrder gets undefind", () => {
-        //     expect((service as any).getUserIdsOrder(undefined, 1)).toEqual([1, 2]);
-        // })
+        it('should throw Invalid input when passed not number', () => {
+            expect(() => service.getNumbersOrder(undefined as any, 1)).toThrow('Invalid input');
+            expect(() => service.getNumbersOrder(null as any, 1)).toThrow('Invalid input');
+        });
     });
 });

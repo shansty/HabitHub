@@ -82,7 +82,7 @@ export class FriendshipService {
 
 
   async deleteUserFriend(userId: string, friendId: string): Promise<{ success: boolean }> {
-    const [user1Id, user2Id] = this.getUserIdsOrder(+userId, +friendId);
+    const [user1Id, user2Id] = this.getNumbersOrder(+userId, +friendId);
     const friendship = await this.friendshipRepository.findOne({
       where: {
         user1: { id: user1Id },
@@ -97,7 +97,10 @@ export class FriendshipService {
   }
 
 
-  getUserIdsOrder(id1: number, id2: number): [number, number] {
+  getNumbersOrder(id1: number, id2: number): [number, number] {
+    if (typeof id1 !== 'number' || typeof id2 !== 'number') {
+      throw new Error('Invalid input');
+    }
     return id1 < id2 ? [id1, id2] : [id2, id1];
   }
 
@@ -131,7 +134,7 @@ export class FriendshipService {
 
 
   async getFriendshipWithAnyStatus(senderId: number, recipientId: number): Promise<Friendship | null> {
-    const [id1, id2] = this.getUserIdsOrder(senderId, recipientId)
+    const [id1, id2] = this.getNumbersOrder(senderId, recipientId)
     return await this.friendshipRepository.findOne({
       where: {
         user1: { id: id1 },
