@@ -15,11 +15,11 @@ describe('FriendshipService', () => {
             providers: [
                 FriendshipService,
                 {
-                    provide:  getRepositoryToken(Friendship), 
+                    provide: getRepositoryToken(Friendship),
                     useValue: mockFriendshipRepository,
                 },
                 {
-                    provide: NotificationService, 
+                    provide: NotificationService,
                     useValue: mockNotificationService,
                 },
             ],
@@ -34,5 +34,9 @@ describe('FriendshipService', () => {
             expect((service as any).getUserIdsOrder(1, 2)).toEqual([1, 2]);
             expect((service as any).getUserIdsOrder(3, 3)).toEqual([3, 3]);
         });
+
+        it("getUserIdsOrder gets undefind", () => {
+            expect((service as any).getUserIdsOrder(undefined, 1)).toEqual([1, 2]);
+        })
     });
 });

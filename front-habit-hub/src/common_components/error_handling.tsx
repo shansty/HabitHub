@@ -7,7 +7,9 @@ const ErrorHandling: React.FC<ErrorHandlingProps> = ({ customError }) => {
     if (!customError) return null
     return (
         <>
-            <p className="text-red-600 text-sm text-center mt-1">
+            <p
+                data-testid="custom-error"
+                className="text-red-600 text-sm text-center mt-1">
                 {customError || 'Something went wrong. Please try again.'}
             </p>
         </>
