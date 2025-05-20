@@ -41,7 +41,7 @@ describe('HabitForm', () => {
         mockUseGetHabitCategoriesQuery.mockReturnValue({ data: mockCategories });
     });
 
-    it('shows all categories in the dropdown when clicked', () => {
+    it('should shows all categories name in the dropdown when clicked', () => {
         render(
             <HabitForm
                 onClose={() => { }}

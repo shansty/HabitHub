@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 
-test('Testing a form filled with correct data', async ({ page }) => {
+test('Profile page should be shown after submitting login form with valid credentials.', async ({ page }) => {
 
     const username_field = page.getByPlaceholder("Enter your username")
     await username_field.fill("Anastasiya")
@@ -27,7 +27,7 @@ test('Testing a form filled with correct data', async ({ page }) => {
     await expect(add_habit_button).toBeVisible();
 });
 
-test('Testing a login form filled with incorrect data', async ({ page }) => {
+test('Login form must show an error message because of invalid credentials', async ({ page }) => {
 
     const username_field = page.getByPlaceholder("Enter your username")
     await username_field.fill("Wrong")
